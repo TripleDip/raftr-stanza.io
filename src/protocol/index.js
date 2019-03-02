@@ -1,4 +1,5 @@
 import Addresses from './stanzas/addresses';
+import Attachment from './stanzas/attachment';
 import Avatar from './stanzas/avatar';
 import Bind from './stanzas/bind';
 import Blocking from './stanzas/blocking';
@@ -148,4 +149,5 @@ export default function(JXT) {
     JXT.use(Version);
     JXT.use(Visibility);
     JXT.use(XRD);
+    //   JXT.use(Attachment)
 }

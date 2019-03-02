@@ -364,3 +364,4 @@ export const OMEMO_AXOLOTL_BUNDLE = deviceId =>
 // ================================================================
 
 export const XRD = 'http://docs.oasis-open.org/ns/xri/xrd-1.0';
+export const RAFTR_ATTACHMENT = 'raftr:attachment';

@@ -23,7 +23,7 @@ function timeoutPromise(targetPromise, queryid, delay) {
 }
 
 export default function(client) {
-    client.disco.addFeature(Namespaces.MAM_2);
+    client.disco.addFeature(Namespaces.MAM_1);
 
     client.getHistorySearchForm = function(jid, cb) {
         return client.sendIq(
@@ -61,7 +61,7 @@ export default function(client) {
                     val = val.toISOString();
                 }
                 if (name === 'FORM_TYPE') {
-                    val = Namespaces.MAM_2;
+                    val = Namespaces.MAM_1;
                 }
 
                 const existing = false;
