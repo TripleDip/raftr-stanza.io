@@ -1,72 +1,83 @@
 {
-  "name": "raftr-stanza.io",
-  "description": "Modern XMPP in the browser, with a JSON API",
-  "version": "10.2.6",
-  "author": "Lance Stout <lancestout@gmail.com>",
-  "browser": {
-    "node-stringprep": false,
-    "ws": false
-  },
-  "bugs": "https://github.com/legastero/stanza.io/issues",
-  "contributors": [ "Philipp Hancke <fippo@andyet.net>", "Steven Lloyd Watkin <lloyd@evilprofessor.co.uk>" ],
-  "dependencies": {
-    "async": "^2.5.0",
-    "cross-fetch": "^3.0.0",
-    "iana-hashes": "^1.1.0",
-    "jxt": "^4.0.0",
-    "sdp": "^2.9.0",
-    "tslib": "^1.9.3",
-    "uuid": "^3.0.1",
-    "wildemitter": "^1.0.1",
-    "ws": "^6.1.2"
-  },
-  "devDependencies": {
-    "husky": "^1.1.3",
-    "prettier": "^1.14.3",
-    "pretty-quick": "^1.8.0",
-    "rimraf": "^2.6.2",
-    "rollup": "^1.0.0",
-    "rollup-plugin-node-resolve": "^4.0.0",
-    "string-replace-loader": "^2.1.1",
-    "tap-spec": "^5.0.0",
-    "tape": "^4.8.0",
-    "ts-loader": "^5.3.0",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "typescript": "^3.1.6",
-    "webpack": "^4.25.0",
-    "webpack-bundle-analyzer": "^3.0.3",
-    "webpack-cli": "^3.1.2"
-  },
-  "homepage": "https://stanza.io",
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --stage && npm run lint && npm test"
+    "name": "raftr-stanza.io",
+    "description": "Modern XMPP in the browser, with a JSON API",
+    "version": "10.2.6",
+    "author": "Lance Stout <lancestout@gmail.com>",
+    "browser": {
+        "node-stringprep": false,
+        "ws": false
+    },
+    "bugs": "https://github.com/legastero/stanza.io/issues",
+    "contributors": [
+        "Philipp Hancke <fippo@andyet.net>",
+        "Steven Lloyd Watkin <lloyd@evilprofessor.co.uk>"
+    ],
+    "dependencies": {
+        "async": "^2.5.0",
+        "cross-fetch": "^3.0.0",
+        "iana-hashes": "^1.1.0",
+        "jxt": "^4.0.0",
+        "sdp": "^2.9.0",
+        "tslib": "^1.9.3",
+        "uuid": "^3.0.1",
+        "wildemitter": "^1.0.1",
+        "ws": "^6.1.2"
+    },
+    "devDependencies": {
+        "husky": "^1.1.3",
+        "prettier": "^1.14.3",
+        "pretty-quick": "^1.8.0",
+        "rimraf": "^2.6.2",
+        "rollup": "^1.0.0",
+        "rollup-plugin-node-resolve": "^4.0.0",
+        "string-replace-loader": "^2.1.1",
+        "tap-spec": "^5.0.0",
+        "tape": "^4.8.0",
+        "ts-loader": "^5.3.0",
+        "ts-node": "^7.0.1",
+        "tslint": "^5.11.0",
+        "typescript": "^3.1.6",
+        "webpack": "^4.25.0",
+        "webpack-bundle-analyzer": "^3.0.3",
+        "webpack-cli": "^3.1.2"
+    },
+    "homepage": "https://stanza.io",
+    "husky": {
+        "hooks": {
+            "pre-commit": "pretty-quick --stage && npm run lint && npm test"
+        }
+    },
+    "keywords": [
+        "bosh",
+        "jingle",
+        "json",
+        "stanza",
+        "stanza.io",
+        "websocket",
+        "xmpp"
+    ],
+    "license": "MIT",
+    "main": "./dist/es/index.js",
+    "prettier": {
+        "tabWidth": 4,
+        "printWidth": 100,
+        "semi": true,
+        "singleQuote": true
+    },
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TripleDip/raftr-stanza.io.git"
+    },
+    "scripts": {
+        "build": "node scripts/build",
+        "clean": "rimraf dist",
+        "compile": "tsc -p .",
+        "compile:module": "tsc -p . --outDir ./dist/es --target es2015 --module es2015",
+        "compile:rollup": "rollup -c rollup.config.js",
+        "compile:webpack": "webpack --mode production",
+        "lint": "tslint -p .",
+        "test": "ts-node --files test/index.js | tap-spec",
+        "validate": "npm ls"
     }
-  },
-  "keywords": [ "bosh", "jingle", "json", "stanza", "stanza.io", "websocket", "xmpp" ],
-  "license": "MIT",
-  "main": "./dist/es/index.js",
-  "prettier": {
-    "tabWidth": 4,
-    "printWidth": 100,
-    "semi": true,
-    "singleQuote": true
-  },
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TripleDip/raftr-stanza.io.git"
-  },
-  "scripts": {
-    "build": "node scripts/build",
-    "clean": "rimraf dist",
-    "compile": "tsc -p .",
-    "compile:module": "tsc -p . --outDir ./dist/es --target es2015 --module es2015",
-    "compile:rollup": "rollup -c rollup.config.js",
-    "compile:webpack": "webpack --mode production",
-    "lint": "tslint -p .",
-    "test": "ts-node --files test/index.js | tap-spec",
-    "validate": "npm ls"
-  }
 }

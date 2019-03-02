@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 const TYPE_MAP = {
     erase: 'e',
     insert: 't',
@@ -18,7 +18,7 @@ function default_1(JXT) {
         element: 'rtt',
         fields: {
             actions: {
-                get: function () {
+                get: function() {
                     const results = [];
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         const child = this.xml.childNodes[i];
@@ -29,8 +29,7 @@ function default_1(JXT) {
                         }
                         if (ACTION_MAP[name]) {
                             action.type = ACTION_MAP[name];
-                        }
-                        else {
+                        } else {
                             continue;
                         }
                         const pos = Utils.getAttribute(child, 'p');
@@ -49,7 +48,7 @@ function default_1(JXT) {
                     }
                     return results;
                 },
-                set: function (actions) {
+                set: function(actions) {
                     const self = this;
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         this.xml.removeChild(this.xml.childNodes[i]);
@@ -58,7 +57,11 @@ function default_1(JXT) {
                         if (!TYPE_MAP[action.type]) {
                             return;
                         }
-                        const child = Utils.createElement(NS.RTT_0, TYPE_MAP[action.type], NS.RTT_0);
+                        const child = Utils.createElement(
+                            NS.RTT_0,
+                            TYPE_MAP[action.type],
+                            NS.RTT_0
+                        );
                         if (action.pos !== undefined) {
                             Utils.setAttribute(child, 'p', action.pos.toString());
                         }

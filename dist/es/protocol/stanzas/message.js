@@ -1,6 +1,6 @@
 import * as NS from '../namespaces';
 const internals = {};
-internals.defineMessage = function (JXT, name, namespace) {
+internals.defineMessage = function(JXT, name, namespace) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'message',
@@ -18,8 +18,18 @@ internals.defineMessage = function (JXT, name, namespace) {
             attachment: {
                 get: function getAttachment() {
                     const attachmentObj = {
-                        dispay_width: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'dispay_width'),
-                        display_height: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'display_height'),
+                        dispay_width: Utils.getSubAttribute(
+                            this.xml,
+                            namespace,
+                            'attachment',
+                            'dispay_width'
+                        ),
+                        display_height: Utils.getSubAttribute(
+                            this.xml,
+                            namespace,
+                            'attachment',
+                            'display_height'
+                        ),
                         type: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'type')
                     };
                     const attachmentXml = Utils.find(this.xml, namespace, 'attachment');
@@ -27,7 +37,11 @@ internals.defineMessage = function (JXT, name, namespace) {
                         attachmentObj.url = Utils.getSubText(attachmentXml[0], namespace, 'url');
                         const thumbnailXml = Utils.find(attachmentXml[0], namespace, 'thumbnail');
                         if (thumbnailXml[0]) {
-                            attachmentObj.thumbnailUrl = Utils.getSubText(thumbnailXml[0], namespace, 'url');
+                            attachmentObj.thumbnailUrl = Utils.getSubText(
+                                thumbnailXml[0],
+                                namespace,
+                                'url'
+                            );
                         }
                     }
                     return attachmentXml[0] ? attachmentObj : null;
@@ -84,7 +98,7 @@ internals.defineMessage = function (JXT, name, namespace) {
         topLevel: true
     });
 };
-export default function (JXT) {
+export default function(JXT) {
     internals.defineMessage(JXT, 'message', NS.CLIENT);
     internals.defineMessage(JXT, 'serverMessage', NS.SERVER);
     internals.defineMessage(JXT, 'componentMessage', NS.COMPONENT);

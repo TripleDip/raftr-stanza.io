@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const Register = JXT.define({
@@ -32,10 +32,10 @@ function default_1(JXT) {
         namespace: NS.REGISTER
     });
     JXT.extendIQ(Register);
-    JXT.withDefinition('x', NS.OOB, function (OOB) {
+    JXT.withDefinition('x', NS.OOB, function(OOB) {
         JXT.extend(Register, OOB);
     });
-    JXT.withDataForm(function (DataForm) {
+    JXT.withDataForm(function(DataForm) {
         JXT.extend(Register, DataForm);
     });
 }

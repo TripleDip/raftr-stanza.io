@@ -1,9 +1,9 @@
 const NS = 'urn:ietf:params:xml:ns:xmpp-sasl';
-export default function (client, stanzas) {
+export default function(client, stanzas) {
     const Auth = stanzas.getDefinition('auth', NS);
     const Response = stanzas.getDefinition('response', NS);
     const Abort = stanzas.getDefinition('abort', NS);
-    client.registerFeature('sasl', 100, function (features, cb) {
+    client.registerFeature('sasl', 100, function(features, cb) {
         const self = this;
         const mech = self.SASLFactory.create(features.sasl.mechanisms);
         if (!mech) {
@@ -11,25 +11,26 @@ export default function (client, stanzas) {
             self.emit('auth:failed');
             return cb('disconnect', 'authentication failed');
         }
-        self.on('sasl:success', 'sasl', function () {
+        self.on('sasl:success', 'sasl', function() {
             self.features.negotiated.sasl = true;
             self.releaseGroup('sasl');
             self.emit('auth:success', self.config.credentials);
             cb('restart');
         });
-        self.on('sasl:challenge', 'sasl', function (challenge) {
+        self.on('sasl:challenge', 'sasl', function(challenge) {
             mech.challenge(Buffer.from(challenge.value, 'base64').toString());
-            return self.getCredentials(function (err, credentials) {
+            return self.getCredentials(function(err, credentials) {
                 if (err) {
                     return self.send(new Abort());
                 }
                 const resp = mech.response(credentials);
                 if (resp || resp === '') {
-                    self.send(new Response({
-                        value: Buffer.from(resp).toString('base64')
-                    }));
-                }
-                else {
+                    self.send(
+                        new Response({
+                            value: Buffer.from(resp).toString('base64')
+                        })
+                    );
+                } else {
                     self.send(new Response());
                 }
                 if (mech.cache) {
@@ -43,12 +44,12 @@ export default function (client, stanzas) {
                 }
             });
         });
-        self.on('sasl:failure', 'sasl', function () {
+        self.on('sasl:failure', 'sasl', function() {
             self.releaseGroup('sasl');
             self.emit('auth:failed');
             cb('disconnect', 'authentication failed');
         });
-        self.on('sasl:abort', 'sasl', function () {
+        self.on('sasl:abort', 'sasl', function() {
             self.releaseGroup('sasl');
             self.emit('auth:failed');
             cb('disconnect', 'authentication failed');
@@ -57,7 +58,7 @@ export default function (client, stanzas) {
             mechanism: mech.name
         };
         if (mech.clientFirst) {
-            return self.getCredentials(function (err, credentials) {
+            return self.getCredentials(function(err, credentials) {
                 if (err) {
                     return self.send(new Abort());
                 }
@@ -67,7 +68,7 @@ export default function (client, stanzas) {
         }
         self.send(new Auth(auth));
     });
-    client.on('disconnected', function () {
+    client.on('disconnected', function() {
         client.features.negotiated.sasl = false;
         client.releaseGroup('sasl');
     });

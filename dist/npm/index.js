@@ -1,11 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const jid = tslib_1.__importStar(require("./protocol/jid"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const jid = tslib_1.__importStar(require('./protocol/jid'));
 exports.jid = jid;
-const client_1 = tslib_1.__importDefault(require("./client"));
+const client_1 = tslib_1.__importDefault(require('./client'));
 exports.Client = client_1.default;
-const plugins_1 = tslib_1.__importDefault(require("./plugins"));
+const plugins_1 = tslib_1.__importDefault(require('./plugins'));
 exports.VERSION = '__STANZAIO_VERSION__';
 exports.JID = jid.JID;
 function createClient(opts) {

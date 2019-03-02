@@ -2,39 +2,40 @@ function timeoutPromise(targetPromise, delay) {
     let timeoutRef;
     return Promise.race([
         targetPromise,
-        new Promise(function (resolve, reject) {
-            timeoutRef = setTimeout(function () {
+        new Promise(function(resolve, reject) {
+            timeoutRef = setTimeout(function() {
                 reject();
             }, delay);
         })
-    ]).then(function (result) {
+    ]).then(function(result) {
         clearTimeout(timeoutRef);
         return result;
     });
 }
 function checkConnection(client, timeout) {
-    return timeoutPromise(new Promise(function (resolve, reject) {
-        if (client.sm.started) {
-            client.once('stream:management:ack', resolve);
-            client.sm.request();
-        }
-        else {
-            client
-                .ping()
-                .then(resolve)
-                .catch(function (err) {
-                if (err.error && err.error.condition !== 'timeout') {
-                    resolve();
-                }
-                else {
-                    reject();
-                }
-            });
-        }
-    }), timeout * 1000 || 15000);
+    return timeoutPromise(
+        new Promise(function(resolve, reject) {
+            if (client.sm.started) {
+                client.once('stream:management:ack', resolve);
+                client.sm.request();
+            } else {
+                client
+                    .ping()
+                    .then(resolve)
+                    .catch(function(err) {
+                        if (err.error && err.error.condition !== 'timeout') {
+                            resolve();
+                        } else {
+                            reject();
+                        }
+                    });
+            }
+        }),
+        timeout * 1000 || 15000
+    );
 }
-export default function (client) {
-    client.enableKeepAlive = function (opts) {
+export default function(client) {
+    client.enableKeepAlive = function(opts) {
         opts = opts || {};
         // Ping every 5 minutes
         opts.interval = opts.interval || 300;
@@ -42,7 +43,7 @@ export default function (client) {
         opts.timeout = opts.timeout || 15;
         function keepalive() {
             if (client.sessionStarted) {
-                checkConnection(client, opts.timeout).catch(function () {
+                checkConnection(client, opts.timeout).catch(function() {
                     // Kill the apparently dead connection without closing
                     // the stream itself so we can reconnect and potentially
                     // resume the session.
@@ -59,13 +60,13 @@ export default function (client) {
         }
         client._keepAliveInterval = setInterval(keepalive, opts.interval * 1000);
     };
-    client.disableKeepAlive = function () {
+    client.disableKeepAlive = function() {
         if (client._keepAliveInterval) {
             clearInterval(client._keepAliveInterval);
             delete client._keepAliveInterval;
         }
     };
-    client.on('disconnected', function () {
+    client.on('disconnected', function() {
         client.disableKeepAlive();
     });
 }

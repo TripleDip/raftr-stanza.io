@@ -1,8 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const hashes = tslib_1.__importStar(require("iana-hashes"));
-const protocol_1 = require("../protocol");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const hashes = tslib_1.__importStar(require('iana-hashes'));
+const protocol_1 = require('../protocol');
 function default_1(client) {
     client.disco.addFeature('jid\\20escaping');
     client.disco.addFeature(protocol_1.Namespaces.DELAY);

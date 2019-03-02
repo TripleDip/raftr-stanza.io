@@ -1,10 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
 const SDPUtils = require('sdp');
-const Protocol_1 = require("./lib/Protocol");
-const Intermediate_1 = require("./lib/Intermediate");
-const Session_1 = tslib_1.__importDefault(require("./Session"));
+const Protocol_1 = require('./lib/Protocol');
+const Intermediate_1 = require('./lib/Intermediate');
+const Session_1 = tslib_1.__importDefault(require('./Session'));
 class ICESession extends Session_1.default {
     constructor(opts) {
         super(opts);
@@ -16,8 +16,7 @@ class ICESession extends Session_1.default {
         this.pc.addEventListener('icecandidate', e => {
             if (e.candidate) {
                 this.onIceCandidate(e);
-            }
-            else {
+            } else {
                 this.onIceEndOfCandidates();
             }
         });
@@ -37,9 +36,9 @@ class ICESession extends Session_1.default {
                 .addIceCandidate(null)
                 .then(() => cb())
                 .catch(e => {
-                this._log('error', 'Could not add null ICE candidate', e.name);
-                cb();
-            });
+                    this._log('error', 'Could not add null ICE candidate', e.name);
+                    cb();
+                });
         }
         // detect an ice restart.
         if (this.pc.remoteDescription) {
@@ -61,36 +60,36 @@ class ICESession extends Session_1.default {
                         .setRemoteDescription(remoteDescription)
                         .then(() => this.pc.createAnswer())
                         .then(answer => {
-                        const json = Intermediate_1.importFromSDP(answer.sdp);
-                        const jingle = {
-                            action: 'transport-info',
-                            contents: json.media.map(media => {
-                                return {
-                                    creator: 'initiator',
-                                    name: media.mid,
-                                    transport: Protocol_1.convertIntermediateToTransport(media)
-                                };
-                            }),
-                            sessionId: this.sid
-                        };
-                        this.send('transport-info', jingle);
-                        return this.pc.setLocalDescription(answer);
-                    })
+                            const json = Intermediate_1.importFromSDP(answer.sdp);
+                            const jingle = {
+                                action: 'transport-info',
+                                contents: json.media.map(media => {
+                                    return {
+                                        creator: 'initiator',
+                                        name: media.mid,
+                                        transport: Protocol_1.convertIntermediateToTransport(media)
+                                    };
+                                }),
+                                sessionId: this.sid
+                            };
+                            this.send('transport-info', jingle);
+                            return this.pc.setLocalDescription(answer);
+                        })
                         .then(() => cb())
                         .catch(err => {
-                        this._log('error', 'Could not do remote ICE restart', err);
-                        this.end('failed-application', true);
-                        cb(err);
-                    });
+                            this._log('error', 'Could not do remote ICE restart', err);
+                            this.end('failed-application', true);
+                            cb(err);
+                        });
                 }
                 return this.pc
                     .setRemoteDescription(remoteDescription)
                     .then(() => cb())
                     .catch(err => {
-                    this._log('error', 'Could not do local ICE restart', err);
-                    this.end('failed-application', true);
-                    cb(err);
-                });
+                        this._log('error', 'Could not do local ICE restart', err);
+                        this.end('failed-application', true);
+                        cb(err);
+                    });
             }
         }
         const all = changes.contents.map(content => {
@@ -121,13 +120,16 @@ class ICESession extends Session_1.default {
         this.state = 'active';
         const json = Protocol_1.convertRequestToIntermediate(changes, this.peerRole);
         const sdp = Intermediate_1.exportToSDP(json);
-        this.pc.setRemoteDescription({ type: 'answer', sdp }).then(() => {
-            this.emit('accepted', this, undefined);
-            cb();
-        }, err => {
-            this._log('error', `Could not process WebRTC answer: ${err}`);
-            cb({ condition: 'general-error' });
-        });
+        this.pc.setRemoteDescription({ type: 'answer', sdp }).then(
+            () => {
+                this.emit('accepted', this, undefined);
+                cb();
+            },
+            err => {
+                this._log('error', `Could not process WebRTC answer: ${err}`);
+                cb({ condition: 'general-error' });
+            }
+        );
     }
     onSessionTerminate(changes, cb) {
         this._log('info', 'Terminating session');
@@ -182,8 +184,7 @@ class ICESession extends Session_1.default {
             case 'disconnected':
                 if (this.pc.signalingState === 'stable') {
                     this.connectionState = 'interrupted';
-                }
-                else {
+                } else {
                     this.connectionState = 'disconnected';
                 }
                 this.maybeRestartIce();
@@ -192,8 +193,7 @@ class ICESession extends Session_1.default {
                 if (this.connectionState === 'failed') {
                     this.connectionState = 'failed';
                     this.end('failed-transport');
-                }
-                else {
+                } else {
                     this.restartIce();
                 }
                 break;
@@ -235,23 +235,33 @@ class ICESession extends Session_1.default {
                             if (activeCandidatePair) {
                                 let isRelay = false;
                                 if (activeCandidatePair.remoteCandidateId) {
-                                    const remoteCandidate = stats.get(activeCandidatePair.remoteCandidateId);
-                                    if (remoteCandidate &&
-                                        remoteCandidate.candidateType === 'relay') {
+                                    const remoteCandidate = stats.get(
+                                        activeCandidatePair.remoteCandidateId
+                                    );
+                                    if (
+                                        remoteCandidate &&
+                                        remoteCandidate.candidateType === 'relay'
+                                    ) {
                                         isRelay = true;
                                     }
                                 }
                                 if (activeCandidatePair.localCandidateId) {
-                                    const localCandidate = stats.get(activeCandidatePair.localCandidateId);
-                                    if (localCandidate &&
-                                        localCandidate.candidateType === 'relay') {
+                                    const localCandidate = stats.get(
+                                        activeCandidatePair.localCandidateId
+                                    );
+                                    if (
+                                        localCandidate &&
+                                        localCandidate.candidateType === 'relay'
+                                    ) {
                                         isRelay = true;
                                     }
                                 }
                                 if (isRelay) {
                                     this.maximumBitrate = this.maxRelayBandwidth;
                                     if (this.currentBitrate) {
-                                        this.setMaximumBitrate(Math.min(this.currentBitrate, this.maximumBitrate));
+                                        this.setMaximumBitrate(
+                                            Math.min(this.currentBitrate, this.maximumBitrate)
+                                        );
                                     }
                                 }
                             }
@@ -291,26 +301,29 @@ class ICESession extends Session_1.default {
         if (this._maybeRestartingIce !== undefined) {
             clearTimeout(this._maybeRestartingIce);
         }
-        this.pc.createOffer({ iceRestart: true }).then(offer => {
-            // extract new ufrag / pwd, send transport-info with just that.
-            const json = Intermediate_1.importFromSDP(offer.sdp);
-            const jingle = {
-                action: 'transport-info',
-                contents: json.media.map(media => {
-                    return {
-                        creator: 'initiator',
-                        name: media.mid,
-                        transport: Protocol_1.convertIntermediateToTransport(media)
-                    };
-                }),
-                sessionId: this.sid
-            };
-            this.send('transport-info', jingle);
-            return this.pc.setLocalDescription(offer);
-        }, err => {
-            this._log('error', 'Could not create WebRTC offer', err);
-            this.end('failed-application', true);
-        });
+        this.pc.createOffer({ iceRestart: true }).then(
+            offer => {
+                // extract new ufrag / pwd, send transport-info with just that.
+                const json = Intermediate_1.importFromSDP(offer.sdp);
+                const jingle = {
+                    action: 'transport-info',
+                    contents: json.media.map(media => {
+                        return {
+                            creator: 'initiator',
+                            name: media.mid,
+                            transport: Protocol_1.convertIntermediateToTransport(media)
+                        };
+                    }),
+                    sessionId: this.sid
+                };
+                this.send('transport-info', jingle);
+                return this.pc.setLocalDescription(offer);
+            },
+            err => {
+                this._log('error', 'Could not create WebRTC offer', err);
+                this.end('failed-application', true);
+            }
+        );
     }
     // set the maximum bitrate. Only supported in Chrome and Firefox right now.
     setMaximumBitrate(maximumBitrate) {
@@ -330,8 +343,7 @@ class ICESession extends Session_1.default {
         let browser = '';
         if (window.navigator && window.navigator.mozGetUserMedia) {
             browser = 'firefox';
-        }
-        else if (window.navigator && window.navigator.webkitGetUserMedia) {
+        } else if (window.navigator && window.navigator.webkitGetUserMedia) {
             browser = 'chrome';
         }
         const parameters = sender.getParameters();
@@ -340,8 +352,7 @@ class ICESession extends Session_1.default {
         }
         if (maximumBitrate === 0) {
             delete parameters.encodings[0].maximumBitrate;
-        }
-        else {
+        } else {
             if (!parameters.encodings.length) {
                 parameters.encodings[0] = {};
             }
@@ -351,8 +362,7 @@ class ICESession extends Session_1.default {
             sender.setParameters(parameters).catch(err => {
                 this._log('error', 'setParameters failed', err);
             });
-        }
-        else if (browser === 'firefox') {
+        } else if (browser === 'firefox') {
             // Firefox needs renegotiation:
             // https://bugzilla.mozilla.org/show_bug.cgi?id=1253499
             // but we do not want to intefere with our queue so we
@@ -361,26 +371,24 @@ class ICESession extends Session_1.default {
                 sender.setParameters(parameters).catch(err => {
                     this._log('error', 'setParameters failed', err);
                 });
-            }
-            else if (this.pc.localDescription.type === 'offer') {
+            } else if (this.pc.localDescription.type === 'offer') {
                 sender
                     .setParameters(parameters)
                     .then(() => this.pc.createOffer())
                     .then(offer => this.pc.setLocalDescription(offer))
                     .then(() => this.pc.setRemoteDescription(this.pc.remoteDescription))
                     .catch(err => {
-                    this._log('error', 'setParameters failed', err);
-                });
-            }
-            else if (this.pc.localDescription.type === 'answer') {
+                        this._log('error', 'setParameters failed', err);
+                    });
+            } else if (this.pc.localDescription.type === 'answer') {
                 sender
                     .setParameters(parameters)
                     .then(() => this.pc.setRemoteDescription(this.pc.remoteDescription))
                     .then(() => this.pc.createAnswer())
                     .then(answer => this.pc.setLocalDescription(answer))
                     .catch(err => {
-                    this._log('error', 'setParameters failed', err);
-                });
+                        this._log('error', 'setParameters failed', err);
+                    });
             }
         }
         // else: not supported.

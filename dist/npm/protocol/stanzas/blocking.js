@@ -1,12 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
-const jid_1 = require("../jid");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
+const jid_1 = require('../jid');
 function default_1(JXT) {
     const Utils = JXT.utils;
     const jidList = {
-        get: function () {
+        get: function() {
             const result = [];
             const items = Utils.find(this.xml, NS.BLOCKING, 'item');
             if (!items.length) {
@@ -17,7 +17,7 @@ function default_1(JXT) {
             }
             return result;
         },
-        set: function (values) {
+        set: function(values) {
             const self = this;
             for (const value of values) {
                 const item = Utils.createElement(NS.BLOCKING, 'item', NS.BLOCKING);

@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const PubsubOwner = JXT.define({
@@ -10,14 +10,14 @@ function default_1(JXT) {
             del: Utils.subAttribute(NS.PUBSUB_OWNER, 'delete', 'node'),
             purge: Utils.subAttribute(NS.PUBSUB_OWNER, 'purge', 'node'),
             redirect: {
-                get: function () {
+                get: function() {
                     const del = Utils.find(this.xml, NS.PUBSUB_OWNER, 'delete');
                     if (del.length) {
                         return Utils.getSubAttribute(del[0], NS.PUBSUB_OWNER, 'redirect', 'uri');
                     }
                     return '';
                 },
-                set: function (value) {
+                set: function(value) {
                     const del = Utils.findOrCreate(this.xml, NS.PUBSUB_OWNER, 'delete');
                     Utils.setSubAttribute(del, NS.PUBSUB_OWNER, 'redirect', 'uri', value);
                 }
@@ -31,7 +31,7 @@ function default_1(JXT) {
         fields: {
             configurable: Utils.boolSub('subscribe-options'),
             configurationRequired: {
-                get: function () {
+                get: function() {
                     const options = Utils.find(this.xml, NS.PUBSUB_OWNER, 'subscribe-options');
                     if (options.length) {
                         return Utils.getBoolSub(options[0], NS.PUBSUB_OWNER, 'required');
@@ -92,7 +92,7 @@ function default_1(JXT) {
     JXT.extend(Subscriptions, Subscription, 'list');
     JXT.extend(Affiliations, Affiliation, 'list');
     JXT.extendIQ(PubsubOwner);
-    JXT.withDataForm(function (DataForm) {
+    JXT.withDataForm(function(DataForm) {
         JXT.extend(Configure, DataForm);
     });
 }

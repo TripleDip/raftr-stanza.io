@@ -13,7 +13,7 @@ const CONDITIONS = [
     'temporary-auth-failure',
     'not-supported'
 ];
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     const Mechanisms = JXT.define({
         element: 'mechanisms',
@@ -76,25 +76,25 @@ export default function (JXT) {
         eventName: 'sasl:failure',
         fields: {
             $text: {
-                get: function () {
+                get: function() {
                     return Utils.getSubLangText(this.xml, NS.SASL, 'text', this.lang);
                 }
             },
             condition: Utils.enumSub(NS.SASL, CONDITIONS),
             lang: {
-                get: function () {
+                get: function() {
                     return this._lang || '';
                 },
-                set: function (value) {
+                set: function(value) {
                     this._lang = value;
                 }
             },
             text: {
-                get: function () {
+                get: function() {
                     const text = this.$text;
                     return text[this.lang] || '';
                 },
-                set: function (value) {
+                set: function(value) {
                     Utils.setSubLangText(this.xml, NS.SASL, 'text', value, this.lang);
                 }
             }

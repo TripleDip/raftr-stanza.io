@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     const Services = JXT.define({
         element: 'services',
@@ -31,7 +31,7 @@ export default function (JXT) {
     JXT.extend(Credentials, Service);
     JXT.extendIQ(Services);
     JXT.extendIQ(Credentials);
-    JXT.withDataForm(function (DataForm) {
+    JXT.withDataForm(function(DataForm) {
         JXT.extend(Service, DataForm);
     });
 }

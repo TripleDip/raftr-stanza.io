@@ -23,13 +23,13 @@ const CONDITIONS = [
     'undefined-condition',
     'unexpected-request'
 ];
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     const StanzaError = JXT.define({
         element: 'error',
         fields: {
             $text: {
-                get: function () {
+                get: function() {
                     return Utils.getSubLangText(this.xml, NS.STANZA_ERROR, 'text', this.lang);
                 }
             },
@@ -37,34 +37,34 @@ export default function (JXT) {
             code: Utils.attribute('code'),
             condition: Utils.enumSub(NS.STANZA_ERROR, CONDITIONS),
             gone: {
-                get: function () {
+                get: function() {
                     return Utils.getSubText(this.xml, NS.STANZA_ERROR, 'gone');
                 },
-                set: function (value) {
+                set: function(value) {
                     this.condition = 'gone';
                     Utils.setSubText(this.xml, NS.STANZA_ERROR, 'gone', value);
                 }
             },
             lang: {
-                get: function () {
+                get: function() {
                     return (this.parent || {}).lang || '';
                 }
             },
             redirect: {
-                get: function () {
+                get: function() {
                     return Utils.getSubText(this.xml, NS.STANZA_ERROR, 'redirect');
                 },
-                set: function (value) {
+                set: function(value) {
                     this.condition = 'redirect';
                     Utils.setSubText(this.xml, NS.STANZA_ERROR, 'redirect', value);
                 }
             },
             text: {
-                get: function () {
+                get: function() {
                     const text = this.$text;
                     return text[this.lang] || '';
                 },
-                set: function (value) {
+                set: function(value) {
                     Utils.setSubLangText(this.xml, NS.STANZA_ERROR, 'text', value, this.lang);
                 }
             },

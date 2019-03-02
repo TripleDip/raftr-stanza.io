@@ -1,5 +1,9 @@
 const SDPUtils = require('sdp');
-import { convertIntermediateToTransportInfo, convertRequestToIntermediate, convertIntermediateToTransport } from './lib/Protocol';
+import {
+    convertIntermediateToTransportInfo,
+    convertRequestToIntermediate,
+    convertIntermediateToTransport
+} from './lib/Protocol';
 import { importFromSDP, exportToSDP } from './lib/Intermediate';
 import BaseSession from './Session';
 export default class ICESession extends BaseSession {
@@ -13,8 +17,7 @@ export default class ICESession extends BaseSession {
         this.pc.addEventListener('icecandidate', e => {
             if (e.candidate) {
                 this.onIceCandidate(e);
-            }
-            else {
+            } else {
                 this.onIceEndOfCandidates();
             }
         });
@@ -34,9 +37,9 @@ export default class ICESession extends BaseSession {
                 .addIceCandidate(null)
                 .then(() => cb())
                 .catch(e => {
-                this._log('error', 'Could not add null ICE candidate', e.name);
-                cb();
-            });
+                    this._log('error', 'Could not add null ICE candidate', e.name);
+                    cb();
+                });
         }
         // detect an ice restart.
         if (this.pc.remoteDescription) {
@@ -58,36 +61,36 @@ export default class ICESession extends BaseSession {
                         .setRemoteDescription(remoteDescription)
                         .then(() => this.pc.createAnswer())
                         .then(answer => {
-                        const json = importFromSDP(answer.sdp);
-                        const jingle = {
-                            action: 'transport-info',
-                            contents: json.media.map(media => {
-                                return {
-                                    creator: 'initiator',
-                                    name: media.mid,
-                                    transport: convertIntermediateToTransport(media)
-                                };
-                            }),
-                            sessionId: this.sid
-                        };
-                        this.send('transport-info', jingle);
-                        return this.pc.setLocalDescription(answer);
-                    })
+                            const json = importFromSDP(answer.sdp);
+                            const jingle = {
+                                action: 'transport-info',
+                                contents: json.media.map(media => {
+                                    return {
+                                        creator: 'initiator',
+                                        name: media.mid,
+                                        transport: convertIntermediateToTransport(media)
+                                    };
+                                }),
+                                sessionId: this.sid
+                            };
+                            this.send('transport-info', jingle);
+                            return this.pc.setLocalDescription(answer);
+                        })
                         .then(() => cb())
                         .catch(err => {
-                        this._log('error', 'Could not do remote ICE restart', err);
-                        this.end('failed-application', true);
-                        cb(err);
-                    });
+                            this._log('error', 'Could not do remote ICE restart', err);
+                            this.end('failed-application', true);
+                            cb(err);
+                        });
                 }
                 return this.pc
                     .setRemoteDescription(remoteDescription)
                     .then(() => cb())
                     .catch(err => {
-                    this._log('error', 'Could not do local ICE restart', err);
-                    this.end('failed-application', true);
-                    cb(err);
-                });
+                        this._log('error', 'Could not do local ICE restart', err);
+                        this.end('failed-application', true);
+                        cb(err);
+                    });
             }
         }
         const all = changes.contents.map(content => {
@@ -118,13 +121,16 @@ export default class ICESession extends BaseSession {
         this.state = 'active';
         const json = convertRequestToIntermediate(changes, this.peerRole);
         const sdp = exportToSDP(json);
-        this.pc.setRemoteDescription({ type: 'answer', sdp }).then(() => {
-            this.emit('accepted', this, undefined);
-            cb();
-        }, err => {
-            this._log('error', `Could not process WebRTC answer: ${err}`);
-            cb({ condition: 'general-error' });
-        });
+        this.pc.setRemoteDescription({ type: 'answer', sdp }).then(
+            () => {
+                this.emit('accepted', this, undefined);
+                cb();
+            },
+            err => {
+                this._log('error', `Could not process WebRTC answer: ${err}`);
+                cb({ condition: 'general-error' });
+            }
+        );
     }
     onSessionTerminate(changes, cb) {
         this._log('info', 'Terminating session');
@@ -179,8 +185,7 @@ export default class ICESession extends BaseSession {
             case 'disconnected':
                 if (this.pc.signalingState === 'stable') {
                     this.connectionState = 'interrupted';
-                }
-                else {
+                } else {
                     this.connectionState = 'disconnected';
                 }
                 this.maybeRestartIce();
@@ -189,8 +194,7 @@ export default class ICESession extends BaseSession {
                 if (this.connectionState === 'failed') {
                     this.connectionState = 'failed';
                     this.end('failed-transport');
-                }
-                else {
+                } else {
                     this.restartIce();
                 }
                 break;
@@ -232,23 +236,33 @@ export default class ICESession extends BaseSession {
                             if (activeCandidatePair) {
                                 let isRelay = false;
                                 if (activeCandidatePair.remoteCandidateId) {
-                                    const remoteCandidate = stats.get(activeCandidatePair.remoteCandidateId);
-                                    if (remoteCandidate &&
-                                        remoteCandidate.candidateType === 'relay') {
+                                    const remoteCandidate = stats.get(
+                                        activeCandidatePair.remoteCandidateId
+                                    );
+                                    if (
+                                        remoteCandidate &&
+                                        remoteCandidate.candidateType === 'relay'
+                                    ) {
                                         isRelay = true;
                                     }
                                 }
                                 if (activeCandidatePair.localCandidateId) {
-                                    const localCandidate = stats.get(activeCandidatePair.localCandidateId);
-                                    if (localCandidate &&
-                                        localCandidate.candidateType === 'relay') {
+                                    const localCandidate = stats.get(
+                                        activeCandidatePair.localCandidateId
+                                    );
+                                    if (
+                                        localCandidate &&
+                                        localCandidate.candidateType === 'relay'
+                                    ) {
                                         isRelay = true;
                                     }
                                 }
                                 if (isRelay) {
                                     this.maximumBitrate = this.maxRelayBandwidth;
                                     if (this.currentBitrate) {
-                                        this.setMaximumBitrate(Math.min(this.currentBitrate, this.maximumBitrate));
+                                        this.setMaximumBitrate(
+                                            Math.min(this.currentBitrate, this.maximumBitrate)
+                                        );
                                     }
                                 }
                             }
@@ -288,26 +302,29 @@ export default class ICESession extends BaseSession {
         if (this._maybeRestartingIce !== undefined) {
             clearTimeout(this._maybeRestartingIce);
         }
-        this.pc.createOffer({ iceRestart: true }).then(offer => {
-            // extract new ufrag / pwd, send transport-info with just that.
-            const json = importFromSDP(offer.sdp);
-            const jingle = {
-                action: 'transport-info',
-                contents: json.media.map(media => {
-                    return {
-                        creator: 'initiator',
-                        name: media.mid,
-                        transport: convertIntermediateToTransport(media)
-                    };
-                }),
-                sessionId: this.sid
-            };
-            this.send('transport-info', jingle);
-            return this.pc.setLocalDescription(offer);
-        }, err => {
-            this._log('error', 'Could not create WebRTC offer', err);
-            this.end('failed-application', true);
-        });
+        this.pc.createOffer({ iceRestart: true }).then(
+            offer => {
+                // extract new ufrag / pwd, send transport-info with just that.
+                const json = importFromSDP(offer.sdp);
+                const jingle = {
+                    action: 'transport-info',
+                    contents: json.media.map(media => {
+                        return {
+                            creator: 'initiator',
+                            name: media.mid,
+                            transport: convertIntermediateToTransport(media)
+                        };
+                    }),
+                    sessionId: this.sid
+                };
+                this.send('transport-info', jingle);
+                return this.pc.setLocalDescription(offer);
+            },
+            err => {
+                this._log('error', 'Could not create WebRTC offer', err);
+                this.end('failed-application', true);
+            }
+        );
     }
     // set the maximum bitrate. Only supported in Chrome and Firefox right now.
     setMaximumBitrate(maximumBitrate) {
@@ -327,8 +344,7 @@ export default class ICESession extends BaseSession {
         let browser = '';
         if (window.navigator && window.navigator.mozGetUserMedia) {
             browser = 'firefox';
-        }
-        else if (window.navigator && window.navigator.webkitGetUserMedia) {
+        } else if (window.navigator && window.navigator.webkitGetUserMedia) {
             browser = 'chrome';
         }
         const parameters = sender.getParameters();
@@ -337,8 +353,7 @@ export default class ICESession extends BaseSession {
         }
         if (maximumBitrate === 0) {
             delete parameters.encodings[0].maximumBitrate;
-        }
-        else {
+        } else {
             if (!parameters.encodings.length) {
                 parameters.encodings[0] = {};
             }
@@ -348,8 +363,7 @@ export default class ICESession extends BaseSession {
             sender.setParameters(parameters).catch(err => {
                 this._log('error', 'setParameters failed', err);
             });
-        }
-        else if (browser === 'firefox') {
+        } else if (browser === 'firefox') {
             // Firefox needs renegotiation:
             // https://bugzilla.mozilla.org/show_bug.cgi?id=1253499
             // but we do not want to intefere with our queue so we
@@ -358,26 +372,24 @@ export default class ICESession extends BaseSession {
                 sender.setParameters(parameters).catch(err => {
                     this._log('error', 'setParameters failed', err);
                 });
-            }
-            else if (this.pc.localDescription.type === 'offer') {
+            } else if (this.pc.localDescription.type === 'offer') {
                 sender
                     .setParameters(parameters)
                     .then(() => this.pc.createOffer())
                     .then(offer => this.pc.setLocalDescription(offer))
                     .then(() => this.pc.setRemoteDescription(this.pc.remoteDescription))
                     .catch(err => {
-                    this._log('error', 'setParameters failed', err);
-                });
-            }
-            else if (this.pc.localDescription.type === 'answer') {
+                        this._log('error', 'setParameters failed', err);
+                    });
+            } else if (this.pc.localDescription.type === 'answer') {
                 sender
                     .setParameters(parameters)
                     .then(() => this.pc.setRemoteDescription(this.pc.remoteDescription))
                     .then(() => this.pc.createAnswer())
                     .then(answer => this.pc.setLocalDescription(answer))
                     .catch(err => {
-                    this._log('error', 'setParameters failed', err);
-                });
+                        this._log('error', 'setParameters failed', err);
+                    });
             }
         }
         // else: not supported.

@@ -1,33 +1,37 @@
 import { JID } from '../protocol/jid';
-export default function (client, stanzas, config) {
-    client.registerFeature('bind', 300, function (features, cb) {
-        client.sendIq({
-            bind: {
-                resource: config.resource
+export default function(client, stanzas, config) {
+    client.registerFeature('bind', 300, function(features, cb) {
+        client.sendIq(
+            {
+                bind: {
+                    resource: config.resource
+                },
+                type: 'set'
             },
-            type: 'set'
-        }, function (err, resp) {
-            if (err) {
-                client.emit('session:error', err);
-                return cb('disconnect', 'JID binding failed');
+            function(err, resp) {
+                if (err) {
+                    client.emit('session:error', err);
+                    return cb('disconnect', 'JID binding failed');
+                }
+                client.features.negotiated.bind = true;
+                client.emit('session:prebind', resp.bind.jid);
+                const canStartSession =
+                    !features.session || (features.session && features.session.optional);
+                if (!client.sessionStarted && canStartSession) {
+                    client.emit('session:started', client.jid);
+                }
+                return cb();
             }
-            client.features.negotiated.bind = true;
-            client.emit('session:prebind', resp.bind.jid);
-            const canStartSession = !features.session || (features.session && features.session.optional);
-            if (!client.sessionStarted && canStartSession) {
-                client.emit('session:started', client.jid);
-            }
-            return cb();
-        });
+        );
     });
-    client.on('session:started', function () {
+    client.on('session:started', function() {
         client.sessionStarted = true;
     });
-    client.on('session:prebind', function (boundJID) {
+    client.on('session:prebind', function(boundJID) {
         client.jid = new JID(boundJID);
         client.emit('session:bound', client.jid);
     });
-    client.on('disconnected', function () {
+    client.on('disconnected', function() {
         client.sessionStarted = false;
         client.features.negotiated.bind = false;
     });

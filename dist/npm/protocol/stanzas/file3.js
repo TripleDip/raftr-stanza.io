@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 const FT_NS = NS.FILE_TRANSFER_3;
 function default_1(JXT) {
     const Utils = JXT.utils;
@@ -51,10 +51,10 @@ function default_1(JXT) {
     });
     JXT.extend(File, Range);
     JXT.extend(File, Thumbnail);
-    JXT.withDefinition('hash', NS.HASHES_1, function (Hash) {
+    JXT.withDefinition('hash', NS.HASHES_1, function(Hash) {
         JXT.extend(File, Hash, 'hashes');
     });
-    JXT.withDefinition('content', NS.JINGLE_1, function (Content) {
+    JXT.withDefinition('content', NS.JINGLE_1, function(Content) {
         JXT.extend(Content, FileTransfer);
     });
 }

@@ -1,9 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 const internals = {};
-internals.defineMessage = function (JXT, name, namespace) {
+internals.defineMessage = function(JXT, name, namespace) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'message',
@@ -21,8 +21,18 @@ internals.defineMessage = function (JXT, name, namespace) {
             attachment: {
                 get: function getAttachment() {
                     const attachmentObj = {
-                        dispay_width: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'dispay_width'),
-                        display_height: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'display_height'),
+                        dispay_width: Utils.getSubAttribute(
+                            this.xml,
+                            namespace,
+                            'attachment',
+                            'dispay_width'
+                        ),
+                        display_height: Utils.getSubAttribute(
+                            this.xml,
+                            namespace,
+                            'attachment',
+                            'display_height'
+                        ),
                         type: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'type')
                     };
                     const attachmentXml = Utils.find(this.xml, namespace, 'attachment');
@@ -30,7 +40,11 @@ internals.defineMessage = function (JXT, name, namespace) {
                         attachmentObj.url = Utils.getSubText(attachmentXml[0], namespace, 'url');
                         const thumbnailXml = Utils.find(attachmentXml[0], namespace, 'thumbnail');
                         if (thumbnailXml[0]) {
-                            attachmentObj.thumbnailUrl = Utils.getSubText(thumbnailXml[0], namespace, 'url');
+                            attachmentObj.thumbnailUrl = Utils.getSubText(
+                                thumbnailXml[0],
+                                namespace,
+                                'url'
+                            );
                         }
                     }
                     return attachmentXml[0] ? attachmentObj : null;

@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const Event = JXT.define({
@@ -30,16 +30,15 @@ function default_1(JXT) {
         element: 'subscription',
         fields: {
             expiry: {
-                get: function () {
+                get: function() {
                     const text = Utils.getAttribute(this.xml, 'expiry');
                     if (text === 'presence') {
                         return text;
-                    }
-                    else if (text) {
+                    } else if (text) {
                         return new Date(text);
                     }
                 },
-                set: function (value) {
+                set: function(value) {
                     if (!value) {
                         return;
                     }
@@ -70,7 +69,7 @@ function default_1(JXT) {
         fields: {
             node: Utils.attribute('node'),
             retracted: {
-                get: function () {
+                get: function() {
                     const results = [];
                     const retracted = Utils.find(this.xml, NS.PUBSUB_EVENT, 'retract');
                     for (const xml of retracted) {
@@ -78,10 +77,14 @@ function default_1(JXT) {
                     }
                     return results;
                 },
-                set: function (value) {
+                set: function(value) {
                     const self = this;
                     for (const id of value) {
-                        const retracted = Utils.createElement(NS.PUBSUB_EVENT, 'retract', NS.PUBSUB_EVENT);
+                        const retracted = Utils.createElement(
+                            NS.PUBSUB_EVENT,
+                            'retract',
+                            NS.PUBSUB_EVENT
+                        );
                         retracted.setAttribute('id', id);
                         self.xml.appendChild(retracted);
                     }
@@ -108,7 +111,7 @@ function default_1(JXT) {
     JXT.extend(Event, EventDelete);
     JXT.extend(Event, EventPurge);
     JXT.extendMessage(Event);
-    JXT.withDataForm(function (DataForm) {
+    JXT.withDataForm(function(DataForm) {
         JXT.extend(EventConfiguration, DataForm);
     });
 }

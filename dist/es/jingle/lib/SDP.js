@@ -11,8 +11,7 @@ export function parseSctpMap(mediaSection) {
             protocol: parts[1],
             streams: parts[2]
         };
-    }
-    else {
+    } else {
         const sctpPort = SDP.matchPrefix(mediaSection, 'a=sctp-port:');
         return {
             number: sctpPort[0].substr(12),
