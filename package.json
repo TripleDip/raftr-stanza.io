@@ -46,7 +46,7 @@
   },
   "keywords": [ "bosh", "jingle", "json", "stanza", "stanza.io", "websocket", "xmpp" ],
   "license": "MIT",
-  "main": "./dist/cjs/index.js",
+  "main": "./dist/es/index.js",
   "prettier": {
     "tabWidth": 4,
     "printWidth": 100,
@@ -56,7 +56,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/legastero/stanza.io.git"
+    "url": "https://github.com/TripleDip/raftr-stanza.io.git"
   },
   "scripts": {
     "build": "node scripts/build",
