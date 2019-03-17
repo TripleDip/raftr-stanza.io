@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const Event = JXT.define({
         element: 'event',
@@ -27,15 +27,16 @@ export default function(JXT) {
         element: 'subscription',
         fields: {
             expiry: {
-                get: function() {
+                get: function () {
                     const text = Utils.getAttribute(this.xml, 'expiry');
                     if (text === 'presence') {
                         return text;
-                    } else if (text) {
+                    }
+                    else if (text) {
                         return new Date(text);
                     }
                 },
-                set: function(value) {
+                set: function (value) {
                     if (!value) {
                         return;
                     }
@@ -66,7 +67,7 @@ export default function(JXT) {
         fields: {
             node: Utils.attribute('node'),
             retracted: {
-                get: function() {
+                get: function () {
                     const results = [];
                     const retracted = Utils.find(this.xml, NS.PUBSUB_EVENT, 'retract');
                     for (const xml of retracted) {
@@ -74,14 +75,10 @@ export default function(JXT) {
                     }
                     return results;
                 },
-                set: function(value) {
+                set: function (value) {
                     const self = this;
                     for (const id of value) {
-                        const retracted = Utils.createElement(
-                            NS.PUBSUB_EVENT,
-                            'retract',
-                            NS.PUBSUB_EVENT
-                        );
+                        const retracted = Utils.createElement(NS.PUBSUB_EVENT, 'retract', NS.PUBSUB_EVENT);
                         retracted.setAttribute('id', id);
                         self.xml.appendChild(retracted);
                     }
@@ -108,7 +105,7 @@ export default function(JXT) {
     JXT.extend(Event, EventDelete);
     JXT.extend(Event, EventPurge);
     JXT.extendMessage(Event);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(EventConfiguration, DataForm);
     });
 }

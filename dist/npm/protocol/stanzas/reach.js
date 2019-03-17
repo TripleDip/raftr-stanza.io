@@ -1,23 +1,23 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const ReachURI = JXT.define({
         element: 'addr',
         fields: {
             $desc: {
-                get: function() {
+                get: function () {
                     return Utils.getSubLangText(this.xml, NS.REACH_0, 'desc', this.lang);
                 }
             },
             desc: {
-                get: function() {
+                get: function () {
                     const descs = this.$desc;
                     return descs[this.lang] || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     Utils.setSubLangText(this.xml, NS.REACH_0, 'desc', value, this.lang);
                 }
             },
@@ -27,7 +27,7 @@ function default_1(JXT) {
         namespace: NS.REACH_0
     });
     const reachability = {
-        get: function() {
+        get: function () {
             const reach = Utils.find(this.xml, NS.REACH_0, 'reach');
             const results = [];
             if (reach.length) {
@@ -38,7 +38,7 @@ function default_1(JXT) {
             }
             return results;
         },
-        set: function(value) {
+        set: function (value) {
             const reach = Utils.findOrCreate(this.xml, NS.REACH_0, 'reach');
             Utils.setAttribute(reach, 'xmlns', NS.REACH_0);
             for (const info of value) {
@@ -47,10 +47,10 @@ function default_1(JXT) {
             }
         }
     };
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.add(Item, 'reach', reachability);
     });
-    JXT.withPresence(function(Presence) {
+    JXT.withPresence(function (Presence) {
         JXT.add(Presence, 'reach', reachability);
     });
 }

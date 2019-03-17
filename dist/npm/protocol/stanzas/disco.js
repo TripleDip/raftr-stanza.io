@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const DiscoCaps = JXT.define({
@@ -59,10 +59,10 @@ function default_1(JXT) {
     JXT.extendIQ(DiscoItems);
     JXT.extendPresence(DiscoCaps);
     JXT.extendStreamFeatures(DiscoCaps);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(DiscoInfo, DataForm, 'extensions');
     });
-    JXT.withDefinition('set', NS.RSM, function(RSM) {
+    JXT.withDefinition('set', NS.RSM, function (RSM) {
         JXT.extend(DiscoItems, RSM);
     });
 }

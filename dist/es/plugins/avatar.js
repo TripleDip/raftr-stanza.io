@@ -1,7 +1,7 @@
 import { Namespaces } from '../protocol';
-export default function(client) {
+export default function (client) {
     client.disco.addFeature(Namespaces.PEP_NOTIFY(Namespaces.AVATAR_METADATA));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -14,7 +14,7 @@ export default function(client) {
             source: 'pubsub'
         });
     });
-    client.on('presence', function(pres) {
+    client.on('presence', function (pres) {
         if (pres.avatarId) {
             client.emit('avatar', {
                 avatars: [
@@ -27,29 +27,19 @@ export default function(client) {
             });
         }
     });
-    client.publishAvatar = function(id, data, cb) {
-        return this.publish(
-            '',
-            Namespaces.AVATAR_DATA,
-            {
-                avatarData: data,
-                id: id
-            },
-            cb
-        );
+    client.publishAvatar = function (id, data, cb) {
+        return this.publish('', Namespaces.AVATAR_DATA, {
+            avatarData: data,
+            id: id
+        }, cb);
     };
-    client.useAvatars = function(info, cb) {
-        return this.publish(
-            '',
-            Namespaces.AVATAR_METADATA,
-            {
-                avatars: info,
-                id: 'current'
-            },
-            cb
-        );
+    client.useAvatars = function (info, cb) {
+        return this.publish('', Namespaces.AVATAR_METADATA, {
+            avatars: info,
+            id: 'current'
+        }, cb);
     };
-    client.getAvatar = function(jid, id, cb) {
+    client.getAvatar = function (jid, id, cb) {
         return this.getItem(jid, Namespaces.AVATAR_DATA, id, cb);
     };
 }

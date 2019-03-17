@@ -1,6 +1,6 @@
 import * as NS from '../namespaces';
 const CONDITIONS = ['server-unavailable', 'connection-paused'];
-export default function(JXT) {
+export default function (JXT) {
     const PSA = JXT.define({
         element: 'state-annotation',
         fields: {

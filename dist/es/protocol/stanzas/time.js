@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function(JXT) {
+export default function (JXT) {
     const EntityTime = JXT.define({
         element: 'time',
         fields: {

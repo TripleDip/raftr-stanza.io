@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 const CONDITIONS = [
     'aborted',
     'account-disabled',
@@ -79,25 +79,25 @@ function default_1(JXT) {
         eventName: 'sasl:failure',
         fields: {
             $text: {
-                get: function() {
+                get: function () {
                     return Utils.getSubLangText(this.xml, NS.SASL, 'text', this.lang);
                 }
             },
             condition: Utils.enumSub(NS.SASL, CONDITIONS),
             lang: {
-                get: function() {
+                get: function () {
                     return this._lang || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     this._lang = value;
                 }
             },
             text: {
-                get: function() {
+                get: function () {
                     const text = this.$text;
                     return text[this.lang] || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     Utils.setSubLangText(this.xml, NS.SASL, 'text', value, this.lang);
                 }
             }

@@ -6,34 +6,14 @@ import { __awaiter } from 'tslib';
 import fetch from 'cross-fetch';
 import { series, queue } from 'async';
 import { EventEmitter } from 'events';
-import {
-    matchPrefix,
-    getMediaSections,
-    getDescription,
-    getKind,
-    isRejected,
-    parseMLine,
-    getDirection,
-    getMid,
-    getIceParameters,
-    getDtlsParameters,
-    parseRtpParameters,
-    parseRtpEncodingParameters,
-    parseRtcpParameters,
-    parseMsid,
-    parseCandidate,
-    writeSessionBoilerplate,
-    writeRtpDescription,
-    writeIceParameters,
-    writeDtlsParameters,
-    writeCandidate
-} from 'sdp';
+import { matchPrefix, getMediaSections, getDescription, getKind, isRejected, parseMLine, getDirection, getMid, getIceParameters, getDtlsParameters, parseRtpParameters, parseRtpEncodingParameters, parseRtcpParameters, parseMsid, parseCandidate, writeSessionBoilerplate, writeRtpDescription, writeIceParameters, writeDtlsParameters, writeCandidate } from 'sdp';
 
 const punycode = require('punycode');
 let StringPrep;
 try {
     StringPrep = require('node-stringprep');
-} catch (err) {
+}
+catch (err) {
     StringPrep = false;
 }
 const HAS_STRINGPREP = !!StringPrep && !!StringPrep.StringPrep;
@@ -41,7 +21,8 @@ const NATIVE_STRINGPREP = HAS_STRINGPREP && new StringPrep.StringPrep('nodeprep'
 function toUnicode(data) {
     if (HAS_STRINGPREP) {
         return punycode.toUnicode(StringPrep.toUnicode(data));
-    } else {
+    }
+    else {
         return punycode.toUnicode(data);
     }
 }
@@ -49,7 +30,8 @@ function nameprep(str) {
     if (HAS_STRINGPREP) {
         const name = new StringPrep.StringPrep('nameprep');
         return name.prepare(str);
-    } else {
+    }
+    else {
         return str.toLowerCase();
     }
 }
@@ -57,7 +39,8 @@ function nodeprep(str) {
     if (HAS_STRINGPREP) {
         const node = new StringPrep.StringPrep('nodeprep');
         return node.prepare(str);
-    } else {
+    }
+    else {
         return str.toLowerCase();
     }
 }
@@ -65,7 +48,8 @@ function resourceprep(str) {
     if (HAS_STRINGPREP) {
         const resource = new StringPrep.StringPrep('resourceprep');
         return resource.prepare(str);
-    } else {
+    }
+    else {
         return str;
     }
 }
@@ -100,12 +84,10 @@ function prep(data) {
     if (domain[domain.length - 1] === '.') {
         domain = domain.slice(0, domain.length - 1);
     }
-    domain = nameprep(
-        domain
-            .split('.')
-            .map(toUnicode)
-            .join('.')
-    );
+    domain = nameprep(domain
+        .split('.')
+        .map(toUnicode)
+        .join('.'));
     return {
         bare: bareJID(local, domain),
         domain,
@@ -148,12 +130,10 @@ function equal(jid1, jid2, requirePrep) {
     if (arguments.length === 2) {
         requirePrep = true;
     }
-    return (
-        jid1.local === jid2.local &&
+    return (jid1.local === jid2.local &&
         jid1.domain === jid2.domain &&
         jid1.resource === jid2.resource &&
-        (requirePrep ? jid1.prepped && jid2.prepped : true)
-    );
+        (requirePrep ? jid1.prepped && jid2.prepped : true));
 }
 function equalBare(jid1, jid2, requirePrep) {
     jid1 = new JID(jid1);
@@ -161,11 +141,9 @@ function equalBare(jid1, jid2, requirePrep) {
     if (arguments.length === 2) {
         requirePrep = true;
     }
-    return (
-        jid1.local === jid2.local &&
+    return (jid1.local === jid2.local &&
         jid1.domain === jid2.domain &&
-        (requirePrep ? jid1.prepped && jid2.prepped : true)
-    );
+        (requirePrep ? jid1.prepped && jid2.prepped : true));
 }
 function isBare(jid) {
     jid = new JID(jid);
@@ -222,12 +200,15 @@ class JID {
         if (localOrJID && !domain && !resource) {
             if (typeof localOrJID === 'string') {
                 parsed = parse(localOrJID);
-            } else if (localOrJID._isJID || localOrJID instanceof JID) {
+            }
+            else if (localOrJID._isJID || localOrJID instanceof JID) {
                 parsed = localOrJID;
-            } else {
+            }
+            else {
                 throw new Error('Invalid argument type');
             }
-        } else if (domain) {
+        }
+        else if (domain) {
             let trusted = ASCII.test(localOrJID) && ASCII.test(domain);
             if (resource) {
                 trusted = trusted && ASCII.test(resource);
@@ -238,7 +219,8 @@ class JID {
                 prepped: trusted,
                 resource
             });
-        } else {
+        }
+        else {
             parsed = {};
         }
         this._isJID = true;
@@ -260,7 +242,7 @@ class JID {
     }
 }
 
-var jid = /*#__PURE__*/ Object.freeze({
+var jid = /*#__PURE__*/Object.freeze({
     NATIVE_STRINGPREP: NATIVE_STRINGPREP,
     toUnicode: toUnicode,
     nameprep: nameprep,
@@ -442,9 +424,11 @@ function saslname(name) {
         curr = name[i];
         if (curr === ',') {
             escaped.push('=2C');
-        } else if (curr === '=') {
+        }
+        else if (curr === '=') {
             escaped.push('=3D');
-        } else {
+        }
+        else {
             escaped.push(curr);
         }
     }
@@ -503,7 +487,7 @@ class SCRAM {
 }
 SCRAM.prototype.name = 'SCRAM-SHA-1';
 SCRAM.prototype.clientFirst = true;
-RESP.initial = function(mech, cred) {
+RESP.initial = function (mech, cred) {
     mech._cnonce = mech._genNonce();
     let authzid = '';
     if (cred.authzid) {
@@ -517,7 +501,7 @@ RESP.initial = function(mech, cred) {
     mech._stage = 'challenge';
     return result;
 };
-RESP.challenge = function(mech, cred) {
+RESP.challenge = function (mech, cred) {
     const gs2Header = Buffer.from(mech._gs2Header).toString('base64');
     mech._clientFinalMessageWithoutProof = 'c=' + gs2Header + ',r=' + mech._nonce;
     let saltedPassword;
@@ -529,19 +513,20 @@ RESP.challenge = function(mech, cred) {
         if (cred.clientKey && cred.serverKey) {
             clientKey = cred.clientKey;
             serverKey = cred.serverKey;
-        } else if (cred.saltedPassword) {
+        }
+        else if (cred.saltedPassword) {
             saltedPassword = cred.saltedPassword;
             clientKey = HMAC(saltedPassword, CLIENT_KEY);
             serverKey = HMAC(saltedPassword, SERVER_KEY);
         }
-    } else {
+    }
+    else {
         saltedPassword = Hi(cred.password || '', mech._salt, mech._iterationCount);
         clientKey = HMAC(saltedPassword, CLIENT_KEY);
         serverKey = HMAC(saltedPassword, SERVER_KEY);
     }
     const storedKey = H(clientKey);
-    const authMessage =
-        mech._clientFirstMessageBare +
+    const authMessage = mech._clientFirstMessageBare +
         ',' +
         mech._challenge +
         ',' +
@@ -559,7 +544,7 @@ RESP.challenge = function(mech, cred) {
     };
     return result;
 };
-RESP.final = function() {
+RESP.final = function () {
     // TODO: Signal errors
     return '';
 };
@@ -800,7 +785,7 @@ const OMEMO_AXOLOTL = 'eu.siacs.conversations.axolotl';
 // ================================================================
 const XRD = 'http://docs.oasis-open.org/ns/xri/xrd-1.0';
 
-function Addresses(JXT) {
+function Addresses (JXT) {
     const Utils = JXT.utils;
     const Address = JXT.define({
         element: 'address',
@@ -816,15 +801,15 @@ function Addresses(JXT) {
         namespace: ADDRESS
     });
     const Addresses = Utils.subMultiExtension(ADDRESS, 'addresses', Address);
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.add(Message, 'addresses', Addresses);
     });
-    JXT.withPresence(function(Presence) {
+    JXT.withPresence(function (Presence) {
         JXT.add(Presence, 'addresses', Addresses);
     });
 }
 
-function Avatar(JXT) {
+function Avatar (JXT) {
     const Utils = JXT.utils;
     const Avatar = JXT.define({
         element: 'info',
@@ -840,7 +825,7 @@ function Avatar(JXT) {
         namespace: AVATAR_METADATA
     });
     const avatars = {
-        get: function() {
+        get: function () {
             const metadata = Utils.find(this.xml, AVATAR_METADATA, 'metadata');
             const results = [];
             if (metadata.length) {
@@ -851,7 +836,7 @@ function Avatar(JXT) {
             }
             return results;
         },
-        set: function(value) {
+        set: function (value) {
             const metadata = Utils.findOrCreate(this.xml, AVATAR_METADATA, 'metadata');
             Utils.setAttribute(metadata, 'xmlns', AVATAR_METADATA);
             for (const info of value) {
@@ -860,13 +845,13 @@ function Avatar(JXT) {
             }
         }
     };
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.add(Item, 'avatars', avatars);
         JXT.add(Item, 'avatarData', Utils.textSub(AVATAR_DATA, 'data'));
     });
 }
 
-function Bind(JXT) {
+function Bind (JXT) {
     const Utils = JXT.utils;
     const Bind = JXT.define({
         element: 'bind',
@@ -881,10 +866,10 @@ function Bind(JXT) {
     JXT.extendStreamFeatures(Bind);
 }
 
-function Blocking(JXT) {
+function Blocking (JXT) {
     const Utils = JXT.utils;
     const jidList = {
-        get: function() {
+        get: function () {
             const result = [];
             const items = Utils.find(this.xml, BLOCKING, 'item');
             if (!items.length) {
@@ -895,7 +880,7 @@ function Blocking(JXT) {
             }
             return result;
         },
-        set: function(values) {
+        set: function (values) {
             const self = this;
             for (const value of values) {
                 const item = Utils.createElement(BLOCKING, 'item', BLOCKING);
@@ -933,7 +918,7 @@ function Blocking(JXT) {
     JXT.extendIQ(BlockList);
 }
 
-function BOB$1(JXT) {
+function BOB$1 (JXT) {
     const Utils = JXT.utils;
     const BOB$1 = JXT.define({
         element: 'data',
@@ -951,7 +936,7 @@ function BOB$1(JXT) {
     JXT.extendPresence(BOB$1);
 }
 
-function Bookmarks(JXT) {
+function Bookmarks (JXT) {
     const Utils = JXT.utils;
     const Conference = JXT.define({
         element: 'conference',
@@ -970,12 +955,12 @@ function Bookmarks(JXT) {
         namespace: BOOKMARKS
     });
     JXT.extend(Bookmarks, Conference, 'conferences');
-    JXT.withDefinition('query', PRIVATE, function(PrivateStorage) {
+    JXT.withDefinition('query', PRIVATE, function (PrivateStorage) {
         JXT.extend(PrivateStorage, Bookmarks);
     });
 }
 
-function BOSH$1(JXT) {
+function BOSH$1 (JXT) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'body',
@@ -995,7 +980,7 @@ function BOSH$1(JXT) {
             newKey: Utils.attribute('newkey'),
             pause: Utils.numberAttribute('pause'),
             payload: {
-                get: function() {
+                get: function () {
                     const results = [];
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         const obj = JXT.build(this.xml.childNodes[i]);
@@ -1005,7 +990,7 @@ function BOSH$1(JXT) {
                     }
                     return results;
                 },
-                set: function(values) {
+                set: function (values) {
                     for (const types of values) {
                         this.xml.appendChild(types.xml);
                     }
@@ -1037,7 +1022,7 @@ function BOSH$1(JXT) {
     });
 }
 
-function Carbons(JXT) {
+function Carbons (JXT) {
     const Sent = JXT.define({
         element: 'sent',
         eventName: 'carbon:sent',
@@ -1066,7 +1051,7 @@ function Carbons(JXT) {
         name: 'disableCarbons',
         namespace: CARBONS_2
     });
-    JXT.withDefinition('forwarded', FORWARD_0, function(Forwarded) {
+    JXT.withDefinition('forwarded', FORWARD_0, function (Forwarded) {
         JXT.extend(Sent, Forwarded);
         JXT.extend(Received, Forwarded);
     });
@@ -1086,14 +1071,14 @@ const CONDITIONS = [
     'malformed-action',
     'session-expired'
 ];
-function Command(JXT) {
+function Command (JXT) {
     const Utils = JXT.utils;
     const Command = JXT.define({
         element: 'command',
         fields: {
             action: Utils.attribute('action'),
             actions: {
-                get: function() {
+                get: function () {
                     const result = [];
                     const actionSet = Utils.find(this.xml, ADHOC_COMMANDS, 'actions');
                     if (!actionSet.length) {
@@ -1107,15 +1092,13 @@ function Command(JXT) {
                     }
                     return result;
                 },
-                set: function(values) {
+                set: function (values) {
                     const actionSet = Utils.findOrCreate(this.xml, ADHOC_COMMANDS, 'actions');
                     for (let i = 0, len = actionSet.childNodes.length; i < len; i++) {
                         actionSet.removeChild(actionSet.childNodes[i]);
                     }
                     for (const value of values) {
-                        actionSet.appendChild(
-                            Utils.createElement(ADHOC_COMMANDS, value.toLowerCase(), ADHOC_COMMANDS)
-                        );
+                        actionSet.appendChild(Utils.createElement(ADHOC_COMMANDS, value.toLowerCase(), ADHOC_COMMANDS));
                     }
                 }
             },
@@ -1138,15 +1121,15 @@ function Command(JXT) {
     });
     JXT.extend(Command, Note, 'notes');
     JXT.extendIQ(Command);
-    JXT.withStanzaError(function(StanzaError) {
+    JXT.withStanzaError(function (StanzaError) {
         JXT.add(StanzaError, 'adhocCommandCondition', Utils.enumSub(ADHOC_COMMANDS, CONDITIONS));
     });
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(Command, DataForm);
     });
 }
 
-function CSI$1(JXT) {
+function CSI$1 (JXT) {
     const CSIFeature = JXT.define({
         element: 'csi',
         name: 'clientStateIndication',
@@ -1170,7 +1153,7 @@ function CSI$1(JXT) {
 }
 
 const SINGLE_FIELDS = ['text-single', 'text-private', 'list-single', 'jid-single'];
-function Dataforms(JXT) {
+function Dataforms (JXT) {
     const Utils = JXT.utils;
     const Field = JXT.define({
         element: 'field',
@@ -1180,16 +1163,16 @@ function Dataforms(JXT) {
             name: Utils.attribute('var'),
             required: Utils.boolSub(DATAFORM, 'required'),
             type: {
-                get: function() {
+                get: function () {
                     return Utils.getAttribute(this.xml, 'type', 'text-single');
                 },
-                set: function(value) {
+                set: function (value) {
                     this._type = value;
                     Utils.setAttribute(this.xml, 'type', value);
                 }
             },
             value: {
-                get: function() {
+                get: function () {
                     const vals = Utils.getMultiSubText(this.xml, DATAFORM, 'value');
                     if (this._type === 'boolean') {
                         return vals[0] === '1' || vals[0] === 'true';
@@ -1199,7 +1182,7 @@ function Dataforms(JXT) {
                             return vals.join('\n');
                         }
                         if (this._type === 'jid-multi') {
-                            return vals.map(function(jid) {
+                            return vals.map(function (jid) {
                                 return new JID(jid);
                             });
                         }
@@ -1213,32 +1196,27 @@ function Dataforms(JXT) {
                     }
                     return vals;
                 },
-                set: function(value) {
+                set: function (value) {
                     if (this._type === 'boolean' || value === true || value === false) {
                         const truthy = value === true || value === 'true' || value === '1';
                         const sub = Utils.createElement(DATAFORM, 'value', DATAFORM);
                         sub.textContent = truthy ? '1' : '0';
                         this.xml.appendChild(sub);
-                    } else {
+                    }
+                    else {
                         if (this._type === 'text-multi' && typeof value === 'string') {
                             value = value.split('\n');
                         }
-                        Utils.setMultiSubText(
-                            this.xml,
-                            DATAFORM,
-                            'value',
-                            value,
-                            function(val) {
-                                const sub = Utils.createElement(DATAFORM, 'value', DATAFORM);
-                                sub.textContent = val;
-                                this.xml.appendChild(sub);
-                            }.bind(this)
-                        );
+                        Utils.setMultiSubText(this.xml, DATAFORM, 'value', value, function (val) {
+                            const sub = Utils.createElement(DATAFORM, 'value', DATAFORM);
+                            sub.textContent = val;
+                            this.xml.appendChild(sub);
+                        }.bind(this));
                     }
                 }
             }
         },
-        init: function(data) {
+        init: function (data) {
             this._type = (data || {}).type || this.type;
         },
         name: '_field',
@@ -1306,7 +1284,7 @@ function Dataforms(JXT) {
         namespace: DATAFORM_VALIDATION
     });
     const layoutContents = {
-        get: function() {
+        get: function () {
             const result = [];
             for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                 const child = this.xml.childNodes[i];
@@ -1338,7 +1316,7 @@ function Dataforms(JXT) {
             }
             return result;
         },
-        set: function(values) {
+        set: function (values) {
             for (let i = 0, len = values.length; i < len; i++) {
                 const value = values[i];
                 if (value.text) {
@@ -1352,16 +1330,10 @@ function Dataforms(JXT) {
                     this.xml.appendChild(field);
                 }
                 if (value.reported) {
-                    this.xml.appendChild(
-                        Utils.createElement(DATAFORM_LAYOUT, 'reportedref', DATAFORM_LAYOUT)
-                    );
+                    this.xml.appendChild(Utils.createElement(DATAFORM_LAYOUT, 'reportedref', DATAFORM_LAYOUT));
                 }
                 if (value.section) {
-                    const sectionXML = Utils.createElement(
-                        DATAFORM_LAYOUT,
-                        'section',
-                        DATAFORM_LAYOUT
-                    );
+                    const sectionXML = Utils.createElement(DATAFORM_LAYOUT, 'section', DATAFORM_LAYOUT);
                     this.xml.appendChild(sectionXML);
                     const section = new Section(null, sectionXML);
                     section.label = value.section.label;
@@ -1396,7 +1368,7 @@ function Dataforms(JXT) {
             title: Utils.textSub(DATAFORM, 'title'),
             type: Utils.attribute('type', 'form')
         },
-        init: function() {
+        init: function () {
             // Propagate reported field types to items
             if (!this.reportedFields.length) {
                 return;
@@ -1427,7 +1399,7 @@ function Dataforms(JXT) {
     JXT.extendMessage(DataForm);
 }
 
-function Delayed(JXT) {
+function Delayed (JXT) {
     const Utils = JXT.utils;
     const DelayedDelivery = JXT.define({
         element: 'delay',
@@ -1443,7 +1415,7 @@ function Delayed(JXT) {
     JXT.extendPresence(DelayedDelivery);
 }
 
-function Disco(JXT) {
+function Disco (JXT) {
     const Utils = JXT.utils;
     const DiscoCaps = JXT.define({
         element: 'c',
@@ -1500,10 +1472,10 @@ function Disco(JXT) {
     JXT.extendIQ(DiscoItems);
     JXT.extendPresence(DiscoCaps);
     JXT.extendStreamFeatures(DiscoCaps);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(DiscoInfo, DataForm, 'extensions');
     });
-    JXT.withDefinition('set', RSM, function(RSM) {
+    JXT.withDefinition('set', RSM, function (RSM) {
         JXT.extend(DiscoItems, RSM);
     });
 }
@@ -1532,13 +1504,13 @@ const CONDITIONS$1 = [
     'undefined-condition',
     'unexpected-request'
 ];
-function StanzaError(JXT) {
+function StanzaError (JXT) {
     const Utils = JXT.utils;
     const StanzaError = JXT.define({
         element: 'error',
         fields: {
             $text: {
-                get: function() {
+                get: function () {
                     return Utils.getSubLangText(this.xml, STANZA_ERROR, 'text', this.lang);
                 }
             },
@@ -1546,34 +1518,34 @@ function StanzaError(JXT) {
             code: Utils.attribute('code'),
             condition: Utils.enumSub(STANZA_ERROR, CONDITIONS$1),
             gone: {
-                get: function() {
+                get: function () {
                     return Utils.getSubText(this.xml, STANZA_ERROR, 'gone');
                 },
-                set: function(value) {
+                set: function (value) {
                     this.condition = 'gone';
                     Utils.setSubText(this.xml, STANZA_ERROR, 'gone', value);
                 }
             },
             lang: {
-                get: function() {
+                get: function () {
                     return (this.parent || {}).lang || '';
                 }
             },
             redirect: {
-                get: function() {
+                get: function () {
                     return Utils.getSubText(this.xml, STANZA_ERROR, 'redirect');
                 },
-                set: function(value) {
+                set: function (value) {
                     this.condition = 'redirect';
                     Utils.setSubText(this.xml, STANZA_ERROR, 'redirect', value);
                 }
             },
             text: {
-                get: function() {
+                get: function () {
                     const text = this.$text;
                     return text[this.lang] || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     Utils.setSubLangText(this.xml, STANZA_ERROR, 'text', value, this.lang);
                 }
             },
@@ -1587,7 +1559,7 @@ function StanzaError(JXT) {
     JXT.extendIQ(StanzaError);
 }
 
-function EME(JXT) {
+function EME (JXT) {
     const Utils = JXT.utils;
     const EncryptionMethod = JXT.define({
         element: 'encryption',
@@ -1601,7 +1573,7 @@ function EME(JXT) {
     JXT.extendMessage(EncryptionMethod);
 }
 
-function ExtDisco(JXT) {
+function ExtDisco (JXT) {
     const Utils = JXT.utils;
     const Services = JXT.define({
         element: 'services',
@@ -1633,13 +1605,13 @@ function ExtDisco(JXT) {
     JXT.extend(Credentials, Service);
     JXT.extendIQ(Services);
     JXT.extendIQ(Credentials);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(Service, DataForm);
     });
 }
 
 const FT_NS = FILE_TRANSFER_4;
-function File(JXT) {
+function File (JXT) {
     const Utils = JXT.utils;
     const File = JXT.define({
         element: 'file',
@@ -1703,21 +1675,21 @@ function File(JXT) {
     JXT.extend(File, Range);
     JXT.extend(Checksum, File);
     JXT.extend(FileTransfer, File);
-    JXT.withDefinition('hash', HASHES_1, function(Hash) {
+    JXT.withDefinition('hash', HASHES_1, function (Hash) {
         JXT.extend(File, Hash, 'hashes');
         JXT.extend(Range, Hash, 'hashes');
     });
-    JXT.withDefinition('content', JINGLE_1, function(Content) {
+    JXT.withDefinition('content', JINGLE_1, function (Content) {
         JXT.extend(Content, FileTransfer);
     });
-    JXT.withDefinition('jingle', JINGLE_1, function(Jingle) {
+    JXT.withDefinition('jingle', JINGLE_1, function (Jingle) {
         JXT.extend(Jingle, Received);
         JXT.extend(Jingle, Checksum);
     });
 }
 
 const FT_NS$1 = FILE_TRANSFER_3;
-function File3(JXT) {
+function File3 (JXT) {
     const Utils = JXT.utils;
     const File = JXT.define({
         element: 'file',
@@ -1765,38 +1737,38 @@ function File3(JXT) {
     });
     JXT.extend(File, Range);
     JXT.extend(File, Thumbnail);
-    JXT.withDefinition('hash', HASHES_1, function(Hash) {
+    JXT.withDefinition('hash', HASHES_1, function (Hash) {
         JXT.extend(File, Hash, 'hashes');
     });
-    JXT.withDefinition('content', JINGLE_1, function(Content) {
+    JXT.withDefinition('content', JINGLE_1, function (Content) {
         JXT.extend(Content, FileTransfer);
     });
 }
 
-function Forwarded(JXT) {
+function Forwarded (JXT) {
     const Forwarded = JXT.define({
         element: 'forwarded',
         name: 'forwarded',
         namespace: FORWARD_0
     });
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.extend(Message, Forwarded);
         JXT.extend(Forwarded, Message);
     });
-    JXT.withPresence(function(Presence) {
+    JXT.withPresence(function (Presence) {
         JXT.extend(Presence, Forwarded);
         JXT.extend(Forwarded, Presence);
     });
-    JXT.withIQ(function(IQ) {
+    JXT.withIQ(function (IQ) {
         JXT.extend(IQ, Forwarded);
         JXT.extend(Forwarded, IQ);
     });
-    JXT.withDefinition('delay', DELAY, function(Delayed) {
+    JXT.withDefinition('delay', DELAY, function (Delayed) {
         JXT.extend(Forwarded, Delayed);
     });
 }
 
-function Framing(JXT) {
+function Framing (JXT) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'open',
@@ -1822,7 +1794,7 @@ function Framing(JXT) {
     });
 }
 
-function GeoLoc(JXT) {
+function GeoLoc (JXT) {
     const Utils = JXT.utils;
     const GeoLoc = JXT.define({
         element: 'geoloc',
@@ -1858,7 +1830,7 @@ function GeoLoc(JXT) {
     JXT.extendPubsubItem(GeoLoc);
 }
 
-function Hash(JXT) {
+function Hash (JXT) {
     JXT.define({
         element: 'hash',
         fields: {
@@ -1870,7 +1842,7 @@ function Hash(JXT) {
     });
 }
 
-function Hats(JXT) {
+function Hats (JXT) {
     const Hat = JXT.define({
         element: 'hat',
         fields: {
@@ -1881,7 +1853,7 @@ function Hats(JXT) {
         name: '_hat',
         namespace: HATS_0
     });
-    JXT.withPresence(function(Presence) {
+    JXT.withPresence(function (Presence) {
         JXT.add(Presence, 'hats', JXT.utils.subMultiExtension(HATS_0, 'hats', Hat));
     });
 }
@@ -1898,11 +1870,11 @@ const IMPORT_MAP = {
     'no-store': 'noStore',
     store: 'store'
 };
-function Hints(JXT) {
+function Hints (JXT) {
     const Utils = JXT.utils;
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.add(Message, 'processingHints', {
-            get: function() {
+            get: function () {
                 const results = {};
                 for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                     const child = this.xml.childNodes[i];
@@ -1916,7 +1888,7 @@ function Hints(JXT) {
                 }
                 return results;
             },
-            set: function(hints) {
+            set: function (hints) {
                 for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                     const child = this.xml.childNodes[i];
                     if (child.namespaceURI !== HINTS) {
@@ -1935,7 +1907,7 @@ function Hints(JXT) {
     });
 }
 
-function UDP(JXT) {
+function UDP (JXT) {
     const Utils = JXT.utils;
     const ICE = JXT.define({
         element: 'transport',
@@ -2007,15 +1979,15 @@ function UDP(JXT) {
     JXT.extend(ICE, RemoteCandidate);
     JXT.extend(ICE, Fingerprint, 'fingerprints');
     JXT.extend(ICE, SctpMap, 'sctp');
-    JXT.withDefinition('content', JINGLE_1, function(Content) {
+    JXT.withDefinition('content', JINGLE_1, function (Content) {
         JXT.extend(Content, ICE);
     });
 }
 
-function IBB$1(JXT) {
+function IBB$1 (JXT) {
     const Utils = JXT.utils;
     const IBB$1 = {
-        get: function() {
+        get: function () {
             let data = Utils.find(this.xml, IBB, 'data');
             if (data.length) {
                 data = data[0];
@@ -2032,7 +2004,8 @@ function IBB$1(JXT) {
                 let ack = Utils.getAttribute(open, 'stanza');
                 if (ack === 'message') {
                     ack = false;
-                } else {
+                }
+                else {
                     ack = true;
                 }
                 return {
@@ -2050,7 +2023,7 @@ function IBB$1(JXT) {
                 };
             }
         },
-        set: function(value) {
+        set: function (value) {
             if (value.action === 'data') {
                 const data = Utils.createElement(IBB, 'data');
                 Utils.setAttribute(data, 'sid', value.sid);
@@ -2064,7 +2037,8 @@ function IBB$1(JXT) {
                 Utils.setAttribute(open, 'block-size', (value.blockSize || '4096').toString());
                 if (value.ack === false) {
                     Utils.setAttribute(open, 'stanza', 'message');
-                } else {
+                }
+                else {
                     Utils.setAttribute(open, 'stanza', 'iq');
                 }
                 this.xml.appendChild(open);
@@ -2080,17 +2054,18 @@ function IBB$1(JXT) {
         element: 'transport',
         fields: {
             ack: {
-                get: function() {
+                get: function () {
                     const value = Utils.getAttribute(this.xml, 'stanza');
                     if (value === 'message') {
                         return false;
                     }
                     return true;
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value.ack === false) {
                         Utils.setAttribute(this.xml, 'stanza', 'message');
-                    } else {
+                    }
+                    else {
                         Utils.setAttribute(this.xml, 'stanza', 'iq');
                     }
                 }
@@ -2106,19 +2081,19 @@ function IBB$1(JXT) {
         namespace: JINGLE_IBB_1,
         tags: ['jingle-transport']
     });
-    JXT.withDefinition('content', JINGLE_1, function(Content) {
+    JXT.withDefinition('content', JINGLE_1, function (Content) {
         JXT.extend(Content, JingleIBB);
     });
-    JXT.withIQ(function(IQ) {
+    JXT.withIQ(function (IQ) {
         JXT.add(IQ, 'ibb', IBB$1);
     });
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.add(Message, 'ibb', IBB$1);
     });
 }
 
 const internals = {};
-internals.defineIQ = function(JXT, name, namespace) {
+internals.defineIQ = function (JXT, name, namespace) {
     const Utils = JXT.utils;
     const IQ = JXT.define({
         element: 'iq',
@@ -2157,16 +2132,16 @@ internals.defineIQ = function(JXT, name, namespace) {
         }
     });
 };
-function IQ(JXT) {
+function IQ (JXT) {
     internals.defineIQ(JXT, 'iq', CLIENT);
     internals.defineIQ(JXT, 'serverIQ', SERVER);
     internals.defineIQ(JXT, 'componentIQ', COMPONENT);
 }
 
-function JIDPrep(JXT) {
-    JXT.withIQ(function(IQ) {
+function JIDPrep (JXT) {
+    JXT.withIQ(function (IQ) {
         JXT.add(IQ, 'jidPrep', {
-            get: function() {
+            get: function () {
                 const data = JXT.utils.getSubText(this.xml, JID_PREP_0, 'jid');
                 if (data) {
                     const jid = new JID(data);
@@ -2174,7 +2149,7 @@ function JIDPrep(JXT) {
                     return jid;
                 }
             },
-            set: function(value) {
+            set: function (value) {
                 JXT.utils.setSubText(this.xml, JID_PREP_0, 'jid', (value || '').toString());
             }
         });
@@ -2201,15 +2176,15 @@ const REASONS = [
     'unsupported-applications',
     'unsupported-transports'
 ];
-function Jingle(JXT) {
+function Jingle (JXT) {
     const Utils = JXT.utils;
     const Jingle = JXT.define({
         element: 'jingle',
         fields: {
             action: Utils.attribute('action'),
             info: {
-                get: function() {
-                    const opts = JXT.tagged('jingle-info').map(function(Info) {
+                get: function () {
+                    const opts = JXT.tagged('jingle-info').map(function (Info) {
                         return Info.prototype._name;
                     });
                     for (let i = 0, len = opts.length; i < len; i++) {
@@ -2228,7 +2203,7 @@ function Jingle(JXT) {
                         };
                     }
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value.infoType === 'ping') {
                         return;
                     }
@@ -2247,8 +2222,8 @@ function Jingle(JXT) {
         element: 'content',
         fields: {
             application: {
-                get: function() {
-                    const opts = JXT.tagged('jingle-application').map(function(Description) {
+                get: function () {
+                    const opts = JXT.tagged('jingle-application').map(function (Description) {
                         return Description.prototype._name;
                     });
                     for (let i = 0, len = opts.length; i < len; i++) {
@@ -2257,7 +2232,7 @@ function Jingle(JXT) {
                         }
                     }
                 },
-                set: function(value) {
+                set: function (value) {
                     const ext = '_' + value.applicationType;
                     this[ext] = value;
                 }
@@ -2266,8 +2241,8 @@ function Jingle(JXT) {
             disposition: Utils.attribute('disposition', 'session'),
             name: Utils.attribute('name'),
             security: {
-                get: function() {
-                    const opts = JXT.tagged('jingle-security').map(function(Security) {
+                get: function () {
+                    const opts = JXT.tagged('jingle-security').map(function (Security) {
                         return Security.prototype._name;
                     });
                     for (let i = 0, len = opts.length; i < len; i++) {
@@ -2276,15 +2251,15 @@ function Jingle(JXT) {
                         }
                     }
                 },
-                set: function(value) {
+                set: function (value) {
                     const ext = '_' + value.securityType;
                     this[ext] = value;
                 }
             },
             senders: Utils.attribute('senders', 'both'),
             transport: {
-                get: function() {
-                    const opts = JXT.tagged('jingle-transport').map(function(Transport) {
+                get: function () {
+                    const opts = JXT.tagged('jingle-transport').map(function (Transport) {
                         return Transport.prototype._name;
                     });
                     for (let i = 0, len = opts.length; i < len; i++) {
@@ -2293,7 +2268,7 @@ function Jingle(JXT) {
                         }
                     }
                 },
-                set: function(value) {
+                set: function (value) {
                     const ext = '_' + value.transportType;
                     this[ext] = value;
                 }
@@ -2306,10 +2281,10 @@ function Jingle(JXT) {
         element: 'reason',
         fields: {
             alternativeSession: {
-                get: function() {
+                get: function () {
                     return Utils.getSubText(this.xml, JINGLE_1, 'alternative-session');
                 },
-                set: function(value) {
+                set: function (value) {
                     this.condition = 'alternative-session';
                     Utils.setSubText(this.xml, JINGLE_1, 'alternative-session', value);
                 }
@@ -2323,35 +2298,35 @@ function Jingle(JXT) {
     JXT.extend(Jingle, Content, 'contents');
     JXT.extend(Jingle, Reason);
     JXT.extendIQ(Jingle);
-    JXT.withStanzaError(function(StanzaError) {
+    JXT.withStanzaError(function (StanzaError) {
         JXT.add(StanzaError, 'jingleCondition', Utils.enumSub(JINGLE_ERRORS_1, CONDITIONS$2));
     });
 }
 
-function JSONData(JXT) {
+function JSONData (JXT) {
     const JSONExtension = {
-        get: function() {
+        get: function () {
             const data = JXT.utils.getSubText(this.xml, JSON_0, 'json');
             if (data) {
                 return JSON.parse(data);
             }
         },
-        set: function(value) {
+        set: function (value) {
             value = JSON.stringify(value);
             if (value) {
                 JXT.utils.setSubText(this.xml, JSON_0, 'json', value);
             }
         }
     };
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.add(Message, 'json', JSONExtension);
     });
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.add(Item, 'json', JSONExtension);
     });
 }
 
-function Eventlog(JXT) {
+function Eventlog (JXT) {
     const Utils = JXT.utils;
     const Log = JXT.define({
         element: 'log',
@@ -2385,7 +2360,7 @@ function Eventlog(JXT) {
     JXT.extendPubsubItem(Log);
 }
 
-function MAM(JXT) {
+function MAM (JXT) {
     const Utils = JXT.utils;
     const MAMQuery = JXT.define({
         element: 'query',
@@ -2418,7 +2393,7 @@ function MAM(JXT) {
         element: 'prefs',
         fields: {
             always: {
-                get: function() {
+                get: function () {
                     const results = [];
                     let container = Utils.find(this.xml, MAM_1, 'always');
                     if (container.length === 0) {
@@ -2431,7 +2406,7 @@ function MAM(JXT) {
                     }
                     return results;
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value.length > 0) {
                         const container = Utils.findOrCreate(this.xml, MAM_1, 'always');
                         Utils.setMultiSubText(container, MAM_1, 'jid', value);
@@ -2440,7 +2415,7 @@ function MAM(JXT) {
             },
             defaultCondition: Utils.attribute('default'),
             never: {
-                get: function() {
+                get: function () {
                     const results = [];
                     let container = Utils.find(this.xml, MAM_1, 'always');
                     if (container.length === 0) {
@@ -2453,7 +2428,7 @@ function MAM(JXT) {
                     }
                     return results;
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value.length > 0) {
                         const container = Utils.findOrCreate(this.xml, MAM_1, 'never');
                         Utils.setMultiSubText(container, MAM_1, 'jid', value);
@@ -2468,33 +2443,29 @@ function MAM(JXT) {
     JXT.extendIQ(MAMQuery);
     JXT.extendIQ(Prefs);
     JXT.extendIQ(Fin);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(MAMQuery, DataForm);
     });
-    JXT.withDefinition('forwarded', FORWARD_0, function(Forwarded) {
+    JXT.withDefinition('forwarded', FORWARD_0, function (Forwarded) {
         JXT.extend(Result, Forwarded);
     });
-    JXT.withDefinition('set', RSM, function(RSM) {
+    JXT.withDefinition('set', RSM, function (RSM) {
         JXT.extend(MAMQuery, RSM);
         JXT.extend(Fin, RSM);
     });
 }
 
-function Markers(JXT) {
-    JXT.withMessage(function(Message) {
+function Markers (JXT) {
+    JXT.withMessage(function (Message) {
         JXT.add(Message, 'markable', JXT.utils.boolSub(CHAT_MARKERS_0, 'markable'));
         JXT.add(Message, 'received', JXT.utils.subAttribute(CHAT_MARKERS_0, 'received', 'id'));
         JXT.add(Message, 'displayed', JXT.utils.subAttribute(CHAT_MARKERS_0, 'displayed', 'id'));
-        JXT.add(
-            Message,
-            'acknowledged',
-            JXT.utils.subAttribute(CHAT_MARKERS_0, 'acknowledged', 'id')
-        );
+        JXT.add(Message, 'acknowledged', JXT.utils.subAttribute(CHAT_MARKERS_0, 'acknowledged', 'id'));
     });
 }
 
 const internals$1 = {};
-internals$1.defineMessage = function(JXT, name, namespace) {
+internals$1.defineMessage = function (JXT, name, namespace) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'message',
@@ -2502,40 +2473,26 @@ internals$1.defineMessage = function(JXT, name, namespace) {
             $body: {
                 get: function getBody$() {
                     return Utils.getSubLangText(this.xml, namespace, 'body', this.lang);
-                }
+                },
             },
             archiveId: {
                 get: function getArchiveId() {
                     return Utils.getSubAttribute(this.xml, MAM_TMP, 'archived', 'id');
-                }
+                },
             },
             attachment: {
                 get: function getAttachment() {
                     const attachmentObj = {
-                        dispay_width: Utils.getSubAttribute(
-                            this.xml,
-                            namespace,
-                            'attachment',
-                            'dispay_width'
-                        ),
-                        display_height: Utils.getSubAttribute(
-                            this.xml,
-                            namespace,
-                            'attachment',
-                            'display_height'
-                        ),
-                        type: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'type')
+                        dispay_width: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'dispay_width'),
+                        display_height: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'display_height'),
+                        type: Utils.getSubAttribute(this.xml, namespace, 'attachment', 'type'),
                     };
                     const attachmentXml = Utils.find(this.xml, namespace, 'attachment');
                     if (attachmentXml[0]) {
                         attachmentObj.url = Utils.getSubText(attachmentXml[0], namespace, 'url');
                         const thumbnailXml = Utils.find(attachmentXml[0], namespace, 'thumbnail');
                         if (thumbnailXml[0]) {
-                            attachmentObj.thumbnailUrl = Utils.getSubText(
-                                thumbnailXml[0],
-                                namespace,
-                                'url'
-                            );
+                            attachmentObj.thumbnailUrl = Utils.getSubText(thumbnailXml[0], namespace, 'url');
                         }
                     }
                     return attachmentXml[0] ? attachmentObj : null;
@@ -2556,7 +2513,7 @@ internals$1.defineMessage = function(JXT, name, namespace) {
                         attachment.appendChild(url);
                         this.xml.appendChild(attachment);
                     }
-                }
+                },
             },
             attention: Utils.boolSub(ATTENTION_0, 'attention'),
             body: {
@@ -2566,15 +2523,10 @@ internals$1.defineMessage = function(JXT, name, namespace) {
                 },
                 set: function setBody(value) {
                     Utils.setSubLangText(this.xml, namespace, 'body', value, this.lang);
-                }
+                },
             },
-            chatState: Utils.enumSub(CHAT_STATES, [
-                'active',
-                'composing',
-                'paused',
-                'inactive',
-                'gone'
-            ]),
+            chatState: Utils.enumSub(CHAT_STATES, ['active', 'composing', 'paused', 'inactive', 'gone']),
+            deleted: Utils.textSub(namespace, 'deleted'),
             from: Utils.jidAttribute('from', true),
             id: Utils.attribute('id'),
             lang: Utils.langAttribute(),
@@ -2585,14 +2537,14 @@ internals$1.defineMessage = function(JXT, name, namespace) {
             subject: Utils.textSub(namespace, 'subject'),
             thread: Utils.textSub(namespace, 'thread'),
             to: Utils.jidAttribute('to', true),
-            type: Utils.attribute('type', 'normal')
+            type: Utils.attribute('type', 'normal'),
         },
         name: name,
         namespace: namespace,
-        topLevel: true
+        topLevel: true,
     });
 };
-function Message(JXT) {
+function Message (JXT) {
     internals$1.defineMessage(JXT, 'message', CLIENT);
     internals$1.defineMessage(JXT, 'serverMessage', SERVER);
     internals$1.defineMessage(JXT, 'componentMessage', COMPONENT);
@@ -2682,7 +2634,7 @@ const MOODS = [
     'weak',
     'worried'
 ];
-function Mood(JXT) {
+function Mood (JXT) {
     const Mood = JXT.define({
         element: 'mood',
         fields: {
@@ -2698,17 +2650,17 @@ function Mood(JXT) {
 
 function proxy(child, field) {
     return {
-        get: function() {
+        get: function () {
             if (this._extensions[child]) {
                 return this[child][field];
             }
         },
-        set: function(value) {
+        set: function (value) {
             this[child][field] = value;
         }
     };
 }
-function MUC$1(JXT) {
+function MUC$1 (JXT) {
     const Utils = JXT.utils;
     const UserItem = JXT.define({
         element: 'item',
@@ -2799,14 +2751,14 @@ function MUC$1(JXT) {
             actor: proxy('_mucUserItem', '_mucUserActor'),
             affiliation: proxy('_mucUserItem', 'affiliation'),
             codes: {
-                get: function() {
-                    return Utils.getMultiSubText(this.xml, MUC_USER, 'status', function(sub) {
+                get: function () {
+                    return Utils.getMultiSubText(this.xml, MUC_USER, 'status', function (sub) {
                         return Utils.getAttribute(sub, 'code');
                     });
                 },
-                set: function(value) {
+                set: function (value) {
                     const self = this;
-                    Utils.setMultiSubText(this.xml, MUC_USER, 'status', value, function(val) {
+                    Utils.setMultiSubText(this.xml, MUC_USER, 'status', value, function (val) {
                         const child = Utils.createElement(MUC_USER, 'status', MUC_USER);
                         Utils.setAttribute(child, 'code', val);
                         self.xml.appendChild(child);
@@ -2844,7 +2796,7 @@ function MUC$1(JXT) {
         element: 'x',
         fields: {
             history: {
-                get: function() {
+                get: function () {
                     let hist = Utils.find(this.xml, MUC, 'history');
                     if (!hist.length) {
                         return {};
@@ -2855,7 +2807,7 @@ function MUC$1(JXT) {
                     const seconds = hist.getAttribute('seconds') || '';
                     const since = hist.getAttribute('since') || '';
                 },
-                set: function(opts) {
+                set: function (opts) {
                     const existing = Utils.find(this.xml, MUC, 'history');
                     if (existing.length) {
                         for (let i = 0; i < existing.length; i++) {
@@ -2907,30 +2859,30 @@ function MUC$1(JXT) {
     JXT.extendPresence(MUCJoin);
     JXT.extendMessage(MUC$1);
     JXT.extendMessage(DirectInvite);
-    JXT.withIQ(function(IQ) {
+    JXT.withIQ(function (IQ) {
         JXT.add(IQ, 'mucUnique', Utils.textSub(MUC_UNIQUE, 'unique'));
         JXT.extend(IQ, MUCAdmin);
         JXT.extend(IQ, MUCOwner);
     });
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(MUCOwner, DataForm);
     });
 }
 
-function Nick(JXT) {
+function Nick (JXT) {
     const nick = JXT.utils.textSub(NICK, 'nick');
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.add(Item, 'nick', nick);
     });
-    JXT.withPresence(function(Presence) {
+    JXT.withPresence(function (Presence) {
         JXT.add(Presence, 'nick', nick);
     });
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.add(Message, 'nick', nick);
     });
 }
 
-function OMEMO(JXT) {
+function OMEMO (JXT) {
     const Utils = JXT.utils;
     const OMEMO = JXT.define({
         element: 'encrypted',
@@ -2997,16 +2949,16 @@ function OMEMO(JXT) {
     JXT.extend(Bundle, SignedPreKeyPublic);
     JXT.extend(Header, Key, 'keys', true);
     JXT.extend(OMEMO, Header);
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.extend(Message, OMEMO);
     });
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.extend(Item, Bundle);
         JXT.extend(Item, DeviceList);
     });
 }
 
-function OOB$1(JXT) {
+function OOB$1 (JXT) {
     const OOB$1 = JXT.define({
         element: 'x',
         fields: {
@@ -3029,7 +2981,7 @@ function OOB$1(JXT) {
     JXT.extendIQ(OOB_IQ$1);
 }
 
-function Ping(JXT) {
+function Ping (JXT) {
     const Ping = JXT.define({
         element: 'ping',
         name: 'ping',
@@ -3039,33 +2991,36 @@ function Ping(JXT) {
 }
 
 const internals$2 = {};
-internals$2.definePresence = function(JXT, name, namespace) {
+internals$2.definePresence = function (JXT, name, namespace) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'presence',
         fields: {
             $status: {
-                get: function() {
+                get: function () {
                     return Utils.getSubLangText(this.xml, namespace, 'status', this.lang);
                 }
             },
             avatarId: {
-                get: function() {
+                get: function () {
                     const update = Utils.find(this.xml, VCARD_TEMP_UPDATE, 'x');
                     if (!update.length) {
                         return '';
                     }
                     return Utils.getSubText(update[0], VCARD_TEMP_UPDATE, 'photo');
                 },
-                set: function(value) {
+                set: function (value) {
                     const update = Utils.findOrCreate(this.xml, VCARD_TEMP_UPDATE, 'x');
                     if (value === '') {
                         Utils.setBoolSub(update, VCARD_TEMP_UPDATE, 'photo', true);
-                    } else if (value === true) {
+                    }
+                    else if (value === true) {
                         return;
-                    } else if (value) {
+                    }
+                    else if (value) {
                         Utils.setSubText(update, VCARD_TEMP_UPDATE, 'photo', value);
-                    } else {
+                    }
+                    else {
                         this.xml.removeChild(update);
                     }
                 }
@@ -3078,20 +3033,20 @@ internals$2.definePresence = function(JXT, name, namespace) {
             priority: Utils.numberSub(namespace, 'priority', false, 0),
             show: Utils.textSub(namespace, 'show'),
             status: {
-                get: function() {
+                get: function () {
                     const statuses = this.$status;
                     return statuses[this.lang] || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     Utils.setSubLangText(this.xml, namespace, 'status', value, this.lang);
                 }
             },
             to: Utils.jidAttribute('to', true),
             type: {
-                get: function() {
+                get: function () {
                     return Utils.getAttribute(this.xml, 'type', 'available');
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value === 'available') {
                         value = false;
                     }
@@ -3104,13 +3059,13 @@ internals$2.definePresence = function(JXT, name, namespace) {
         topLevel: true
     });
 };
-function Presence(JXT) {
+function Presence (JXT) {
     internals$2.definePresence(JXT, 'presence', CLIENT);
     internals$2.definePresence(JXT, 'serverPresence', SERVER);
     internals$2.definePresence(JXT, 'componentPresence', COMPONENT);
 }
 
-function Private(JXT) {
+function Private (JXT) {
     const PrivateStorage = JXT.define({
         element: 'query',
         name: 'privateStorage',
@@ -3120,7 +3075,7 @@ function Private(JXT) {
 }
 
 const CONDITIONS$3 = ['server-unavailable', 'connection-paused'];
-function PSA$1(JXT) {
+function PSA$1 (JXT) {
     const PSA$1 = JXT.define({
         element: 'state-annotation',
         fields: {
@@ -3134,36 +3089,37 @@ function PSA$1(JXT) {
     JXT.extendPresence(PSA$1);
 }
 
-function Pubsub(JXT) {
+function Pubsub (JXT) {
     const Utils = JXT.utils;
     const Pubsub = JXT.define({
         element: 'pubsub',
         fields: {
             create: {
-                get: function() {
+                get: function () {
                     const node = Utils.getSubAttribute(this.xml, PUBSUB, 'create', 'node');
                     if (node) {
                         return node;
                     }
                     return Utils.getBoolSub(this.xml, PUBSUB, 'create');
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value === true || !value) {
                         Utils.setBoolSub(this.xml, PUBSUB, 'create', value);
-                    } else {
+                    }
+                    else {
                         Utils.setSubAttribute(this.xml, PUBSUB, 'create', 'node', value);
                     }
                 }
             },
             publishOptions: {
-                get: function() {
+                get: function () {
                     const DataForm = JXT.getDefinition('x', DATAFORM);
                     const conf = Utils.find(this.xml, PUBSUB, 'publish-options');
                     if (conf.length && conf[0].childNodes.length) {
                         return new DataForm({}, conf[0].childNodes[0]);
                     }
                 },
-                set: function(value) {
+                set: function (value) {
                     const DataForm = JXT.getDefinition('x', DATAFORM);
                     const conf = Utils.findOrCreate(this.xml, PUBSUB, 'publish-options');
                     if (value) {
@@ -3195,7 +3151,7 @@ function Pubsub(JXT) {
         fields: {
             configurable: Utils.boolSub('subscribe-options'),
             configurationRequired: {
-                get: function() {
+                get: function () {
                     const options = Utils.find(this.xml, PUBSUB, 'subscribe-options');
                     if (options.length) {
                         return Utils.getBoolSub(options[0], PUBSUB, 'required');
@@ -3308,12 +3264,12 @@ function Pubsub(JXT) {
     JXT.extend(Subscriptions, Subscription, 'list');
     JXT.extend(Affiliations, Affiliation, 'list');
     JXT.extendIQ(Pubsub);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(SubscriptionOptions, DataForm);
         JXT.extend(Item, DataForm);
         JXT.extend(Configure, DataForm);
     });
-    JXT.withDefinition('set', RSM, function(RSM) {
+    JXT.withDefinition('set', RSM, function (RSM) {
         JXT.extend(Pubsub, RSM);
     });
 }
@@ -3342,14 +3298,14 @@ const CONDITIONS$4 = [
     'unsupported',
     'unsupported-access-model'
 ];
-function PubsubError(JXT) {
-    JXT.withStanzaError(function(StanzaError) {
+function PubsubError (JXT) {
+    JXT.withStanzaError(function (StanzaError) {
         JXT.add(StanzaError, 'pubsubCondition', JXT.utils.enumSub(PUBSUB_ERRORS, CONDITIONS$4));
         JXT.add(StanzaError, 'pubsubUnsupportedFeature', {
-            get: function() {
+            get: function () {
                 return JXT.utils.getSubAttribute(this.xml, PUBSUB_ERRORS, 'unsupported', 'feature');
             },
-            set: function(value) {
+            set: function (value) {
                 if (value) {
                     this.pubsubCondition = 'unsupported';
                 }
@@ -3359,7 +3315,7 @@ function PubsubError(JXT) {
     });
 }
 
-function PubsubEvents(JXT) {
+function PubsubEvents (JXT) {
     const Utils = JXT.utils;
     const Event = JXT.define({
         element: 'event',
@@ -3387,15 +3343,16 @@ function PubsubEvents(JXT) {
         element: 'subscription',
         fields: {
             expiry: {
-                get: function() {
+                get: function () {
                     const text = Utils.getAttribute(this.xml, 'expiry');
                     if (text === 'presence') {
                         return text;
-                    } else if (text) {
+                    }
+                    else if (text) {
                         return new Date(text);
                     }
                 },
-                set: function(value) {
+                set: function (value) {
                     if (!value) {
                         return;
                     }
@@ -3426,7 +3383,7 @@ function PubsubEvents(JXT) {
         fields: {
             node: Utils.attribute('node'),
             retracted: {
-                get: function() {
+                get: function () {
                     const results = [];
                     const retracted = Utils.find(this.xml, PUBSUB_EVENT, 'retract');
                     for (const xml of retracted) {
@@ -3434,14 +3391,10 @@ function PubsubEvents(JXT) {
                     }
                     return results;
                 },
-                set: function(value) {
+                set: function (value) {
                     const self = this;
                     for (const id of value) {
-                        const retracted = Utils.createElement(
-                            PUBSUB_EVENT,
-                            'retract',
-                            PUBSUB_EVENT
-                        );
+                        const retracted = Utils.createElement(PUBSUB_EVENT, 'retract', PUBSUB_EVENT);
                         retracted.setAttribute('id', id);
                         self.xml.appendChild(retracted);
                     }
@@ -3468,12 +3421,12 @@ function PubsubEvents(JXT) {
     JXT.extend(Event, EventDelete);
     JXT.extend(Event, EventPurge);
     JXT.extendMessage(Event);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(EventConfiguration, DataForm);
     });
 }
 
-function PubsubOwner(JXT) {
+function PubsubOwner (JXT) {
     const Utils = JXT.utils;
     const PubsubOwner = JXT.define({
         element: 'pubsub',
@@ -3481,14 +3434,14 @@ function PubsubOwner(JXT) {
             del: Utils.subAttribute(PUBSUB_OWNER, 'delete', 'node'),
             purge: Utils.subAttribute(PUBSUB_OWNER, 'purge', 'node'),
             redirect: {
-                get: function() {
+                get: function () {
                     const del = Utils.find(this.xml, PUBSUB_OWNER, 'delete');
                     if (del.length) {
                         return Utils.getSubAttribute(del[0], PUBSUB_OWNER, 'redirect', 'uri');
                     }
                     return '';
                 },
-                set: function(value) {
+                set: function (value) {
                     const del = Utils.findOrCreate(this.xml, PUBSUB_OWNER, 'delete');
                     Utils.setSubAttribute(del, PUBSUB_OWNER, 'redirect', 'uri', value);
                 }
@@ -3502,7 +3455,7 @@ function PubsubOwner(JXT) {
         fields: {
             configurable: Utils.boolSub('subscribe-options'),
             configurationRequired: {
-                get: function() {
+                get: function () {
                     const options = Utils.find(this.xml, PUBSUB_OWNER, 'subscribe-options');
                     if (options.length) {
                         return Utils.getBoolSub(options[0], PUBSUB_OWNER, 'required');
@@ -3563,12 +3516,12 @@ function PubsubOwner(JXT) {
     JXT.extend(Subscriptions, Subscription, 'list');
     JXT.extend(Affiliations, Affiliation, 'list');
     JXT.extendIQ(PubsubOwner);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(Configure, DataForm);
     });
 }
 
-function Push(JXT) {
+function Push (JXT) {
     const Utils = JXT.utils;
     const Enable = JXT.define({
         element: 'enable',
@@ -3601,22 +3554,22 @@ function Push(JXT) {
     JXT.extendIQ(Disable);
 }
 
-function Reach(JXT) {
+function Reach (JXT) {
     const Utils = JXT.utils;
     const ReachURI = JXT.define({
         element: 'addr',
         fields: {
             $desc: {
-                get: function() {
+                get: function () {
                     return Utils.getSubLangText(this.xml, REACH_0, 'desc', this.lang);
                 }
             },
             desc: {
-                get: function() {
+                get: function () {
                     const descs = this.$desc;
                     return descs[this.lang] || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     Utils.setSubLangText(this.xml, REACH_0, 'desc', value, this.lang);
                 }
             },
@@ -3626,7 +3579,7 @@ function Reach(JXT) {
         namespace: REACH_0
     });
     const reachability = {
-        get: function() {
+        get: function () {
             const reach = Utils.find(this.xml, REACH_0, 'reach');
             const results = [];
             if (reach.length) {
@@ -3637,7 +3590,7 @@ function Reach(JXT) {
             }
             return results;
         },
-        set: function(value) {
+        set: function (value) {
             const reach = Utils.findOrCreate(this.xml, REACH_0, 'reach');
             Utils.setAttribute(reach, 'xmlns', REACH_0);
             for (const info of value) {
@@ -3646,15 +3599,15 @@ function Reach(JXT) {
             }
         }
     };
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.add(Item, 'reach', reachability);
     });
-    JXT.withPresence(function(Presence) {
+    JXT.withPresence(function (Presence) {
         JXT.add(Presence, 'reach', reachability);
     });
 }
 
-function Register(JXT) {
+function Register (JXT) {
     const Utils = JXT.utils;
     const Register = JXT.define({
         element: 'query',
@@ -3684,15 +3637,15 @@ function Register(JXT) {
         namespace: REGISTER
     });
     JXT.extendIQ(Register);
-    JXT.withDefinition('x', OOB, function(OOB) {
+    JXT.withDefinition('x', OOB, function (OOB) {
         JXT.extend(Register, OOB);
     });
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(Register, DataForm);
     });
 }
 
-function References(JXT) {
+function References (JXT) {
     const Utils = JXT.utils;
     const Reference = JXT.define({
         element: 'reference',
@@ -3707,21 +3660,21 @@ function References(JXT) {
         namespace: REFERENCE_0
     });
     const References = Utils.multiExtension(Reference);
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.add(Message, 'references', References);
     });
 }
 
-function Roster(JXT) {
+function Roster (JXT) {
     const Utils = JXT.utils;
     const Roster = JXT.define({
         element: 'query',
         fields: {
             ver: {
-                get: function() {
+                get: function () {
                     return Utils.getAttribute(this.xml, 'ver');
                 },
-                set: function(value) {
+                set: function (value) {
                     const force = value === '';
                     Utils.setAttribute(this.xml, 'ver', value, force);
                 }
@@ -3739,7 +3692,7 @@ function Roster(JXT) {
             preApproved: Utils.boolAttribute(ROSTER, 'approved'),
             subscription: Utils.attribute('subscription', 'none'),
             subscriptionRequested: {
-                get: function() {
+                get: function () {
                     const ask = Utils.getAttribute(this.xml, 'ask');
                     return ask === 'subscribe';
                 }
@@ -3752,20 +3705,21 @@ function Roster(JXT) {
     JXT.extendIQ(Roster);
 }
 
-function RSM$1(JXT) {
+function RSM$1 (JXT) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'set',
         fields: {
             after: Utils.textSub(RSM, 'after'),
             before: {
-                get: function() {
+                get: function () {
                     return Utils.getSubText(this.xml, RSM, 'before');
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value === true) {
                         Utils.findOrCreate(this.xml, RSM, 'before');
-                    } else {
+                    }
+                    else {
                         Utils.setSubText(this.xml, RSM, 'before', value);
                     }
                 }
@@ -3782,10 +3736,10 @@ function RSM$1(JXT) {
     });
 }
 
-function RTP(JXT) {
+function RTP (JXT) {
     const Utils = JXT.utils;
     const Feedback = {
-        get: function() {
+        get: function () {
             let existing = Utils.find(this.xml, JINGLE_RTP_RTCP_FB_0, 'rtcp-fb');
             const result = [];
             for (const xml of existing) {
@@ -3803,7 +3757,7 @@ function RTP(JXT) {
             }
             return result;
         },
-        set: function(values) {
+        set: function (values) {
             const self = this;
             let existing = Utils.find(this.xml, JINGLE_RTP_RTCP_FB_0, 'rtcp-fb');
             for (const item of existing) {
@@ -3819,7 +3773,8 @@ function RTP(JXT) {
                     fb = Utils.createElement(JINGLE_RTP_RTCP_FB_0, 'rtcp-fb-trr-int', JINGLE_RTP_1);
                     Utils.setAttribute(fb, 'type', value.type);
                     Utils.setAttribute(fb, 'value', value.value);
-                } else {
+                }
+                else {
                     fb = Utils.createElement(JINGLE_RTP_RTCP_FB_0, 'rtcp-fb', JINGLE_RTP_1);
                     Utils.setAttribute(fb, 'type', value.type);
                     Utils.setAttribute(fb, 'subtype', value.subtype);
@@ -3845,7 +3800,7 @@ function RTP(JXT) {
                 writable: true
             },
             encryption: {
-                get: function() {
+                get: function () {
                     let enc = Utils.find(this.xml, JINGLE_RTP_1, 'encryption');
                     if (!enc.length) {
                         return [];
@@ -3859,7 +3814,7 @@ function RTP(JXT) {
                     }
                     return results;
                 },
-                set: function(values) {
+                set: function (values) {
                     let enc = Utils.find(this.xml, JINGLE_RTP_1, 'encryption');
                     if (enc.length) {
                         this.xml.removeChild(enc);
@@ -3867,13 +3822,7 @@ function RTP(JXT) {
                     if (!values.length) {
                         return;
                     }
-                    Utils.setBoolSubAttribute(
-                        this.xml,
-                        JINGLE_RTP_1,
-                        'encryption',
-                        'required',
-                        true
-                    );
+                    Utils.setBoolSubAttribute(this.xml, JINGLE_RTP_1, 'encryption', 'required', true);
                     enc = Utils.find(this.xml, JINGLE_RTP_1, 'encryption')[0];
                     const self = this;
                     for (const value of values) {
@@ -3884,7 +3833,7 @@ function RTP(JXT) {
             },
             feedback: Feedback,
             headerExtensions: {
-                get: function() {
+                get: function () {
                     const existing = Utils.find(this.xml, JINGLE_RTP_HDREXT_0, 'rtp-hdrext');
                     const result = [];
                     for (const xml of existing) {
@@ -3896,18 +3845,14 @@ function RTP(JXT) {
                     }
                     return result;
                 },
-                set: function(values) {
+                set: function (values) {
                     const self = this;
                     const existing = Utils.find(this.xml, JINGLE_RTP_HDREXT_0, 'rtp-hdrext');
                     for (const item of existing) {
                         self.xml.removeChild(item);
                     }
                     for (const value of values) {
-                        const hdr = Utils.createElement(
-                            JINGLE_RTP_HDREXT_0,
-                            'rtp-hdrext',
-                            JINGLE_RTP_1
-                        );
+                        const hdr = Utils.createElement(JINGLE_RTP_HDREXT_0, 'rtp-hdrext', JINGLE_RTP_1);
                         Utils.setAttribute(hdr, 'id', value.id);
                         Utils.setAttribute(hdr, 'uri', value.uri);
                         Utils.setAttribute(hdr, 'senders', value.senders);
@@ -3934,7 +3879,7 @@ function RTP(JXT) {
             maxptime: Utils.attribute('maxptime'),
             name: Utils.attribute('name'),
             parameters: {
-                get: function() {
+                get: function () {
                     const result = [];
                     const params = Utils.find(this.xml, JINGLE_RTP_1, 'parameter');
                     for (const param of params) {
@@ -3945,7 +3890,7 @@ function RTP(JXT) {
                     }
                     return result;
                 },
-                set: function(values) {
+                set: function (values) {
                     const self = this;
                     for (const value of values) {
                         const param = Utils.createElement(JINGLE_RTP_1, 'parameter');
@@ -3993,7 +3938,7 @@ function RTP(JXT) {
         element: 'source',
         fields: {
             parameters: {
-                get: function() {
+                get: function () {
                     const result = [];
                     const params = Utils.find(this.xml, JINGLE_RTP_SSMA_0, 'parameter');
                     for (const param of params) {
@@ -4004,7 +3949,7 @@ function RTP(JXT) {
                     }
                     return result;
                 },
-                set: function(values) {
+                set: function (values) {
                     const self = this;
                     for (const value of values) {
                         const param = Utils.createElement(JINGLE_RTP_SSMA_0, 'parameter');
@@ -4051,10 +3996,10 @@ function RTP(JXT) {
     JXT.extend(RTP, Source, 'sources');
     JXT.extend(RTP, SourceGroup, 'sourceGroups');
     JXT.extend(RTP, Stream, 'streams');
-    JXT.withDefinition('content', JINGLE_1, function(Content) {
+    JXT.withDefinition('content', JINGLE_1, function (Content) {
         JXT.extend(Content, RTP);
     });
-    JXT.withDefinition('jingle', JINGLE_1, function(Jingle) {
+    JXT.withDefinition('jingle', JINGLE_1, function (Jingle) {
         JXT.extend(Jingle, Mute);
         JXT.extend(Jingle, Unmute);
         JXT.extend(Jingle, ContentGroup, 'groups');
@@ -4074,13 +4019,13 @@ const ACTION_MAP = {
     t: 'insert',
     w: 'wait'
 };
-function RTT(JXT) {
+function RTT (JXT) {
     const Utils = JXT.utils;
     const RTT = JXT.define({
         element: 'rtt',
         fields: {
             actions: {
-                get: function() {
+                get: function () {
                     const results = [];
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         const child = this.xml.childNodes[i];
@@ -4091,7 +4036,8 @@ function RTT(JXT) {
                         }
                         if (ACTION_MAP[name]) {
                             action.type = ACTION_MAP[name];
-                        } else {
+                        }
+                        else {
                             continue;
                         }
                         const pos = Utils.getAttribute(child, 'p');
@@ -4110,7 +4056,7 @@ function RTT(JXT) {
                     }
                     return results;
                 },
-                set: function(actions) {
+                set: function (actions) {
                     const self = this;
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         this.xml.removeChild(this.xml.childNodes[i]);
@@ -4157,7 +4103,7 @@ const CONDITIONS$5 = [
     'temporary-auth-failure',
     'not-supported'
 ];
-function SASL$1(JXT) {
+function SASL$1 (JXT) {
     const Utils = JXT.utils;
     const Mechanisms = JXT.define({
         element: 'mechanisms',
@@ -4220,25 +4166,25 @@ function SASL$1(JXT) {
         eventName: 'sasl:failure',
         fields: {
             $text: {
-                get: function() {
+                get: function () {
                     return Utils.getSubLangText(this.xml, SASL, 'text', this.lang);
                 }
             },
             condition: Utils.enumSub(SASL, CONDITIONS$5),
             lang: {
-                get: function() {
+                get: function () {
                     return this._lang || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     this._lang = value;
                 }
             },
             text: {
-                get: function() {
+                get: function () {
                     const text = this.$text;
                     return text[this.lang] || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     Utils.setSubLangText(this.xml, SASL, 'text', value, this.lang);
                 }
             }
@@ -4250,7 +4196,7 @@ function SASL$1(JXT) {
     JXT.extendStreamFeatures(Mechanisms);
 }
 
-function Session(JXT) {
+function Session (JXT) {
     const Session = JXT.define({
         element: 'session',
         fields: {
@@ -4264,13 +4210,13 @@ function Session(JXT) {
     JXT.extendStreamFeatures(Session);
 }
 
-function Shim(JXT) {
+function Shim (JXT) {
     const Utils = JXT.utils;
     const SHIM$1 = {
-        get: function() {
+        get: function () {
             const headerSet = Utils.find(this.xml, SHIM, 'headers');
             if (headerSet.length) {
-                return Utils.getMultiSubText(headerSet[0], SHIM, 'header', function(header) {
+                return Utils.getMultiSubText(headerSet[0], SHIM, 'header', function (header) {
                     const name = Utils.getAttribute(header, 'name');
                     if (name) {
                         return {
@@ -4282,9 +4228,9 @@ function Shim(JXT) {
             }
             return [];
         },
-        set: function(values) {
+        set: function (values) {
             const headerSet = Utils.findOrCreate(this.xml, SHIM, 'headers');
-            JXT.setMultiSubText(headerSet, SHIM, 'header', values, function(val) {
+            JXT.setMultiSubText(headerSet, SHIM, 'header', values, function (val) {
                 const header = Utils.createElement(SHIM, 'header', SHIM);
                 Utils.setAttribute(header, 'name', val.name);
                 Utils.setText(header, val.value);
@@ -4292,15 +4238,15 @@ function Shim(JXT) {
             });
         }
     };
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.add(Message, 'headers', SHIM$1);
     });
-    JXT.withPresence(function(Presence) {
+    JXT.withPresence(function (Presence) {
         JXT.add(Presence, 'headers', SHIM$1);
     });
 }
 
-function SM(JXT) {
+function SM (JXT) {
     const Utils = JXT.utils;
     const SMFeature = JXT.define({
         element: 'sm',
@@ -4377,7 +4323,7 @@ function SM(JXT) {
     JXT.extendStreamFeatures(SMFeature);
 }
 
-function Stream(JXT) {
+function Stream (JXT) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'stream',
@@ -4420,40 +4366,40 @@ const CONDITIONS$6 = [
     'unsupported-stanza-type',
     'unsupported-version'
 ];
-function StreamError(JXT) {
+function StreamError (JXT) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'error',
         fields: {
             $text: {
-                get: function() {
+                get: function () {
                     return Utils.getSubLangText(this.xml, STREAM_ERROR, 'text', this.lang);
                 }
             },
             condition: Utils.enumSub(STREAM_ERROR, CONDITIONS$6),
             lang: {
-                get: function() {
+                get: function () {
                     return this._lang || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     this._lang = value;
                 }
             },
             seeOtherHost: {
-                get: function() {
+                get: function () {
                     return Utils.getSubText(this.xml, STREAM_ERROR, 'see-other-host');
                 },
-                set: function(value) {
+                set: function (value) {
                     this.condition = 'see-other-host';
                     Utils.setSubText(this.xml, STREAM_ERROR, 'see-other-host', value);
                 }
             },
             text: {
-                get: function() {
+                get: function () {
                     const text = this.$text;
                     return text[this.lang] || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     Utils.setSubLangText(this.xml, STREAM_ERROR, 'text', value, this.lang);
                 }
             }
@@ -4464,7 +4410,7 @@ function StreamError(JXT) {
     });
 }
 
-function StreamFeatures(JXT) {
+function StreamFeatures (JXT) {
     JXT.define({
         element: 'features',
         name: 'streamFeatures',
@@ -4485,7 +4431,7 @@ function StreamFeatures(JXT) {
     JXT.extendStreamFeatures(SubscriptionPreApprovalFeature);
 }
 
-function Time(JXT) {
+function Time (JXT) {
     const EntityTime = JXT.define({
         element: 'time',
         fields: {
@@ -4498,7 +4444,7 @@ function Time(JXT) {
     JXT.extendIQ(EntityTime);
 }
 
-function Tune(JXT) {
+function Tune (JXT) {
     const Utils = JXT.utils;
     const Tune = JXT.define({
         element: 'tune',
@@ -4518,7 +4464,7 @@ function Tune(JXT) {
     JXT.extendMessage(Tune);
 }
 
-function VCardTemp(JXT) {
+function VCardTemp (JXT) {
     const Utils = JXT.utils;
     const VCardTemp = JXT.define({
         element: 'vCard',
@@ -4615,7 +4561,7 @@ function VCardTemp(JXT) {
     JXT.extendIQ(VCardTemp);
 }
 
-function Version(JXT) {
+function Version (JXT) {
     const Version = JXT.define({
         element: 'query',
         fields: {
@@ -4629,17 +4575,17 @@ function Version(JXT) {
     JXT.extendIQ(Version);
 }
 
-function Visibility(JXT) {
-    JXT.withIQ(function(IQ) {
+function Visibility (JXT) {
+    JXT.withIQ(function (IQ) {
         JXT.add(IQ, 'visible', JXT.utils.boolSub(INVISIBLE_0, 'visible'));
         JXT.add(IQ, 'invisible', JXT.utils.boolSub(INVISIBLE_0, 'invisible'));
     });
 }
 
-function XRD$1(JXT) {
+function XRD$1 (JXT) {
     const Utils = JXT.utils;
     const Properties = {
-        get: function() {
+        get: function () {
             const results = {};
             const props = Utils.find(this.xml, XRD, 'Property');
             for (let i = 0, len = props.length; i < len; i++) {
@@ -4682,31 +4628,31 @@ const VERSION$1 = {
     component: COMPONENT,
     server: SERVER
 };
-function XMPPShortcuts(JXT) {
+function XMPPShortcuts (JXT) {
     // ----------------------------------------------------------------
     // Shortcuts for common extension calls
     // ----------------------------------------------------------------
-    JXT.extendMessage = function(JXTClass, multiName) {
+    JXT.extendMessage = function (JXTClass, multiName) {
         this.withMessage(Message => {
             this.extend(Message, JXTClass, multiName);
         });
     };
-    JXT.extendPresence = function(JXTClass, multiName) {
+    JXT.extendPresence = function (JXTClass, multiName) {
         this.withPresence(Presence => {
             this.extend(Presence, JXTClass, multiName);
         });
     };
-    JXT.extendIQ = function(JXTClass, multiName) {
+    JXT.extendIQ = function (JXTClass, multiName) {
         this.withIQ(IQ => {
             this.extend(IQ, JXTClass, multiName);
         });
     };
-    JXT.extendStreamFeatures = function(JXTClass) {
+    JXT.extendStreamFeatures = function (JXTClass) {
         this.withStreamFeatures(StreamFeatures => {
             this.extend(StreamFeatures, JXTClass);
         });
     };
-    JXT.extendPubsubItem = function(JXTClass) {
+    JXT.extendPubsubItem = function (JXTClass) {
         this.withPubsubItem(PubsubItem => {
             this.extend(PubsubItem, JXTClass);
         });
@@ -4714,45 +4660,45 @@ function XMPPShortcuts(JXT) {
     // ----------------------------------------------------------------
     // Shortcuts for common withDefinition calls
     // ----------------------------------------------------------------
-    JXT.withIQ = function(cb) {
+    JXT.withIQ = function (cb) {
         this.withDefinition('iq', CLIENT, cb);
         this.withDefinition('iq', COMPONENT, cb);
     };
-    JXT.withMessage = function(cb) {
+    JXT.withMessage = function (cb) {
         this.withDefinition('message', CLIENT, cb);
         this.withDefinition('message', COMPONENT, cb);
     };
-    JXT.withPresence = function(cb) {
+    JXT.withPresence = function (cb) {
         this.withDefinition('presence', CLIENT, cb);
         this.withDefinition('presence', COMPONENT, cb);
     };
-    JXT.withStreamFeatures = function(cb) {
+    JXT.withStreamFeatures = function (cb) {
         this.withDefinition('features', STREAM, cb);
     };
-    JXT.withStanzaError = function(cb) {
+    JXT.withStanzaError = function (cb) {
         this.withDefinition('error', CLIENT, cb);
         this.withDefinition('error', COMPONENT, cb);
     };
-    JXT.withDataForm = function(cb) {
+    JXT.withDataForm = function (cb) {
         this.withDefinition('x', DATAFORM, cb);
     };
-    JXT.withPubsubItem = function(cb) {
+    JXT.withPubsubItem = function (cb) {
         this.withDefinition('item', PUBSUB, cb);
         this.withDefinition('item', PUBSUB_EVENT, cb);
     };
     // ----------------------------------------------------------------
     // Shortcuts for common getDefinition calls
     // ----------------------------------------------------------------
-    JXT.getMessage = function(version = 'client') {
+    JXT.getMessage = function (version = 'client') {
         return this.getDefinition('message', VERSION$1[version]);
     };
-    JXT.getPresence = function(version = 'client') {
+    JXT.getPresence = function (version = 'client') {
         return this.getDefinition('presence', VERSION$1[version]);
     };
-    JXT.getIQ = function(version = 'client') {
+    JXT.getIQ = function (version = 'client') {
         return this.getDefinition('iq', VERSION$1[version]);
     };
-    JXT.getStreamError = function() {
+    JXT.getStreamError = function () {
         return this.getDefinition('error', STREAM);
     };
     // For backward compatibility
@@ -4760,73 +4706,71 @@ function XMPPShortcuts(JXT) {
     JXT.withIq = JXT.withIQ;
 }
 
-function XMPPTypes(JXT) {
+function XMPPTypes (JXT) {
     const Utils = JXT.utils;
-    Utils.jidAttribute = function(attr, prepped) {
+    Utils.jidAttribute = function (attr, prepped) {
         return {
-            get: function() {
+            get: function () {
                 const jid = new JID(Utils.getAttribute(this.xml, attr));
                 if (prepped) {
                     jid.prepped = true;
                 }
                 return jid;
             },
-            set: function(value) {
+            set: function (value) {
                 Utils.setAttribute(this.xml, attr, (value || '').toString());
             }
         };
     };
-    Utils.jidSub = function(NS, sub, prepped) {
+    Utils.jidSub = function (NS, sub, prepped) {
         return {
-            get: function() {
+            get: function () {
                 const jid = new JID(Utils.getSubText(this.xml, NS, sub));
                 if (prepped) {
                     jid.prepped = true;
                 }
                 return jid;
             },
-            set: function(value) {
+            set: function (value) {
                 Utils.setSubText(this.xml, NS, sub, (value || '').toString());
             }
         };
     };
-    Utils.tzoSub = Utils.field(
-        function(xml, NS, sub, defaultVal) {
-            let sign = -1;
-            let formatted = Utils.getSubText(xml, NS, sub);
-            if (!formatted) {
-                return defaultVal;
-            }
-            if (formatted.charAt(0) === '-') {
-                sign = 1;
-                formatted = formatted.slice(1);
-            }
-            const split = formatted.split(':');
-            const hrs = parseInt(split[0], 10);
-            const min = parseInt(split[1], 10);
-            return (hrs * 60 + min) * sign;
-        },
-        function(xml, NS, sub, value) {
-            let hrs;
-            let min;
-            let formatted = '-';
-            if (typeof value === 'number') {
-                if (value < 0) {
-                    value = -value;
-                    formatted = '+';
-                }
-                hrs = value / 60;
-                min = value % 60;
-                formatted += (hrs < 10 ? '0' : '') + hrs + ':' + (min < 10 ? '0' : '') + min;
-            } else {
-                formatted = value;
-            }
-            Utils.setSubText(xml, NS, sub, formatted);
+    Utils.tzoSub = Utils.field(function (xml, NS, sub, defaultVal) {
+        let sign = -1;
+        let formatted = Utils.getSubText(xml, NS, sub);
+        if (!formatted) {
+            return defaultVal;
         }
-    );
+        if (formatted.charAt(0) === '-') {
+            sign = 1;
+            formatted = formatted.slice(1);
+        }
+        const split = formatted.split(':');
+        const hrs = parseInt(split[0], 10);
+        const min = parseInt(split[1], 10);
+        return (hrs * 60 + min) * sign;
+    }, function (xml, NS, sub, value) {
+        let hrs;
+        let min;
+        let formatted = '-';
+        if (typeof value === 'number') {
+            if (value < 0) {
+                value = -value;
+                formatted = '+';
+            }
+            hrs = value / 60;
+            min = value % 60;
+            formatted += (hrs < 10 ? '0' : '') + hrs + ':' + (min < 10 ? '0' : '') + min;
+        }
+        else {
+            formatted = value;
+        }
+        Utils.setSubText(xml, NS, sub, formatted);
+    });
 }
 
-function Protocol(JXT) {
+function Protocol (JXT) {
     JXT.use(XMPPTypes);
     JXT.use(XMPPShortcuts);
     JXT.use(Addresses);
@@ -4967,11 +4911,9 @@ class StreamManagement {
         this.unacked = [];
     }
     ack() {
-        this.client.send(
-            new this.stanzas.Ack({
-                h: this.handled
-            })
-        );
+        this.client.send(new this.stanzas.Ack({
+            h: this.handled
+        }));
     }
     request() {
         this.pendingAck = true;
@@ -5021,84 +4963,79 @@ class StreamManagement {
 }
 
 function promiseAny(promises) {
-    return __awaiter(this, void 0, void 0, function*() {
+    return __awaiter(this, void 0, void 0, function* () {
         try {
-            const errors = yield Promise.all(
-                promises.map(p => {
-                    return p.then(val => Promise.reject(val), err => Promise.resolve(err));
-                })
-            );
+            const errors = yield Promise.all(promises.map(p => {
+                return p.then(val => Promise.reject(val), err => Promise.resolve(err));
+            }));
             return Promise.reject(errors);
-        } catch (val) {
+        }
+        catch (val) {
             return Promise.resolve(val);
         }
     });
 }
 function getHostMeta(JXT, opts) {
-    return __awaiter(this, void 0, void 0, function*() {
+    return __awaiter(this, void 0, void 0, function* () {
         if (typeof opts === 'string') {
             opts = { host: opts };
         }
         const config = Object.assign({ json: true, ssl: true, xrd: true }, opts);
         const scheme = config.ssl ? 'https://' : 'http://';
         return promiseAny([
-            fetch(`${scheme}${config.host}/.well-known/host-meta.json`).then(res =>
-                __awaiter(this, void 0, void 0, function*() {
-                    if (!res.ok) {
-                        throw new Error('could-not-fetch-json');
-                    }
-                    return res.json();
-                })
-            ),
-            fetch(`${scheme}${config.host}/.well-known/host-meta`).then(res =>
-                __awaiter(this, void 0, void 0, function*() {
-                    if (!res.ok) {
-                        throw new Error('could-not-fetch-xml');
-                    }
-                    const data = yield res.text();
-                    return JXT.parse(data);
-                })
-            )
+            fetch(`${scheme}${config.host}/.well-known/host-meta.json`).then((res) => __awaiter(this, void 0, void 0, function* () {
+                if (!res.ok) {
+                    throw new Error('could-not-fetch-json');
+                }
+                return res.json();
+            })),
+            fetch(`${scheme}${config.host}/.well-known/host-meta`).then((res) => __awaiter(this, void 0, void 0, function* () {
+                if (!res.ok) {
+                    throw new Error('could-not-fetch-xml');
+                }
+                const data = yield res.text();
+                return JXT.parse(data);
+            }))
         ]);
     });
 }
-function HostMeta(client, stanzas) {
-    client.discoverBindings = function(server, cb) {
+function HostMeta (client, stanzas) {
+    client.discoverBindings = function (server, cb) {
         getHostMeta(stanzas, server)
             .then(data => {
-                const results = {
-                    bosh: [],
-                    websocket: []
-                };
-                const links = data.links || [];
-                for (const link of links) {
-                    if (link.href && link.rel === ALT_CONNECTIONS_WEBSOCKET) {
-                        results.websocket.push(link.href);
-                    }
-                    if (link.href && link.rel === ALT_CONNECTIONS_XBOSH) {
-                        results.bosh.push(link.href);
-                    }
+            const results = {
+                bosh: [],
+                websocket: []
+            };
+            const links = data.links || [];
+            for (const link of links) {
+                if (link.href && link.rel === ALT_CONNECTIONS_WEBSOCKET) {
+                    results.websocket.push(link.href);
                 }
-                cb(null, results);
-            })
+                if (link.href && link.rel === ALT_CONNECTIONS_XBOSH) {
+                    results.bosh.push(link.href);
+                }
+            }
+            cb(null, results);
+        })
             .catch(err => {
-                cb(err, []);
-            });
+            cb(err, []);
+        });
     };
 }
 
-function Features(client) {
+function Features (client) {
     client.features = {
         handlers: {},
         negotiated: {},
         order: []
     };
-    client.registerFeature = function(name, priority, handler) {
+    client.registerFeature = function (name, priority, handler) {
         this.features.order.push({
             name,
             priority
         });
-        this.features.order.sort(function(a, b) {
+        this.features.order.sort(function (a, b) {
             if (a.priority < b.priority) {
                 return -1;
             }
@@ -5109,26 +5046,28 @@ function Features(client) {
         });
         this.features.handlers[name] = handler.bind(client);
     };
-    client.on('streamFeatures', function(features) {
+    client.on('streamFeatures', function (features) {
         const series$1 = [];
         const negotiated = client.features.negotiated;
         const handlers = client.features.handlers;
         for (const feature of client.features.order) {
             const name = feature.name;
             if (features[name] && handlers[name] && !negotiated[name]) {
-                series$1.push(function(cb) {
+                series$1.push(function (cb) {
                     if (!negotiated[name]) {
                         handlers[name](features, cb);
-                    } else {
+                    }
+                    else {
                         cb();
                     }
                 });
             }
         }
-        series(series$1, function(cmd, msg) {
+        series(series$1, function (cmd, msg) {
             if (cmd === 'restart') {
                 client.transport.restart();
-            } else if (cmd === 'disconnect') {
+            }
+            else if (cmd === 'disconnect') {
                 client.emit('stream:error', {
                     condition: 'policy-violation',
                     text: 'Failed to negotiate stream features: ' + msg
@@ -5140,11 +5079,11 @@ function Features(client) {
 }
 
 const NS = 'urn:ietf:params:xml:ns:xmpp-sasl';
-function SASLPlugin(client, stanzas) {
+function SASLPlugin (client, stanzas) {
     const Auth = stanzas.getDefinition('auth', NS);
     const Response = stanzas.getDefinition('response', NS);
     const Abort = stanzas.getDefinition('abort', NS);
-    client.registerFeature('sasl', 100, function(features, cb) {
+    client.registerFeature('sasl', 100, function (features, cb) {
         const self = this;
         const mech = self.SASLFactory.create(features.sasl.mechanisms);
         if (!mech) {
@@ -5152,26 +5091,25 @@ function SASLPlugin(client, stanzas) {
             self.emit('auth:failed');
             return cb('disconnect', 'authentication failed');
         }
-        self.on('sasl:success', 'sasl', function() {
+        self.on('sasl:success', 'sasl', function () {
             self.features.negotiated.sasl = true;
             self.releaseGroup('sasl');
             self.emit('auth:success', self.config.credentials);
             cb('restart');
         });
-        self.on('sasl:challenge', 'sasl', function(challenge) {
+        self.on('sasl:challenge', 'sasl', function (challenge) {
             mech.challenge(Buffer.from(challenge.value, 'base64').toString());
-            return self.getCredentials(function(err, credentials) {
+            return self.getCredentials(function (err, credentials) {
                 if (err) {
                     return self.send(new Abort());
                 }
                 const resp = mech.response(credentials);
                 if (resp || resp === '') {
-                    self.send(
-                        new Response({
-                            value: Buffer.from(resp).toString('base64')
-                        })
-                    );
-                } else {
+                    self.send(new Response({
+                        value: Buffer.from(resp).toString('base64')
+                    }));
+                }
+                else {
                     self.send(new Response());
                 }
                 if (mech.cache) {
@@ -5185,12 +5123,12 @@ function SASLPlugin(client, stanzas) {
                 }
             });
         });
-        self.on('sasl:failure', 'sasl', function() {
+        self.on('sasl:failure', 'sasl', function () {
             self.releaseGroup('sasl');
             self.emit('auth:failed');
             cb('disconnect', 'authentication failed');
         });
-        self.on('sasl:abort', 'sasl', function() {
+        self.on('sasl:abort', 'sasl', function () {
             self.releaseGroup('sasl');
             self.emit('auth:failed');
             cb('disconnect', 'authentication failed');
@@ -5199,7 +5137,7 @@ function SASLPlugin(client, stanzas) {
             mechanism: mech.name
         };
         if (mech.clientFirst) {
-            return self.getCredentials(function(err, credentials) {
+            return self.getCredentials(function (err, credentials) {
                 if (err) {
                     return self.send(new Abort());
                 }
@@ -5209,25 +5147,25 @@ function SASLPlugin(client, stanzas) {
         }
         self.send(new Auth(auth));
     });
-    client.on('disconnected', function() {
+    client.on('disconnected', function () {
         client.features.negotiated.sasl = false;
         client.releaseGroup('sasl');
     });
 }
 
-function Smacks(client, stanzas, config) {
-    const smacks = function(features, cb) {
+function Smacks (client, stanzas, config) {
+    const smacks = function (features, cb) {
         const self = this;
         if (!config.useStreamManagement) {
             return cb();
         }
-        self.on('stream:management:enabled', 'sm', function(enabled) {
+        self.on('stream:management:enabled', 'sm', function (enabled) {
             self.sm.enabled(enabled);
             self.features.negotiated.streamManagement = true;
             self.releaseGroup('sm');
             cb();
         });
-        self.on('stream:management:resumed', 'sm', function(resumed) {
+        self.on('stream:management:resumed', 'sm', function (resumed) {
             self.sm.resumed(resumed);
             self.features.negotiated.streamManagement = true;
             self.features.negotiated.bind = true;
@@ -5235,7 +5173,7 @@ function Smacks(client, stanzas, config) {
             self.releaseGroup('sm');
             cb('break'); // Halt further processing of stream features
         });
-        self.on('stream:management:failed', 'sm', function() {
+        self.on('stream:management:failed', 'sm', function () {
             self.sm.failed();
             self.emit('session:end');
             self.releaseGroup('session');
@@ -5245,88 +5183,84 @@ function Smacks(client, stanzas, config) {
         if (!self.sm.id) {
             if (self.features.negotiated.bind) {
                 self.sm.enable();
-            } else {
+            }
+            else {
                 self.releaseGroup('sm');
                 cb();
             }
-        } else if (self.sm.id && self.sm.allowResume) {
+        }
+        else if (self.sm.id && self.sm.allowResume) {
             self.sm.resume();
-        } else {
+        }
+        else {
             self.releaseGroup('sm');
             cb();
         }
     };
-    client.on('disconnected', function() {
+    client.on('disconnected', function () {
         client.features.negotiated.streamManagement = false;
     });
     client.registerFeature('streamManagement', 200, smacks);
     client.registerFeature('streamManagement', 500, smacks);
 }
 
-function Bind$1(client, stanzas, config) {
-    client.registerFeature('bind', 300, function(features, cb) {
-        client.sendIq(
-            {
-                bind: {
-                    resource: config.resource
-                },
-                type: 'set'
+function Bind$1 (client, stanzas, config) {
+    client.registerFeature('bind', 300, function (features, cb) {
+        client.sendIq({
+            bind: {
+                resource: config.resource
             },
-            function(err, resp) {
-                if (err) {
-                    client.emit('session:error', err);
-                    return cb('disconnect', 'JID binding failed');
-                }
-                client.features.negotiated.bind = true;
-                client.emit('session:prebind', resp.bind.jid);
-                const canStartSession =
-                    !features.session || (features.session && features.session.optional);
-                if (!client.sessionStarted && canStartSession) {
-                    client.emit('session:started', client.jid);
-                }
-                return cb();
+            type: 'set'
+        }, function (err, resp) {
+            if (err) {
+                client.emit('session:error', err);
+                return cb('disconnect', 'JID binding failed');
             }
-        );
+            client.features.negotiated.bind = true;
+            client.emit('session:prebind', resp.bind.jid);
+            const canStartSession = !features.session || (features.session && features.session.optional);
+            if (!client.sessionStarted && canStartSession) {
+                client.emit('session:started', client.jid);
+            }
+            return cb();
+        });
     });
-    client.on('session:started', function() {
+    client.on('session:started', function () {
         client.sessionStarted = true;
     });
-    client.on('session:prebind', function(boundJID) {
+    client.on('session:prebind', function (boundJID) {
         client.jid = new JID(boundJID);
         client.emit('session:bound', client.jid);
     });
-    client.on('disconnected', function() {
+    client.on('disconnected', function () {
         client.sessionStarted = false;
         client.features.negotiated.bind = false;
     });
 }
 
-function Session$1(client) {
-    client.registerFeature('session', 1000, function(features, cb) {
+function Session$1 (client) {
+    client.registerFeature('session', 1000, function (features, cb) {
         const self = this;
         if (features.session.optional || self.sessionStarted) {
             self.features.negotiated.session = true;
             return cb();
         }
-        self.sendIq(
-            {
-                session: {},
-                type: 'set'
-            },
-            function(err) {
-                if (err) {
-                    return cb('disconnect', 'session request failed');
-                }
-                self.features.negotiated.session = true;
-                if (!self.sessionStarted) {
-                    self.sessionStarted = true;
-                    self.emit('session:started', self.jid);
-                }
-                cb();
+        self.sendIq({
+            session: {},
+            type: 'set'
+        }, function (err) {
+            if (err) {
+                return cb('disconnect', 'session request failed');
             }
-        );
+            self.features.negotiated.session = true;
+            if (!self.sessionStarted) {
+                self.sessionStarted = true;
+                self.emit('session:started', self.jid);
+            }
+            cb();
+        });
     });
-    client.on('disconnected', function() {
+    client.on('disconnected', function () {
         client.sessionStarted = false;
         client.features.negotiated.session = false;
     });
@@ -5348,7 +5282,7 @@ class WSConnection extends WildEmitter$2 {
             Open: stanzas.getDefinition('open', 'urn:ietf:params:xml:ns:xmpp-framing', true),
             StreamError: stanzas.getStreamError()
         };
-        self.sendQueue = queue(function(data, cb) {
+        self.sendQueue = queue(function (data, cb) {
             if (self.conn) {
                 if (typeof data !== 'string') {
                     data = data.toString();
@@ -5361,10 +5295,10 @@ class WSConnection extends WildEmitter$2 {
             }
             cb();
         }, 1);
-        self.on('connected', function() {
+        self.on('connected', function () {
             self.send(self.startHeader());
         });
-        self.on('raw:incoming', function(data) {
+        self.on('raw:incoming', function (data) {
             let stanzaObj;
             let err;
             data = data.trim();
@@ -5373,7 +5307,8 @@ class WSConnection extends WildEmitter$2 {
             }
             try {
                 stanzaObj = stanzas.parse(data);
-            } catch (e) {
+            }
+            catch (e) {
                 err = new self.stanzas.StreamError({
                     condition: 'invalid-xml'
                 });
@@ -5405,20 +5340,20 @@ class WSConnection extends WildEmitter$2 {
         self.hasStream = false;
         self.closing = false;
         self.conn = new WS(opts.wsURL, 'xmpp', opts.wsOptions);
-        self.conn.onerror = function(e) {
+        self.conn.onerror = function (e) {
             if (e.preventDefault) {
                 e.preventDefault();
             }
             self.emit('disconnected', self);
         };
-        self.conn.onclose = function() {
+        self.conn.onclose = function () {
             self.emit('disconnected', self);
         };
-        self.conn.onopen = function() {
+        self.conn.onopen = function () {
             self.sm.started = false;
             self.emit('connected', self);
         };
-        self.conn.onmessage = function(wsMsg) {
+        self.conn.onmessage = function (wsMsg) {
             self.emit('raw:incoming', Buffer.from(wsMsg.data, 'utf8').toString());
         };
     }
@@ -5436,7 +5371,8 @@ class WSConnection extends WildEmitter$2 {
         if (this.conn && !this.closing && this.hasStream) {
             this.closing = true;
             this.send(this.closeHeader());
-        } else {
+        }
+        else {
             this.hasStream = false;
             this.stream = undefined;
             if (this.conn && this.conn.readyState === WS_OPEN) {
@@ -5465,17 +5401,19 @@ function timeoutPromise(targetPromise, delay) {
     });
 }
 function retryRequest(url, opts, timeout, allowedRetries) {
-    return __awaiter(this, void 0, void 0, function*() {
+    return __awaiter(this, void 0, void 0, function* () {
         try {
             const resp = yield timeoutPromise(fetch(url, opts), timeout * 1000);
             if (!resp.ok) {
                 throw new Error('HTTP Status Error: ' + resp.status);
             }
             return resp.text();
-        } catch (err) {
+        }
+        catch (err) {
             if (allowedRetries > 0) {
                 return retryRequest(url, opts, timeout, allowedRetries - 1);
-            } else {
+            }
+            else {
                 throw err;
             }
         }
@@ -5495,7 +5433,7 @@ class BOSHConnection extends WildEmitter$2 {
         self.maxRequests = undefined;
         self.sid = '';
         self.authenticated = false;
-        self.on('raw:incoming', function(data) {
+        self.on('raw:incoming', function (data) {
             data = data.trim();
             if (data === '') {
                 return;
@@ -5504,7 +5442,8 @@ class BOSHConnection extends WildEmitter$2 {
             let err;
             try {
                 bosh = stanzas.parse(data, self.stanzas.BOSH);
-            } catch (e) {
+            }
+            catch (e) {
                 err = new self.stanzas.StreamError({
                     condition: 'invalid-xml'
                 });
@@ -5542,10 +5481,7 @@ class BOSHConnection extends WildEmitter$2 {
     }
     connect(opts) {
         const self = this;
-        self.config = Object.assign(
-            { maxRetries: 5, rid: Math.ceil(Math.random() * 9999999999), wait: 30 },
-            opts
-        );
+        self.config = Object.assign({ maxRetries: 5, rid: Math.ceil(Math.random() * 9999999999), wait: 30 }, opts);
         self.hasStream = false;
         self.sm.started = false;
         self.url = opts.boshURL;
@@ -5561,26 +5497,23 @@ class BOSHConnection extends WildEmitter$2 {
             return;
         }
         self.rid++;
-        self.request(
-            new self.stanzas.BOSH({
-                hold: 1,
-                lang: self.config.lang || 'en',
-                to: self.config.server,
-                ver: '1.6',
-                version: self.config.version || '1.0',
-                wait: self.config.wait
-            })
-        );
+        self.request(new self.stanzas.BOSH({
+            hold: 1,
+            lang: self.config.lang || 'en',
+            to: self.config.server,
+            ver: '1.6',
+            version: self.config.version || '1.0',
+            wait: self.config.wait
+        }));
     }
     disconnect() {
         if (this.hasStream) {
             this.rid++;
-            this.request(
-                new this.stanzas.BOSH({
-                    type: 'terminate'
-                })
-            );
-        } else {
+            this.request(new this.stanzas.BOSH({
+                type: 'terminate'
+            }));
+        }
+        else {
             this.stream = undefined;
             this.sid = undefined;
             this.rid = undefined;
@@ -5590,13 +5523,11 @@ class BOSHConnection extends WildEmitter$2 {
     restart() {
         const self = this;
         self.rid++;
-        self.request(
-            new self.stanzas.BOSH({
-                lang: self.config.lang || 'en',
-                restart: 'true',
-                to: self.config.server
-            })
-        );
+        self.request(new self.stanzas.BOSH({
+            lang: self.config.lang || 'en',
+            restart: 'true',
+            to: self.config.server
+        }));
     }
     send(data) {
         const self = this;
@@ -5607,8 +5538,7 @@ class BOSHConnection extends WildEmitter$2 {
     }
     longPoll() {
         const canReceive = !this.maxRequests || this.requests.length < this.maxRequests;
-        const canSend =
-            !this.maxRequests ||
+        const canSend = !this.maxRequests ||
             (this.sendQueue.length > 0 && this.requests.length < this.maxRequests);
         if (!this.sid || (!canReceive && !canSend)) {
             return;
@@ -5616,11 +5546,9 @@ class BOSHConnection extends WildEmitter$2 {
         const stanzas = this.sendQueue;
         this.sendQueue = [];
         this.rid++;
-        this.request(
-            new this.stanzas.BOSH({
-                payload: stanzas
-            })
-        );
+        this.request(new this.stanzas.BOSH({
+            payload: stanzas
+        }));
     }
     request(bosh) {
         const self = this;
@@ -5631,48 +5559,41 @@ class BOSHConnection extends WildEmitter$2 {
         self.emit('raw:outgoing', body);
         self.emit('raw:outgoing:' + ticket.id, body);
         self.requests.push(ticket);
-        const req = retryRequest(
-            self.url,
-            {
-                body: body,
-                headers: {
-                    'Content-Type': 'text/xml'
-                },
-                method: 'POST'
+        const req = retryRequest(self.url, {
+            body: body,
+            headers: {
+                'Content-Type': 'text/xml'
             },
-            self.config.wait * 1.5,
-            this.config.maxRetries
-        )
-            .catch(function(err) {
-                console.log(err);
-                self.hasStream = false;
-                const serr = new self.stanzas.StreamError({
-                    condition: 'connection-timeout'
-                });
-                self.emit('stream:error', serr, err);
-                self.disconnect();
-            })
-            .then(function(respBody) {
-                self.requests = self.requests.filter(item => {
-                    return item.id !== ticket.id;
-                });
-                if (respBody) {
-                    respBody = Buffer.from(respBody, 'utf8').toString();
-                    self.emit('raw:incoming', respBody);
-                    self.emit('raw:incoming:' + ticket.id, respBody);
-                }
-                // do not (re)start long polling if terminating, or request is pending, or before authentication
-                if (
-                    self.hasStream &&
-                    bosh.type !== 'terminate' &&
-                    !self.requests.length &&
-                    self.authenticated
-                ) {
-                    setTimeout(() => {
-                        self.longPoll();
-                    }, 30);
-                }
+            method: 'POST'
+        }, self.config.wait * 1.5, this.config.maxRetries)
+            .catch(function (err) {
+            console.log(err);
+            self.hasStream = false;
+            const serr = new self.stanzas.StreamError({
+                condition: 'connection-timeout'
             });
+            self.emit('stream:error', serr, err);
+            self.disconnect();
+        })
+            .then(function (respBody) {
+            self.requests = self.requests.filter(item => {
+                return item.id !== ticket.id;
+            });
+            if (respBody) {
+                respBody = Buffer.from(respBody, 'utf8').toString();
+                self.emit('raw:incoming', respBody);
+                self.emit('raw:incoming:' + ticket.id, respBody);
+            }
+            // do not (re)start long polling if terminating, or request is pending, or before authentication
+            if (self.hasStream &&
+                bosh.type !== 'terminate' &&
+                !self.requests.length &&
+                self.authenticated) {
+                setTimeout(() => {
+                    self.longPoll();
+                }, 30);
+            }
+        });
         ticket.request = req;
         return req;
     }
@@ -5690,8 +5611,8 @@ function timeoutRequest(targetPromise, id, delay) {
     let timeoutRef;
     return Promise.race([
         targetPromise,
-        new Promise(function(resolve, reject) {
-            timeoutRef = setTimeout(function() {
+        new Promise(function (resolve, reject) {
+            timeoutRef = setTimeout(function () {
                 reject({
                     error: {
                         condition: 'timeout'
@@ -5701,7 +5622,7 @@ function timeoutRequest(targetPromise, id, delay) {
                 });
             }, delay);
         })
-    ]).then(function(result) {
+    ]).then(function (result) {
         clearTimeout(timeoutRef);
         return result;
     });
@@ -5742,9 +5663,11 @@ class Client extends WildEmitter$2 {
             if (data._name === 'message' || data._name === 'presence' || data._name === 'iq') {
                 this.sm.handle(json);
                 this.emit('stanza', json);
-            } else if (data._name === 'smAck') {
+            }
+            else if (data._name === 'smAck') {
                 return this.sm.process(json);
-            } else if (data._name === 'smRequest') {
+            }
+            else if (data._name === 'smRequest') {
                 return this.sm.ack();
             }
             if (json.id) {
@@ -5768,55 +5691,48 @@ class Client extends WildEmitter$2 {
             const iqType = iq.type;
             const xmlChildCount = iq._xmlChildCount;
             delete iq._xmlChildCount;
-            const exts = Object.keys(iq).filter(function(ext) {
-                return (
-                    ext !== 'id' &&
+            const exts = Object.keys(iq).filter(function (ext) {
+                return (ext !== 'id' &&
                     ext !== 'to' &&
                     ext !== 'from' &&
                     ext !== 'lang' &&
                     ext !== 'type' &&
                     ext !== 'errorReply' &&
-                    ext !== 'resultReply'
-                );
+                    ext !== 'resultReply');
             });
             if (iq.type === 'get' || iq.type === 'set') {
                 // Invalid request
                 if (xmlChildCount !== 1) {
-                    return this.sendIq(
-                        iq.errorReply({
-                            error: {
-                                condition: 'bad-request',
-                                type: 'modify'
-                            }
-                        })
-                    );
+                    return this.sendIq(iq.errorReply({
+                        error: {
+                            condition: 'bad-request',
+                            type: 'modify'
+                        }
+                    }));
                 }
                 // Valid request, but we don't have support for the
                 // payload data.
                 if (!exts.length) {
-                    return this.sendIq(
-                        iq.errorReply({
-                            error: {
-                                condition: 'service-unavailable',
-                                type: 'cancel'
-                            }
-                        })
-                    );
+                    return this.sendIq(iq.errorReply({
+                        error: {
+                            condition: 'service-unavailable',
+                            type: 'cancel'
+                        }
+                    }));
                 }
                 const iqEvent = 'iq:' + iqType + ':' + exts[0];
                 if (this.callbacks[iqEvent]) {
                     this.emit(iqEvent, iq);
-                } else {
+                }
+                else {
                     // We support the payload data, but there's
                     // nothing registered to handle it.
-                    this.sendIq(
-                        iq.errorReply({
-                            error: {
-                                condition: 'service-unavailable',
-                                type: 'cancel'
-                            }
-                        })
-                    );
+                    this.sendIq(iq.errorReply({
+                        error: {
+                            condition: 'service-unavailable',
+                            type: 'cancel'
+                        }
+                    }));
                 }
             }
         });
@@ -5824,7 +5740,8 @@ class Client extends WildEmitter$2 {
             if (Object.keys(msg.$body || {}).length && !msg.received && !msg.displayed) {
                 if (msg.type === 'chat' || msg.type === 'normal') {
                     this.emit('chat', msg);
-                } else if (msg.type === 'groupchat') {
+                }
+                else if (msg.type === 'groupchat') {
                     this.emit('groupchat', msg);
                 }
             }
@@ -5845,15 +5762,7 @@ class Client extends WildEmitter$2 {
     }
     _initConfig(opts) {
         const currConfig = this.config || {};
-        this.config = Object.assign(
-            {
-                sasl: ['external', 'scram-sha-1', 'digest-md5', 'plain', 'anonymous'],
-                transports: ['websocket', 'bosh'],
-                useStreamManagement: true
-            },
-            currConfig,
-            opts
-        );
+        this.config = Object.assign({ sasl: ['external', 'scram-sha-1', 'digest-md5', 'plain', 'anonymous'], transports: ['websocket', 'bosh'], useStreamManagement: true }, currConfig, opts);
         // Enable SASL authentication mechanisms (and their preferred order)
         // based on user configuration.
         if (!Array.isArray(this.config.sasl)) {
@@ -5866,7 +5775,8 @@ class Client extends WildEmitter$2 {
                 if (existingMech && existingMech.prototype && existingMech.prototype.name) {
                     this.SASLFactory.use(existingMech);
                 }
-            } else {
+            }
+            else {
                 this.SASLFactory.use(mech);
             }
         }
@@ -5900,18 +5810,7 @@ class Client extends WildEmitter$2 {
         const requestedJID = new JID(this.config.jid);
         const username = creds.username || requestedJID.local;
         const server = creds.server || requestedJID.domain;
-        return Object.assign(
-            {
-                host: server,
-                password: this.config.password,
-                realm: server,
-                server: server,
-                serviceName: server,
-                serviceType: 'xmpp',
-                username: username
-            },
-            creds
-        );
+        return Object.assign({ host: server, password: this.config.password, realm: server, server: server, serviceName: server, serviceType: 'xmpp', username: username }, creds);
     }
     getCredentials(cb) {
         return cb(null, this._getConfiguredCredentials());
@@ -5923,10 +5822,7 @@ class Client extends WildEmitter$2 {
             transInfo.name = this.config.transports[0];
         }
         if (transInfo && transInfo.name) {
-            const trans = (this.transport = new this.transports[transInfo.name](
-                this.sm,
-                this.stanzas
-            ));
+            const trans = (this.transport = new this.transports[transInfo.name](this.sm, this.stanzas));
             trans.on('*', (event, data) => {
                 this.emit(event, data);
             });
@@ -5934,11 +5830,9 @@ class Client extends WildEmitter$2 {
         }
         return this.discoverBindings(this.config.server, (err, endpoints) => {
             if (err) {
-                console.error(
-                    'Could not find https://' +
-                        this.config.server +
-                        '/.well-known/host-meta file to discover connection endpoints for the requested transports.'
-                );
+                console.error('Could not find https://' +
+                    this.config.server +
+                    '/.well-known/host-meta file to discover connection endpoints for the requested transports.');
                 return this.disconnect();
             }
             for (let t = 0, tlen = this.config.transports.length; t < tlen; t++) {
@@ -5949,7 +5843,8 @@ class Client extends WildEmitter$2 {
                     if (uri.indexOf('wss://') === 0 || uri.indexOf('https://') === 0) {
                         if (transport === 'websocket') {
                             this.config.wsURL = uri;
-                        } else {
+                        }
+                        else {
                             this.config.boshURL = uri;
                         }
                         console.log('Using %s endpoint: %s', transport, uri);
@@ -5957,12 +5852,9 @@ class Client extends WildEmitter$2 {
                             name: transport,
                             url: uri
                         });
-                    } else {
-                        console.warn(
-                            'Discovered unencrypted %s endpoint (%s). Ignoring',
-                            transport,
-                            uri
-                        );
+                    }
+                    else {
+                        console.warn('Discovered unencrypted %s endpoint (%s). Ignoring', transport, uri);
                     }
                 }
             }
@@ -5983,7 +5875,8 @@ class Client extends WildEmitter$2 {
         this.releaseGroup('connection');
         if (this.transport) {
             this.transport.disconnect();
-        } else {
+        }
+        else {
             this.emit('disconnected');
         }
     }
@@ -6048,27 +5941,25 @@ class Client extends WildEmitter$2 {
                 this.off(respEvent, handler);
                 if (!res.error) {
                     resolve(res);
-                } else {
+                }
+                else {
                     reject(res);
                 }
             };
             this.on(respEvent, 'session', handler);
         });
         this.send(iq);
-        return timeoutRequest(request, data.id, (this.config.timeout || 15) * 1000).then(
-            function(result) {
-                if (cb) {
-                    cb(null, result);
-                }
-                return result;
-            },
-            function(err) {
-                if (cb) {
-                    return cb(err);
-                }
-                throw err;
+        return timeoutRequest(request, data.id, (this.config.timeout || 15) * 1000).then(function (result) {
+            if (cb) {
+                cb(null, result);
             }
-        );
+            return result;
+        }, function (err) {
+            if (cb) {
+                return cb(err);
+            }
+            throw err;
+        });
     }
     sendStreamError(data) {
         data = data || {};
@@ -6088,14 +5979,12 @@ function generateVerString(info, hash) {
     const formTypes = {};
     const formOrder = [];
     for (const identity of info.identities || []) {
-        identities.push(
-            [
-                identity.category || '',
-                identity.type || '',
-                identity.lang || '',
-                identity.name || ''
-            ].join('/')
-        );
+        identities.push([
+            identity.category || '',
+            identity.type || '',
+            identity.lang || '',
+            identity.name || ''
+        ].join('/'));
     }
     const idLen = identities.length;
     const featureLen = features.length;
@@ -6203,7 +6092,7 @@ class Disco$1 {
         this.extensions[node].push(form);
     }
 }
-function Disco$2(client) {
+function Disco$2 (client) {
     client.disco = new Disco$1(client);
     client.disco.addFeature(DISCO_INFO);
     client.disco.addFeature(DISCO_ITEMS);
@@ -6211,7 +6100,7 @@ function Disco$2(client) {
         category: 'client',
         type: 'web'
     });
-    client.registerFeature('caps', 100, function(features, cb) {
+    client.registerFeature('caps', 100, function (features, cb) {
         this.emit('disco:caps', {
             caps: features.caps,
             from: new JID(client.jid.domain || client.config.server)
@@ -6219,39 +6108,31 @@ function Disco$2(client) {
         this.features.negotiated.caps = true;
         cb();
     });
-    client.getDiscoInfo = function(jid, node, cb) {
-        return this.sendIq(
-            {
-                discoInfo: {
-                    node: node
-                },
-                to: jid,
-                type: 'get'
+    client.getDiscoInfo = function (jid, node, cb) {
+        return this.sendIq({
+            discoInfo: {
+                node: node
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.getDiscoItems = function(jid, node, cb) {
-        return this.sendIq(
-            {
-                discoItems: {
-                    node: node
-                },
-                to: jid,
-                type: 'get'
+    client.getDiscoItems = function (jid, node, cb) {
+        return this.sendIq({
+            discoItems: {
+                node: node
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.updateCaps = function() {
+    client.updateCaps = function () {
         let node = this.config.capsNode || 'https://stanza.io';
-        const data = JSON.parse(
-            JSON.stringify({
-                extensions: this.disco.extensions[''],
-                features: this.disco.features[''],
-                identities: this.disco.identities['']
-            })
-        );
+        const data = JSON.parse(JSON.stringify({
+            extensions: this.disco.extensions[''],
+            features: this.disco.features[''],
+            identities: this.disco.identities['']
+        }));
         const ver = generateVerString(data, 'sha-1');
         this.disco.caps = {
             hash: 'sha-1',
@@ -6264,7 +6145,7 @@ function Disco$2(client) {
         this.disco.extensions[node] = data.extensions;
         return client.getCurrentCaps();
     };
-    client.getCurrentCaps = function() {
+    client.getCurrentCaps = function () {
         const caps = client.disco.caps;
         if (!caps.ver) {
             return { ver: null, discoInfo: null };
@@ -6279,39 +6160,35 @@ function Disco$2(client) {
             ver: caps.ver
         };
     };
-    client.on('presence', function(pres) {
+    client.on('presence', function (pres) {
         if (pres.caps) {
             client.emit('disco:caps', pres);
         }
     });
-    client.on('iq:get:discoInfo', function(iq) {
+    client.on('iq:get:discoInfo', function (iq) {
         let node = iq.discoInfo.node || '';
         let reportedNode = iq.discoInfo.node || '';
         if (node === client.disco.caps.node + '#' + client.disco.caps.ver) {
             reportedNode = node;
             node = '';
         }
-        client.sendIq(
-            iq.resultReply({
-                discoInfo: {
-                    extensions: client.disco.extensions[node] || [],
-                    features: client.disco.features[node] || [],
-                    identities: client.disco.identities[node] || [],
-                    node: reportedNode
-                }
-            })
-        );
+        client.sendIq(iq.resultReply({
+            discoInfo: {
+                extensions: client.disco.extensions[node] || [],
+                features: client.disco.features[node] || [],
+                identities: client.disco.identities[node] || [],
+                node: reportedNode
+            }
+        }));
     });
-    client.on('iq:get:discoItems', function(iq) {
+    client.on('iq:get:discoItems', function (iq) {
         const node = iq.discoItems.node;
-        client.sendIq(
-            iq.resultReply({
-                discoItems: {
-                    items: client.disco.items[node] || [],
-                    node: node
-                }
-            })
-        );
+        client.sendIq(iq.resultReply({
+            discoItems: {
+                items: client.disco.items[node] || [],
+                node: node
+            }
+        }));
     });
     client.verifyVerString = verifyVerString;
     client.generateVerString = generateVerString;
@@ -6319,7 +6196,7 @@ function Disco$2(client) {
     client.updateCaps();
 }
 
-function DiscoOnly(client) {
+function DiscoOnly (client) {
     client.disco.addFeature('jid\\20escaping');
     client.disco.addFeature(DELAY);
     client.disco.addFeature(EME_0);
@@ -6338,25 +6215,25 @@ function DiscoOnly(client) {
     }
 }
 
-function Attention(client) {
+function Attention (client) {
     client.disco.addFeature(ATTENTION_0);
-    client.getAttention = function(jid, opts) {
+    client.getAttention = function (jid, opts) {
         opts = opts || {};
         opts.to = jid;
         opts.type = 'headline';
         opts.attention = true;
         client.sendMessage(opts);
     };
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (msg.attention) {
             client.emit('attention', msg);
         }
     });
 }
 
-function Avatar$1(client) {
+function Avatar$1 (client) {
     client.disco.addFeature(PEP_NOTIFY(AVATAR_METADATA));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -6369,7 +6246,7 @@ function Avatar$1(client) {
             source: 'pubsub'
         });
     });
-    client.on('presence', function(pres) {
+    client.on('presence', function (pres) {
         if (pres.avatarId) {
             client.emit('avatar', {
                 avatars: [
@@ -6382,73 +6259,54 @@ function Avatar$1(client) {
             });
         }
     });
-    client.publishAvatar = function(id, data, cb) {
-        return this.publish(
-            '',
-            AVATAR_DATA,
-            {
-                avatarData: data,
-                id: id
-            },
-            cb
-        );
+    client.publishAvatar = function (id, data, cb) {
+        return this.publish('', AVATAR_DATA, {
+            avatarData: data,
+            id: id
+        }, cb);
     };
-    client.useAvatars = function(info, cb) {
-        return this.publish(
-            '',
-            AVATAR_METADATA,
-            {
-                avatars: info,
-                id: 'current'
-            },
-            cb
-        );
+    client.useAvatars = function (info, cb) {
+        return this.publish('', AVATAR_METADATA, {
+            avatars: info,
+            id: 'current'
+        }, cb);
     };
-    client.getAvatar = function(jid, id, cb) {
+    client.getAvatar = function (jid, id, cb) {
         return this.getItem(jid, AVATAR_DATA, id, cb);
     };
 }
 
-function Blocking$1(client) {
+function Blocking$1 (client) {
     client.disco.addFeature(BLOCKING);
-    client.block = function(jid, cb) {
-        return client.sendIq(
-            {
-                block: {
-                    jids: [jid]
-                },
-                type: 'set'
+    client.block = function (jid, cb) {
+        return client.sendIq({
+            block: {
+                jids: [jid]
             },
-            cb
-        );
+            type: 'set'
+        }, cb);
     };
-    client.unblock = function(jid, cb) {
-        return client.sendIq(
-            {
-                type: 'set',
-                unblock: {
-                    jids: [jid]
-                }
-            },
-            cb
-        );
+    client.unblock = function (jid, cb) {
+        return client.sendIq({
+            type: 'set',
+            unblock: {
+                jids: [jid]
+            }
+        }, cb);
     };
-    client.getBlocked = function(cb) {
-        return client.sendIq(
-            {
-                blockList: true,
-                type: 'get'
-            },
-            cb
-        );
+    client.getBlocked = function (cb) {
+        return client.sendIq({
+            blockList: true,
+            type: 'get'
+        }, cb);
     };
-    client.on('iq:set:block', function(iq) {
+    client.on('iq:set:block', function (iq) {
         client.emit('block', {
             jids: iq.block.jids || []
         });
         client.sendIq(iq.resultReply());
     });
-    client.on('iq:set:unblock', function(iq) {
+    client.on('iq:set:unblock', function (iq) {
         client.emit('unblock', {
             jids: iq.unblock.jids || []
         });
@@ -6456,112 +6314,99 @@ function Blocking$1(client) {
     });
 }
 
-function Bob(client) {
+function Bob (client) {
     client.disco.addFeature(BOB);
-    client.getBits = function(jid, cid, cb) {
-        return client.sendIq(
-            {
-                bob: {
-                    cid: cid
-                },
-                to: jid,
-                type: 'get'
+    client.getBits = function (jid, cid, cb) {
+        return client.sendIq({
+            bob: {
+                cid: cid
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
 }
 
-function Bookmarks$1(client) {
-    client.getBookmarks = function(cb) {
+function Bookmarks$1 (client) {
+    client.getBookmarks = function (cb) {
         return this.getPrivateData({ bookmarks: true }, cb);
     };
-    client.setBookmarks = function(opts, cb) {
+    client.setBookmarks = function (opts, cb) {
         return this.setPrivateData({ bookmarks: opts }, cb);
     };
-    client.addBookmark = function(bookmark, cb) {
+    client.addBookmark = function (bookmark, cb) {
         bookmark.jid = new JID(bookmark.jid);
         return this.getBookmarks()
-            .then(function(res) {
-                const bookmarks = res.privateStorage.bookmarks.conferences || [];
-                let existing = false;
-                for (let i = 0; i < bookmarks.length; i++) {
-                    const bm = bookmarks[i];
-                    if (bm.jid.bare === bookmark.jid.bare) {
-                        bookmarks[i] = Object.assign({}, bm, bookmark);
-                        existing = true;
-                        break;
-                    }
+            .then(function (res) {
+            const bookmarks = res.privateStorage.bookmarks.conferences || [];
+            let existing = false;
+            for (let i = 0; i < bookmarks.length; i++) {
+                const bm = bookmarks[i];
+                if (bm.jid.bare === bookmark.jid.bare) {
+                    bookmarks[i] = Object.assign({}, bm, bookmark);
+                    existing = true;
+                    break;
                 }
-                if (!existing) {
-                    bookmarks.push(bookmark);
-                }
-                return client.setBookmarks({ conferences: bookmarks });
-            })
-            .then(
-                function(result) {
-                    if (cb) {
-                        cb(null, result);
-                    }
-                    return result;
-                },
-                function(err) {
-                    if (cb) {
-                        cb(err);
-                    } else {
-                        throw err;
-                    }
-                }
-            );
+            }
+            if (!existing) {
+                bookmarks.push(bookmark);
+            }
+            return client.setBookmarks({ conferences: bookmarks });
+        })
+            .then(function (result) {
+            if (cb) {
+                cb(null, result);
+            }
+            return result;
+        }, function (err) {
+            if (cb) {
+                cb(err);
+            }
+            else {
+                throw err;
+            }
+        });
     };
-    client.removeBookmark = function(jid, cb) {
+    client.removeBookmark = function (jid, cb) {
         jid = new JID(jid);
         return this.getBookmarks()
-            .then(function(res) {
-                let bookmarks = res.privateStorage.bookmarks.conferences || [];
-                bookmarks = bookmarks.filter(bm => {
-                    return jid.bare !== bm.jid.bare;
-                });
-                return client.setBookmarks({ conferences: bookmarks });
-            })
-            .then(
-                function(result) {
-                    if (cb) {
-                        cb(null, result);
-                    }
-                },
-                function(err) {
-                    if (cb) {
-                        cb(err);
-                    } else {
-                        throw err;
-                    }
-                }
-            );
+            .then(function (res) {
+            let bookmarks = res.privateStorage.bookmarks.conferences || [];
+            bookmarks = bookmarks.filter(bm => {
+                return jid.bare !== bm.jid.bare;
+            });
+            return client.setBookmarks({ conferences: bookmarks });
+        })
+            .then(function (result) {
+            if (cb) {
+                cb(null, result);
+            }
+        }, function (err) {
+            if (cb) {
+                cb(err);
+            }
+            else {
+                throw err;
+            }
+        });
     };
 }
 
-function Carbons$1(client) {
+function Carbons$1 (client) {
     client.disco.addFeature(CARBONS_2);
-    client.enableCarbons = function(cb) {
-        return this.sendIq(
-            {
-                enableCarbons: true,
-                type: 'set'
-            },
-            cb
-        );
+    client.enableCarbons = function (cb) {
+        return this.sendIq({
+            enableCarbons: true,
+            type: 'set'
+        }, cb);
     };
-    client.disableCarbons = function(cb) {
-        return this.sendIq(
-            {
-                disableCarbons: true,
-                type: 'set'
-            },
-            cb
-        );
+    client.disableCarbons = function (cb) {
+        return this.sendIq({
+            disableCarbons: true,
+            type: 'set'
+        }, cb);
     };
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (msg.carbonSent) {
             return client.emit('carbon:sent', msg);
         }
@@ -6569,7 +6414,7 @@ function Carbons$1(client) {
             return client.emit('carbon:received', msg);
         }
     });
-    client.on('carbon:*', function(name, carbon) {
+    client.on('carbon:*', function (name, carbon) {
         const dir = name.split(':')[1];
         if (carbon.from.bare !== client.jid.bare) {
             return;
@@ -6579,7 +6424,8 @@ function Carbons$1(client) {
         if (dir === 'received') {
             msg = carbon.carbonReceived.forwarded.message;
             delay = carbon.carbonReceived.forwarded.delay;
-        } else {
+        }
+        else {
             msg = carbon.carbonSent.forwarded.message;
             delay = carbon.carbonSent.forwarded.delay;
         }
@@ -6593,16 +6439,17 @@ function Carbons$1(client) {
         // have originally treated it ourself.
         if (msg.from.bare === client.jid.bare) {
             client.emit('message:sent', msg);
-        } else {
+        }
+        else {
             client.emit('message', msg);
         }
     });
 }
 
-function ChatStates(client) {
+function ChatStates (client) {
     client.disco.addFeature(CHAT_STATES);
     const allowedTypes = ['chat', 'groupchat', 'normal'];
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (allowedTypes.indexOf(msg.type || 'normal') < 0) {
             return;
         }
@@ -6621,20 +6468,20 @@ function ChatStates(client) {
     });
 }
 
-function Command$1(client) {
+function Command$1 (client) {
     client.disco.addFeature(ADHOC_COMMANDS);
     client.disco.addItem({
         name: 'Ad-Hoc Commands',
         node: ADHOC_COMMANDS
     });
-    client.getCommands = function(jid, cb) {
+    client.getCommands = function (jid, cb) {
         return client.getDiscoItems(jid, ADHOC_COMMANDS, cb);
     };
 }
 
-function Correction(client) {
+function Correction (client) {
     client.disco.addFeature(CORRECTION_0);
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (msg.replace) {
             client.emit('replace', msg);
             client.emit('replace:' + msg.id, msg);
@@ -6642,71 +6489,65 @@ function Correction(client) {
     });
 }
 
-function CSI$2(client, stanzas) {
+function CSI$2 (client, stanzas) {
     const Active = stanzas.getDefinition('active', CSI);
     const Inactive = stanzas.getDefinition('inactive', CSI);
-    client.registerFeature('clientStateIndication', 400, function(features, cb) {
+    client.registerFeature('clientStateIndication', 400, function (features, cb) {
         this.features.negotiated.clientStateIndication = true;
         cb();
     });
-    client.markActive = function() {
+    client.markActive = function () {
         if (this.features.negotiated.clientStateIndication) {
             this.send(new Active());
         }
     };
-    client.markInactive = function() {
+    client.markInactive = function () {
         if (this.features.negotiated.clientStateIndication) {
             this.send(new Inactive());
         }
     };
 }
 
-function DataForms(client) {
+function DataForms (client) {
     client.disco.addFeature(DATAFORM);
     client.disco.addFeature(DATAFORM_MEDIA);
     client.disco.addFeature(DATAFORM_VALIDATION);
     client.disco.addFeature(DATAFORM_LAYOUT);
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (msg.form) {
             client.emit('dataform', msg);
         }
     });
 }
 
-function ExtDisco$1(client) {
+function ExtDisco$1 (client) {
     client.disco.addFeature(DISCO_EXTERNAL_1);
-    client.getServices = function(jid, type, cb) {
-        return this.sendIq(
-            {
-                services: {
-                    type: type
-                },
-                to: jid,
-                type: 'get'
+    client.getServices = function (jid, type, cb) {
+        return this.sendIq({
+            services: {
+                type: type
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.getServiceCredentials = function(jid, host, cb) {
-        return this.sendIq(
-            {
-                credentials: {
-                    service: {
-                        host: host
-                    }
-                },
-                to: jid,
-                type: 'get'
+    client.getServiceCredentials = function (jid, host, cb) {
+        return this.sendIq({
+            credentials: {
+                service: {
+                    host: host
+                }
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
 }
 
-function Geoloc(client) {
+function Geoloc (client) {
     client.disco.addFeature(GEOLOC);
     client.disco.addFeature(PEP_NOTIFY(GEOLOC));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -6718,49 +6559,35 @@ function Geoloc(client) {
             jid: msg.from
         });
     });
-    client.publishGeoLoc = function(data, cb) {
-        return this.publish(
-            '',
-            GEOLOC,
-            {
-                geoloc: data
-            },
-            cb
-        );
+    client.publishGeoLoc = function (data, cb) {
+        return this.publish('', GEOLOC, {
+            geoloc: data
+        }, cb);
     };
 }
 
-function Invisible(client) {
-    client.goInvisible = function(cb) {
-        return this.sendIq(
-            {
-                invisible: true,
-                type: 'set'
-            },
-            cb
-        );
+function Invisible (client) {
+    client.goInvisible = function (cb) {
+        return this.sendIq({
+            invisible: true,
+            type: 'set'
+        }, cb);
     };
-    client.goVisible = function(cb) {
-        return this.sendIq(
-            {
-                type: 'set',
-                visible: true
-            },
-            cb
-        );
+    client.goVisible = function (cb) {
+        return this.sendIq({
+            type: 'set',
+            visible: true
+        }, cb);
     };
 }
 
-function JIDPrep$1(client) {
-    client.prepJID = function(jid, cb) {
-        return client.sendIq(
-            {
-                jidPrep: jid,
-                to: client.jid.domain,
-                type: 'get'
-            },
-            cb
-        );
+function JIDPrep$1 (client) {
+    client.prepJID = function (jid, cb) {
+        return client.sendIq({
+            jidPrep: jid,
+            to: client.jid.domain,
+            type: 'get'
+        }, cb);
     };
 }
 
@@ -6828,10 +6655,9 @@ function convertIntermediateToApplication(media, role) {
     for (const ext of rtp.headerExtensions || []) {
         application.headerExtensions.push({
             id: ext.id,
-            senders:
-                ext.direction && ext.direction !== 'sendrecv'
-                    ? directionToSenders(role, ext.direction)
-                    : undefined,
+            senders: ext.direction && ext.direction !== 'sendrecv'
+                ? directionToSenders(role, ext.direction)
+                : undefined,
             uri: ext.uri
         });
     }
@@ -6946,9 +6772,9 @@ function convertIntermediateToRequest(session, role) {
                 application: isRTP
                     ? convertIntermediateToApplication(media, role)
                     : {
-                          applicationType: 'datachannel',
-                          protocol: media.protocol
-                      },
+                        applicationType: 'datachannel',
+                        protocol: media.protocol
+                    },
                 creator: SessionRole.Initiator,
                 name: media.mid,
                 senders: directionToSenders(role, media.direction),
@@ -6957,9 +6783,9 @@ function convertIntermediateToRequest(session, role) {
         }),
         groups: session.groups
             ? session.groups.map(group => ({
-                  contents: group.mids,
-                  semantics: group.semantics
-              }))
+                contents: group.mids,
+                semantics: group.semantics
+            }))
             : undefined
     };
 }
@@ -7037,10 +6863,9 @@ function convertContentToIntermediate(content, role) {
             });
             for (const ext of application.headerExtensions || []) {
                 media.rtpParameters.headerExtensions.push({
-                    direction:
-                        ext.senders && ext.senders !== 'both'
-                            ? sendersToDirection(role, ext.senders)
-                            : undefined,
+                    direction: ext.senders && ext.senders !== 'both'
+                        ? sendersToDirection(role, ext.senders)
+                        : undefined,
                     id: ext.id,
                     uri: ext.uri
                 });
@@ -7116,7 +6941,8 @@ function parseSctpMap(mediaSection) {
             protocol: parts[1],
             streams: parts[2]
         };
-    } else {
+    }
+    else {
         const sctpPort = matchPrefix(mediaSection, 'a=sctp-port:');
         return {
             number: sctpPort[0].substr(12),
@@ -7174,10 +7000,12 @@ function importFromSDP(sdp) {
             const msid = parseMsid(mediaSection);
             if (msid) {
                 media.streams = [msid];
-            } else {
+            }
+            else {
                 media.streams = [];
             }
-        } else if (kind === 'application') {
+        }
+        else if (kind === 'application') {
             media.sctp = parseSctpMap(mediaSection);
         }
         media.candidates = matchPrefix(mediaSection, 'a=candidate:').map(parseCandidate);
@@ -7190,10 +7018,7 @@ function importFromSDP(sdp) {
 // ====================================================================
 function exportToSDP(session) {
     const output = [];
-    output.push(
-        writeSessionBoilerplate(session.sessionId, session.sessionVersion),
-        'a=msid-semantic:WMS *\r\n'
-    );
+    output.push(writeSessionBoilerplate(session.sessionId, session.sessionVersion), 'a=msid-semantic:WMS *\r\n');
     if (session.iceLite) {
         output.push('a=ice-lite\r\n');
     }
@@ -7204,7 +7029,8 @@ function exportToSDP(session) {
         const isRejected = !(media.iceParameters && media.dtlsParameters);
         if (media.kind === 'application' && media.sctp) {
             output.push(writeSctpDescription(media, media.sctp));
-        } else if (media.rtpParameters) {
+        }
+        else if (media.rtpParameters) {
             let mline = writeRtpDescription(media.kind, media.rtpParameters);
             if (isRejected) {
                 mline = mline.replace(`m=${media.kind} 9 `, `m=${media.kind} 0 `);
@@ -7215,15 +7041,11 @@ function exportToSDP(session) {
                 output.push(`a=msid:${stream.stream} ${stream.track}\r\n`);
             }
             if (media.rtcpParameters && media.rtcpParameters.cname) {
-                output.push(
-                    `a=ssrc:${media.rtcpParameters.ssrc} cname:${media.rtcpParameters.cname}\r\n`
-                );
+                output.push(`a=ssrc:${media.rtcpParameters.ssrc} cname:${media.rtcpParameters.cname}\r\n`);
                 if (media.rtpEncodingParameters && media.rtpEncodingParameters[0].rtx) {
                     const params = media.rtpEncodingParameters[0];
                     output.push(`a=ssrc-group:FID ${params.ssrc} ${params.rtx.ssrc}\r\n`);
-                    output.push(
-                        `a=ssrc:${params.rtx.ssrc} cname:${media.rtcpParameters.cname}\r\n`
-                    );
+                    output.push(`a=ssrc:${params.rtx.ssrc} cname:${media.rtcpParameters.cname}\r\n`);
                 }
             }
         }
@@ -7292,7 +7114,7 @@ class JingleSession extends WildEmitter {
                 cb({ condition: 'bad-request' });
                 return next();
             }
-            this[ACTIONS$1[action]](changes, function(err, result) {
+            this[ACTIONS$1[action]](changes, function (err, result) {
                 cb(err, result);
                 return next();
             });
@@ -7348,7 +7170,8 @@ class JingleSession extends WildEmitter {
         };
         if (requirePending[action]) {
             this.pendingAction = action;
-        } else {
+        }
+        else {
             this.pendingAction = false;
         }
         this.emit('send', {
@@ -7417,7 +7240,7 @@ class JingleSession extends WildEmitter {
             sid: true
         };
         let unknownPayload = false;
-        Object.keys(changes).forEach(function(key) {
+        Object.keys(changes).forEach(function (key) {
             if (!okKeys[key]) {
                 unknownPayload = true;
             }
@@ -7428,7 +7251,8 @@ class JingleSession extends WildEmitter {
                 jingleCondition: 'unsupported-info',
                 type: 'modify'
             });
-        } else {
+        }
+        else {
             cb();
         }
     }
@@ -7488,7 +7312,8 @@ class ICESession extends JingleSession {
         this.pc.addEventListener('icecandidate', e => {
             if (e.candidate) {
                 this.onIceCandidate(e);
-            } else {
+            }
+            else {
                 this.onIceEndOfCandidates();
             }
         });
@@ -7508,9 +7333,9 @@ class ICESession extends JingleSession {
                 .addIceCandidate(null)
                 .then(() => cb())
                 .catch(e => {
-                    this._log('error', 'Could not add null ICE candidate', e.name);
-                    cb();
-                });
+                this._log('error', 'Could not add null ICE candidate', e.name);
+                cb();
+            });
         }
         // detect an ice restart.
         if (this.pc.remoteDescription) {
@@ -7532,36 +7357,36 @@ class ICESession extends JingleSession {
                         .setRemoteDescription(remoteDescription)
                         .then(() => this.pc.createAnswer())
                         .then(answer => {
-                            const json = importFromSDP(answer.sdp);
-                            const jingle = {
-                                action: 'transport-info',
-                                contents: json.media.map(media => {
-                                    return {
-                                        creator: 'initiator',
-                                        name: media.mid,
-                                        transport: convertIntermediateToTransport(media)
-                                    };
-                                }),
-                                sessionId: this.sid
-                            };
-                            this.send('transport-info', jingle);
-                            return this.pc.setLocalDescription(answer);
-                        })
+                        const json = importFromSDP(answer.sdp);
+                        const jingle = {
+                            action: 'transport-info',
+                            contents: json.media.map(media => {
+                                return {
+                                    creator: 'initiator',
+                                    name: media.mid,
+                                    transport: convertIntermediateToTransport(media)
+                                };
+                            }),
+                            sessionId: this.sid
+                        };
+                        this.send('transport-info', jingle);
+                        return this.pc.setLocalDescription(answer);
+                    })
                         .then(() => cb())
                         .catch(err => {
-                            this._log('error', 'Could not do remote ICE restart', err);
-                            this.end('failed-application', true);
-                            cb(err);
-                        });
+                        this._log('error', 'Could not do remote ICE restart', err);
+                        this.end('failed-application', true);
+                        cb(err);
+                    });
                 }
                 return this.pc
                     .setRemoteDescription(remoteDescription)
                     .then(() => cb())
                     .catch(err => {
-                        this._log('error', 'Could not do local ICE restart', err);
-                        this.end('failed-application', true);
-                        cb(err);
-                    });
+                    this._log('error', 'Could not do local ICE restart', err);
+                    this.end('failed-application', true);
+                    cb(err);
+                });
             }
         }
         const all = changes.contents.map(content => {
@@ -7592,16 +7417,13 @@ class ICESession extends JingleSession {
         this.state = 'active';
         const json = convertRequestToIntermediate(changes, this.peerRole);
         const sdp = exportToSDP(json);
-        this.pc.setRemoteDescription({ type: 'answer', sdp }).then(
-            () => {
-                this.emit('accepted', this, undefined);
-                cb();
-            },
-            err => {
-                this._log('error', `Could not process WebRTC answer: ${err}`);
-                cb({ condition: 'general-error' });
-            }
-        );
+        this.pc.setRemoteDescription({ type: 'answer', sdp }).then(() => {
+            this.emit('accepted', this, undefined);
+            cb();
+        }, err => {
+            this._log('error', `Could not process WebRTC answer: ${err}`);
+            cb({ condition: 'general-error' });
+        });
     }
     onSessionTerminate(changes, cb) {
         this._log('info', 'Terminating session');
@@ -7656,7 +7478,8 @@ class ICESession extends JingleSession {
             case 'disconnected':
                 if (this.pc.signalingState === 'stable') {
                     this.connectionState = 'interrupted';
-                } else {
+                }
+                else {
                     this.connectionState = 'disconnected';
                 }
                 this.maybeRestartIce();
@@ -7665,7 +7488,8 @@ class ICESession extends JingleSession {
                 if (this.connectionState === 'failed') {
                     this.connectionState = 'failed';
                     this.end('failed-transport');
-                } else {
+                }
+                else {
                     this.restartIce();
                 }
                 break;
@@ -7707,33 +7531,23 @@ class ICESession extends JingleSession {
                             if (activeCandidatePair) {
                                 let isRelay = false;
                                 if (activeCandidatePair.remoteCandidateId) {
-                                    const remoteCandidate = stats.get(
-                                        activeCandidatePair.remoteCandidateId
-                                    );
-                                    if (
-                                        remoteCandidate &&
-                                        remoteCandidate.candidateType === 'relay'
-                                    ) {
+                                    const remoteCandidate = stats.get(activeCandidatePair.remoteCandidateId);
+                                    if (remoteCandidate &&
+                                        remoteCandidate.candidateType === 'relay') {
                                         isRelay = true;
                                     }
                                 }
                                 if (activeCandidatePair.localCandidateId) {
-                                    const localCandidate = stats.get(
-                                        activeCandidatePair.localCandidateId
-                                    );
-                                    if (
-                                        localCandidate &&
-                                        localCandidate.candidateType === 'relay'
-                                    ) {
+                                    const localCandidate = stats.get(activeCandidatePair.localCandidateId);
+                                    if (localCandidate &&
+                                        localCandidate.candidateType === 'relay') {
                                         isRelay = true;
                                     }
                                 }
                                 if (isRelay) {
                                     this.maximumBitrate = this.maxRelayBandwidth;
                                     if (this.currentBitrate) {
-                                        this.setMaximumBitrate(
-                                            Math.min(this.currentBitrate, this.maximumBitrate)
-                                        );
+                                        this.setMaximumBitrate(Math.min(this.currentBitrate, this.maximumBitrate));
                                     }
                                 }
                             }
@@ -7773,29 +7587,26 @@ class ICESession extends JingleSession {
         if (this._maybeRestartingIce !== undefined) {
             clearTimeout(this._maybeRestartingIce);
         }
-        this.pc.createOffer({ iceRestart: true }).then(
-            offer => {
-                // extract new ufrag / pwd, send transport-info with just that.
-                const json = importFromSDP(offer.sdp);
-                const jingle = {
-                    action: 'transport-info',
-                    contents: json.media.map(media => {
-                        return {
-                            creator: 'initiator',
-                            name: media.mid,
-                            transport: convertIntermediateToTransport(media)
-                        };
-                    }),
-                    sessionId: this.sid
-                };
-                this.send('transport-info', jingle);
-                return this.pc.setLocalDescription(offer);
-            },
-            err => {
-                this._log('error', 'Could not create WebRTC offer', err);
-                this.end('failed-application', true);
-            }
-        );
+        this.pc.createOffer({ iceRestart: true }).then(offer => {
+            // extract new ufrag / pwd, send transport-info with just that.
+            const json = importFromSDP(offer.sdp);
+            const jingle = {
+                action: 'transport-info',
+                contents: json.media.map(media => {
+                    return {
+                        creator: 'initiator',
+                        name: media.mid,
+                        transport: convertIntermediateToTransport(media)
+                    };
+                }),
+                sessionId: this.sid
+            };
+            this.send('transport-info', jingle);
+            return this.pc.setLocalDescription(offer);
+        }, err => {
+            this._log('error', 'Could not create WebRTC offer', err);
+            this.end('failed-application', true);
+        });
     }
     // set the maximum bitrate. Only supported in Chrome and Firefox right now.
     setMaximumBitrate(maximumBitrate) {
@@ -7815,7 +7626,8 @@ class ICESession extends JingleSession {
         let browser = '';
         if (window.navigator && window.navigator.mozGetUserMedia) {
             browser = 'firefox';
-        } else if (window.navigator && window.navigator.webkitGetUserMedia) {
+        }
+        else if (window.navigator && window.navigator.webkitGetUserMedia) {
             browser = 'chrome';
         }
         const parameters = sender.getParameters();
@@ -7824,7 +7636,8 @@ class ICESession extends JingleSession {
         }
         if (maximumBitrate === 0) {
             delete parameters.encodings[0].maximumBitrate;
-        } else {
+        }
+        else {
             if (!parameters.encodings.length) {
                 parameters.encodings[0] = {};
             }
@@ -7834,7 +7647,8 @@ class ICESession extends JingleSession {
             sender.setParameters(parameters).catch(err => {
                 this._log('error', 'setParameters failed', err);
             });
-        } else if (browser === 'firefox') {
+        }
+        else if (browser === 'firefox') {
             // Firefox needs renegotiation:
             // https://bugzilla.mozilla.org/show_bug.cgi?id=1253499
             // but we do not want to intefere with our queue so we
@@ -7843,24 +7657,26 @@ class ICESession extends JingleSession {
                 sender.setParameters(parameters).catch(err => {
                     this._log('error', 'setParameters failed', err);
                 });
-            } else if (this.pc.localDescription.type === 'offer') {
+            }
+            else if (this.pc.localDescription.type === 'offer') {
                 sender
                     .setParameters(parameters)
                     .then(() => this.pc.createOffer())
                     .then(offer => this.pc.setLocalDescription(offer))
                     .then(() => this.pc.setRemoteDescription(this.pc.remoteDescription))
                     .catch(err => {
-                        this._log('error', 'setParameters failed', err);
-                    });
-            } else if (this.pc.localDescription.type === 'answer') {
+                    this._log('error', 'setParameters failed', err);
+                });
+            }
+            else if (this.pc.localDescription.type === 'answer') {
                 sender
                     .setParameters(parameters)
                     .then(() => this.pc.setRemoteDescription(this.pc.remoteDescription))
                     .then(() => this.pc.createAnswer())
                     .then(answer => this.pc.setLocalDescription(answer))
                     .catch(err => {
-                        this._log('error', 'setParameters failed', err);
-                    });
+                    this._log('error', 'setParameters failed', err);
+                });
             }
         }
         // else: not supported.
@@ -7893,10 +7709,12 @@ class Sender extends EventEmitter {
                 if (file.size > offset + this.config.chunkSize) {
                     if (usePoll) {
                         setTimeout(sliceFile, this.config.pacing, offset + this.config.chunkSize);
-                    } else if (channel.bufferedAmount <= channel.bufferedAmountLowThreshold) {
+                    }
+                    else if (channel.bufferedAmount <= channel.bufferedAmountLowThreshold) {
                         setTimeout(sliceFile, 0, offset + this.config.chunkSize);
                     }
-                } else {
+                }
+                else {
                     this.emit('progress', file.size, file.size, null);
                     this.emit('sentFile', {
                         algo: this.config.hash,
@@ -7942,7 +7760,8 @@ class Receiver extends EventEmitter {
                 this.metadata.actualhash = this.hash.digest('hex');
                 this.emit('receivedFile', new Blob(this.receiveBuffer), this.metadata);
                 this.receiveBuffer = [];
-            } else if (this.received > this.metadata.size) {
+            }
+            else if (this.received > this.metadata.size) {
                 // FIXME
                 console.error('received more than expected, discarding...');
                 this.receiveBuffer = []; // just discard...
@@ -7995,35 +7814,35 @@ class FileTransferSession extends ICESession {
         };
         this.pc
             .createOffer({
-                offerToReceiveAudio: false,
-                offerToReceiveVideo: false
-            })
+            offerToReceiveAudio: false,
+            offerToReceiveVideo: false
+        })
             .then(offer => {
-                const json = importFromSDP(offer.sdp);
-                const jingle = convertIntermediateToRequest(json, this.role);
-                this.contentName = jingle.contents[0].name;
-                jingle.sessionId = this.sid;
-                jingle.action = 'session-initate';
-                jingle.contents[0].application = {
-                    applicationType: 'filetransfer',
-                    offer: {
-                        date: file.lastModifiedDate,
-                        hash: {
-                            algo: 'sha-1',
-                            value: ''
-                        },
-                        name: file.name,
-                        size: file.size
-                    }
-                };
-                this.send('session-initiate', jingle);
-                return this.pc.setLocalDescription(offer).then(() => next());
-            })
+            const json = importFromSDP(offer.sdp);
+            const jingle = convertIntermediateToRequest(json, this.role);
+            this.contentName = jingle.contents[0].name;
+            jingle.sessionId = this.sid;
+            jingle.action = 'session-initate';
+            jingle.contents[0].application = {
+                applicationType: 'filetransfer',
+                offer: {
+                    date: file.lastModifiedDate,
+                    hash: {
+                        algo: 'sha-1',
+                        value: ''
+                    },
+                    name: file.name,
+                    size: file.size
+                }
+            };
+            this.send('session-initiate', jingle);
+            return this.pc.setLocalDescription(offer).then(() => next());
+        })
             .catch(err => {
-                console.error(err);
-                this._log('error', 'Could not create WebRTC offer', err);
-                return this.end('failed-application', true);
-            });
+            console.error(err);
+            this._log('error', 'Could not create WebRTC offer', err);
+            return this.end('failed-application', true);
+        });
     }
     accept(next) {
         this._log('info', 'Accepted incoming session');
@@ -8033,22 +7852,22 @@ class FileTransferSession extends ICESession {
         this.pc
             .createAnswer()
             .then(answer => {
-                const json = importFromSDP(answer.sdp);
-                const jingle = convertIntermediateToRequest(json, this.role);
-                jingle.sessionId = this.sid;
-                jingle.action = 'session-accept';
-                jingle.contents.forEach(content => {
-                    content.creator = 'initiator';
-                });
-                this.contentName = jingle.contents[0].name;
-                this.send('session-accept', jingle);
-                return this.pc.setLocalDescription(answer).then(() => next());
-            })
-            .catch(err => {
-                console.error(err);
-                this._log('error', 'Could not create WebRTC answer', err);
-                this.end('failed-application');
+            const json = importFromSDP(answer.sdp);
+            const jingle = convertIntermediateToRequest(json, this.role);
+            jingle.sessionId = this.sid;
+            jingle.action = 'session-accept';
+            jingle.contents.forEach(content => {
+                content.creator = 'initiator';
             });
+            this.contentName = jingle.contents[0].name;
+            this.send('session-accept', jingle);
+            return this.pc.setLocalDescription(answer).then(() => next());
+        })
+            .catch(err => {
+            console.error(err);
+            this._log('error', 'Could not create WebRTC answer', err);
+            this.end('failed-application');
+        });
     }
     onSessionInitiate(changes, cb) {
         this._log('info', 'Initiating incoming session');
@@ -8073,17 +7892,17 @@ class FileTransferSession extends ICESession {
         this.pc
             .setRemoteDescription({ type: 'offer', sdp })
             .then(() => {
-                if (cb) {
-                    return cb();
-                }
-            })
+            if (cb) {
+                return cb();
+            }
+        })
             .catch(err => {
-                console.error(err);
-                this._log('error', 'Could not create WebRTC answer', err);
-                if (cb) {
-                    return cb({ condition: 'general-error' });
-                }
-            });
+            console.error(err);
+            this._log('error', 'Could not create WebRTC answer', err);
+            if (cb) {
+                return cb({ condition: 'general-error' });
+            }
+        });
     }
     onDescriptionInfo(info, cb) {
         const hash = info.contents[0].application.offer.hash;
@@ -8094,12 +7913,13 @@ class FileTransferSession extends ICESession {
         cb();
     }
     _maybeReceivedFile() {
-        if (!this.receiver.metadata.hash.value);
+        if (!this.receiver.metadata.hash.value) ;
         else if (this.receiver.metadata.hash.value === this.receiver.metadata.actualhash) {
             this._log('info', 'File hash matches');
             this.emit('receivedFile', this, this.receivedFile, this.receiver.metadata);
             this.end('success');
-        } else {
+        }
+        else {
             this._log('error', 'File hash does not match');
             this.end('media-error');
         }
@@ -8108,12 +7928,10 @@ class FileTransferSession extends ICESession {
 
 function applyStreamsCompatibility(content) {
     /* signal .streams as a=ssrc: msid */
-    if (
-        content.application.streams &&
+    if (content.application.streams &&
         content.application.streams.length &&
         content.application.sources &&
-        content.application.sources.length
-    ) {
+        content.application.sources.length) {
         const msid = content.application.streams[0];
         content.application.sources[0].parameters.push({
             key: 'msid',
@@ -8157,21 +7975,21 @@ class MediaSession extends ICESession {
         this.pc
             .createOffer(offerOptions)
             .then(offer => {
-                const json = importFromSDP(offer.sdp);
-                const jingle = convertIntermediateToRequest(json, this.role);
-                jingle.sessionId = this.sid;
-                jingle.action = 'session-initate';
-                jingle.contents.forEach(content => {
-                    content.creator = 'initiator';
-                    applyStreamsCompatibility(content);
-                });
-                this.send('session-initiate', jingle);
-                return this.pc.setLocalDescription(offer).then(() => next());
-            })
-            .catch(err => {
-                this._log('error', 'Could not create WebRTC offer', err);
-                this.end('failed-application', true);
+            const json = importFromSDP(offer.sdp);
+            const jingle = convertIntermediateToRequest(json, this.role);
+            jingle.sessionId = this.sid;
+            jingle.action = 'session-initate';
+            jingle.contents.forEach(content => {
+                content.creator = 'initiator';
+                applyStreamsCompatibility(content);
             });
+            this.send('session-initiate', jingle);
+            return this.pc.setLocalDescription(offer).then(() => next());
+        })
+            .catch(err => {
+            this._log('error', 'Could not create WebRTC offer', err);
+            this.end('failed-application', true);
+        });
     }
     accept(opts, next) {
         // support calling with accept(next) or accept(opts, next)
@@ -8187,20 +8005,20 @@ class MediaSession extends ICESession {
         this.pc
             .createAnswer(opts)
             .then(answer => {
-                const json = importFromSDP(answer.sdp);
-                const jingle = convertIntermediateToRequest(json, this.role);
-                jingle.sessionId = this.sid;
-                jingle.action = 'session-accept';
-                jingle.contents.forEach(content => {
-                    content.creator = 'initiator';
-                });
-                this.send('session-accept', jingle);
-                return this.pc.setLocalDescription(answer).then(() => next());
-            })
-            .catch(err => {
-                this._log('error', 'Could not create WebRTC answer', err);
-                this.end('failed-application');
+            const json = importFromSDP(answer.sdp);
+            const jingle = convertIntermediateToRequest(json, this.role);
+            jingle.sessionId = this.sid;
+            jingle.action = 'session-accept';
+            jingle.contents.forEach(content => {
+                content.creator = 'initiator';
             });
+            this.send('session-accept', jingle);
+            return this.pc.setLocalDescription(answer).then(() => next());
+        })
+            .catch(err => {
+            this._log('error', 'Could not create WebRTC answer', err);
+            this.end('failed-application');
+        });
     }
     end(reason, silent) {
         this.pc.getReceivers().forEach(receiver => {
@@ -8245,7 +8063,8 @@ class MediaSession extends ICESession {
     addTrack(track, stream, cb) {
         if (this.pc.addTrack) {
             this.pc.addTrack(track, stream);
-        } else {
+        }
+        else {
             this.pc.addStream(stream, cb);
         }
         if (cb) {
@@ -8286,16 +8105,16 @@ class MediaSession extends ICESession {
         this.pc
             .setRemoteDescription({ type: 'offer', sdp })
             .then(() => {
-                if (cb) {
-                    return cb();
-                }
-            })
+            if (cb) {
+                return cb();
+            }
+        })
             .catch(err => {
-                this._log('error', 'Could not create WebRTC answer', err);
-                if (cb) {
-                    return cb({ condition: 'general-error' });
-                }
-            });
+            this._log('error', 'Could not create WebRTC answer', err);
+            if (cb) {
+                return cb({ condition: 'general-error' });
+            }
+        });
     }
     onSessionTerminate(changes, cb) {
         for (const receiver of this.pc.getReceivers()) {
@@ -8360,42 +8179,33 @@ class SessionManager extends WildEmitter$1 {
         this.peers = {};
         this.prepareSession =
             conf.prepareSession ||
-            function(opts) {
-                if (opts.applicationTypes.indexOf('rtp') >= 0) {
-                    return new MediaSession(opts);
-                }
-                if (opts.applicationTypes.indexOf('filetransfer') >= 0) {
-                    return new FileTransferSession(opts);
-                }
-            };
+                function (opts) {
+                    if (opts.applicationTypes.indexOf('rtp') >= 0) {
+                        return new MediaSession(opts);
+                    }
+                    if (opts.applicationTypes.indexOf('filetransfer') >= 0) {
+                        return new FileTransferSession(opts);
+                    }
+                };
         this.performTieBreak =
             conf.performTieBreak ||
-            function(sess, req) {
-                const applicationTypes = req.jingle.contents.map(content => {
-                    if (content.application) {
-                        return content.application.applicationType;
-                    }
-                });
-                const intersection = sess.pendingApplicationTypes.filter(appType =>
-                    applicationTypes.includes(appType)
-                );
-                return intersection.length > 0;
-            };
-        this.config = Object.assign(
-            {
-                debug: false,
-                peerConnectionConfig: {
-                    bundlePolicy: conf.bundlePolicy || 'balanced',
-                    iceServers: conf.iceServers || [{ urls: 'stun:stun.l.google.com:19302' }],
-                    iceTransportPolicy: conf.iceTransportPolicy || 'all',
-                    rtcpMuxPolicy: conf.rtcpMuxPolicy || 'require'
-                },
-                peerConnectionConstraints: {
-                    optional: [{ DtlsSrtpKeyAgreement: true }, { RtpDataChannels: false }]
-                }
-            },
-            conf
-        );
+                function (sess, req) {
+                    const applicationTypes = req.jingle.contents.map(content => {
+                        if (content.application) {
+                            return content.application.applicationType;
+                        }
+                    });
+                    const intersection = sess.pendingApplicationTypes.filter(appType => applicationTypes.includes(appType));
+                    return intersection.length > 0;
+                };
+        this.config = Object.assign({ debug: false, peerConnectionConfig: {
+                bundlePolicy: conf.bundlePolicy || 'balanced',
+                iceServers: conf.iceServers || [{ urls: 'stun:stun.l.google.com:19302' }],
+                iceTransportPolicy: conf.iceTransportPolicy || 'all',
+                rtcpMuxPolicy: conf.rtcpMuxPolicy || 'require'
+            }, peerConnectionConstraints: {
+                optional: [{ DtlsSrtpKeyAgreement: true }, { RtpDataChannels: false }]
+            } }, conf);
         this.iceServers = this.config.peerConnectionConfig.iceServers;
     }
     addICEServer(server) {
@@ -8481,7 +8291,7 @@ class SessionManager extends WildEmitter$1 {
         peer = peer.full || peer;
         const sessions = this.peers[peer] || [];
         delete this.peers[peer];
-        sessions.forEach(function(session) {
+        sessions.forEach(function (session) {
             session.end(reason || 'gone', silent);
         });
     }
@@ -8528,7 +8338,8 @@ class SessionManager extends WildEmitter$1 {
             const isTieBreak = req.error && req.error.jingleCondition === 'tie-break';
             if (session && session.state === 'pending' && isTieBreak) {
                 return session.end('alternative-session', true);
-            } else {
+            }
+            else {
                 if (session) {
                     session.pendingAction = false;
                 }
@@ -8543,12 +8354,12 @@ class SessionManager extends WildEmitter$1 {
         }
         const action = req.jingle.action;
         const contents = req.jingle.contents || [];
-        const applicationTypes = contents.map(function(content) {
+        const applicationTypes = contents.map(function (content) {
             if (content.application) {
                 return content.application.applicationType;
             }
         });
-        const transportTypes = contents.map(function(content) {
+        const transportTypes = contents.map(function (content) {
             if (content.transport) {
                 return content.transport.transportType;
             }
@@ -8590,7 +8401,8 @@ class SessionManager extends WildEmitter$1 {
                     });
                 }
             }
-        } else if (session) {
+        }
+        else if (session) {
             // Don't accept a new session if we already have one.
             if (session.peerID !== sender) {
                 this._log('error', 'Duplicate sid from new sender');
@@ -8608,7 +8420,8 @@ class SessionManager extends WildEmitter$1 {
                         jingleCondition: 'tie-break'
                     });
                 }
-            } else {
+            }
+            else {
                 // The other side is just doing it wrong.
                 this._log('error', 'Someone is doing this wrong');
                 return this._sendError(sender, rid, {
@@ -8616,18 +8429,17 @@ class SessionManager extends WildEmitter$1 {
                     jingleCondition: 'out-of-order'
                 });
             }
-        } else if (this.peers[sender] && this.peers[sender].length) {
+        }
+        else if (this.peers[sender] && this.peers[sender].length) {
             // Check if we need to have a tie breaker because we already have
             // a different session with this peer that is using the requested
             // content application types.
             for (let i = 0, len = this.peers[sender].length; i < len; i++) {
                 const sess = this.peers[sender][i];
-                if (
-                    sess &&
+                if (sess &&
                     sess.state === 'pending' &&
                     sess.sid > sid &&
-                    this.performTieBreak(sess, req)
-                ) {
+                    this.performTieBreak(sess, req)) {
                     this._log('info', 'Tie break session-initiate');
                     return this._sendError(sender, rid, {
                         condition: 'conflict',
@@ -8643,26 +8455,24 @@ class SessionManager extends WildEmitter$1 {
                     condition: 'bad-request'
                 });
             }
-            session = this._createIncomingSession(
-                {
-                    applicationTypes,
-                    config: this.config.peerConnectionConfig,
-                    constraints: this.config.peerConnectionConstraints,
-                    iceServers: this.iceServers,
-                    initiator: false,
-                    parent: this,
-                    peerID: sender,
-                    sid,
-                    transportTypes
-                },
-                req
-            );
+            session = this._createIncomingSession({
+                applicationTypes,
+                config: this.config.peerConnectionConfig,
+                constraints: this.config.peerConnectionConstraints,
+                iceServers: this.iceServers,
+                initiator: false,
+                parent: this,
+                peerID: sender,
+                sid,
+                transportTypes
+            }, req);
         }
         session.process(action, req.jingle, err => {
             if (err) {
                 this._log('error', 'Could not process request', req, err);
                 this._sendError(sender, rid, err);
-            } else {
+            }
+            else {
                 this.emit('send', {
                     id: rid,
                     to: sender,
@@ -8681,10 +8491,11 @@ class SessionManager extends WildEmitter$1 {
 let root;
 try {
     root = window;
-} catch (err) {
+}
+catch (err) {
     root = global;
 }
-function Jingle$1(client) {
+function Jingle$1 (client) {
     const jingle = (client.jingle = new SessionManager());
     client.supportedICEServiceTypes = {
         stun: true,
@@ -8726,15 +8537,15 @@ function Jingle$1(client) {
         'resumed'
     ];
     for (const event of mappedEvents) {
-        jingle.on(event, function(session, arg1) {
+        jingle.on(event, function (session, arg1) {
             client.emit('jingle:' + event, session, arg1);
         });
     }
-    jingle.on('createdSession', function(session) {
+    jingle.on('createdSession', function (session) {
         client.emit('jingle:created', session);
     });
-    jingle.on('send', function(data) {
-        client.sendIq(data, function(err, result) {
+    jingle.on('send', function (data) {
+        client.sendIq(data, function (err, result) {
             if (err) {
                 client.emit('jingle:error', err);
             }
@@ -8746,69 +8557,68 @@ function Jingle$1(client) {
             jingle.process(resp);
         });
     });
-    client.on('session:bound', 'jingle', function(jid) {
+    client.on('session:bound', 'jingle', function (jid) {
         jingle.selfID = jid.full;
     });
-    client.on('iq:set:jingle', 'jingle', function(data) {
+    client.on('iq:set:jingle', 'jingle', function (data) {
         jingle.process(data);
     });
-    client.on('unavailable', 'jingle', function(pres) {
+    client.on('unavailable', 'jingle', function (pres) {
         const peer = pres.from.full;
         jingle.endPeerSessions(peer, true);
     });
-    client.discoverICEServers = function(cb) {
+    client.discoverICEServers = function (cb) {
         return this.getServices(client.config.server)
-            .then(function(res) {
-                const services = res.services.services;
-                const discovered = [];
-                for (let i = 0; i < services.length; i++) {
-                    const service = services[i];
-                    const ice = {};
-                    if (!client.supportedICEServiceTypes[service.type]) {
-                        continue;
-                    }
-                    if (service.type === 'stun' || service.type === 'stuns') {
-                        ice.urls = service.type + ':' + service.host;
-                        if (service.port) {
-                            ice.urls += ':' + service.port;
-                        }
-                        discovered.push(ice);
-                        client.jingle.addICEServer(ice);
-                    } else if (service.type === 'turn' || service.type === 'turns') {
-                        ice.urls = service.type + ':' + service.host;
-                        if (service.port) {
-                            ice.urls += ':' + service.port;
-                        }
-                        if (service.transport && service.transport !== 'udp') {
-                            ice.urls += '?transport=' + service.transport;
-                        }
-                        if (service.username) {
-                            ice.username = service.username;
-                        }
-                        if (service.password) {
-                            ice.credential = service.password;
-                        }
-                        discovered.push(ice);
-                        client.jingle.addICEServer(ice);
-                    }
+            .then(function (res) {
+            const services = res.services.services;
+            const discovered = [];
+            for (let i = 0; i < services.length; i++) {
+                const service = services[i];
+                const ice = {};
+                if (!client.supportedICEServiceTypes[service.type]) {
+                    continue;
                 }
-                return discovered;
-            })
-            .then(
-                function(result) {
-                    if (cb) {
-                        cb(null, result);
+                if (service.type === 'stun' || service.type === 'stuns') {
+                    ice.urls = service.type + ':' + service.host;
+                    if (service.port) {
+                        ice.urls += ':' + service.port;
                     }
-                    return result;
-                },
-                function(err) {
-                    if (cb) {
-                        cb(err);
-                    } else {
-                        throw err;
-                    }
+                    discovered.push(ice);
+                    client.jingle.addICEServer(ice);
                 }
-            );
+                else if (service.type === 'turn' || service.type === 'turns') {
+                    ice.urls = service.type + ':' + service.host;
+                    if (service.port) {
+                        ice.urls += ':' + service.port;
+                    }
+                    if (service.transport && service.transport !== 'udp') {
+                        ice.urls += '?transport=' + service.transport;
+                    }
+                    if (service.username) {
+                        ice.username = service.username;
+                    }
+                    if (service.password) {
+                        ice.credential = service.password;
+                    }
+                    discovered.push(ice);
+                    client.jingle.addICEServer(ice);
+                }
+            }
+            return discovered;
+        })
+            .then(function (result) {
+            if (cb) {
+                cb(null, result);
+            }
+            return result;
+        }, function (err) {
+            if (cb) {
+                cb(err);
+            }
+            else {
+                throw err;
+            }
+        });
     };
 }
 
@@ -8816,40 +8626,39 @@ function timeoutPromise$1(targetPromise, delay) {
     let timeoutRef;
     return Promise.race([
         targetPromise,
-        new Promise(function(resolve, reject) {
-            timeoutRef = setTimeout(function() {
+        new Promise(function (resolve, reject) {
+            timeoutRef = setTimeout(function () {
                 reject();
             }, delay);
         })
-    ]).then(function(result) {
+    ]).then(function (result) {
         clearTimeout(timeoutRef);
         return result;
     });
 }
 function checkConnection(client, timeout) {
-    return timeoutPromise$1(
-        new Promise(function(resolve, reject) {
-            if (client.sm.started) {
-                client.once('stream:management:ack', resolve);
-                client.sm.request();
-            } else {
-                client
-                    .ping()
-                    .then(resolve)
-                    .catch(function(err) {
-                        if (err.error && err.error.condition !== 'timeout') {
-                            resolve();
-                        } else {
-                            reject();
-                        }
-                    });
-            }
-        }),
-        timeout * 1000 || 15000
-    );
+    return timeoutPromise$1(new Promise(function (resolve, reject) {
+        if (client.sm.started) {
+            client.once('stream:management:ack', resolve);
+            client.sm.request();
+        }
+        else {
+            client
+                .ping()
+                .then(resolve)
+                .catch(function (err) {
+                if (err.error && err.error.condition !== 'timeout') {
+                    resolve();
+                }
+                else {
+                    reject();
+                }
+            });
+        }
+    }), timeout * 1000 || 15000);
 }
-function KeepAlive(client) {
-    client.enableKeepAlive = function(opts) {
+function KeepAlive (client) {
+    client.enableKeepAlive = function (opts) {
         opts = opts || {};
         // Ping every 5 minutes
         opts.interval = opts.interval || 300;
@@ -8857,7 +8666,7 @@ function KeepAlive(client) {
         opts.timeout = opts.timeout || 15;
         function keepalive() {
             if (client.sessionStarted) {
-                checkConnection(client, opts.timeout).catch(function() {
+                checkConnection(client, opts.timeout).catch(function () {
                     // Kill the apparently dead connection without closing
                     // the stream itself so we can reconnect and potentially
                     // resume the session.
@@ -8874,20 +8683,20 @@ function KeepAlive(client) {
         }
         client._keepAliveInterval = setInterval(keepalive, opts.interval * 1000);
     };
-    client.disableKeepAlive = function() {
+    client.disableKeepAlive = function () {
         if (client._keepAliveInterval) {
             clearInterval(client._keepAliveInterval);
             delete client._keepAliveInterval;
         }
     };
-    client.on('disconnected', function() {
+    client.on('disconnected', function () {
         client.disableKeepAlive();
     });
 }
 
-function Logging(client) {
+function Logging (client) {
     client.disco.addFeature('', EVENTLOG);
-    client.sendLog = function(jid, logData) {
+    client.sendLog = function (jid, logData) {
         client.sendMessage({
             log: logData,
             to: jid,
@@ -8900,8 +8709,8 @@ function timeoutPromise$2(targetPromise, queryid, delay) {
     let timeoutRef;
     return Promise.race([
         targetPromise,
-        new Promise(function(resolve, reject) {
-            timeoutRef = setTimeout(function() {
+        new Promise(function (resolve, reject) {
+            timeoutRef = setTimeout(function () {
                 reject({
                     error: {
                         condition: 'timeout'
@@ -8911,24 +8720,21 @@ function timeoutPromise$2(targetPromise, queryid, delay) {
                 });
             }, delay);
         })
-    ]).then(function(result) {
+    ]).then(function (result) {
         clearTimeout(timeoutRef);
         return result;
     });
 }
-function MAM$1(client) {
+function MAM$1 (client) {
     client.disco.addFeature(MAM_1);
-    client.getHistorySearchForm = function(jid, cb) {
-        return client.sendIq(
-            {
-                mam: true,
-                to: jid,
-                type: 'get'
-            },
-            cb
-        );
+    client.getHistorySearchForm = function (jid, cb) {
+        return client.sendIq({
+            mam: true,
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.searchHistory = function(opts, cb) {
+    client.searchHistory = function (opts, cb) {
         const queryid = this.nextId();
         opts = opts || {};
         opts.queryid = queryid;
@@ -8974,7 +8780,7 @@ function MAM$1(client) {
         allowed[client.jid.bare] = true;
         allowed[client.jid.domain] = true;
         const results = [];
-        this.on('mam:item:' + queryid, 'session', function(msg) {
+        this.on('mam:item:' + queryid, 'session', function (msg) {
             if (!allowed[msg.from.full]) {
                 return;
             }
@@ -8988,41 +8794,36 @@ function MAM$1(client) {
         });
         return timeoutPromise$2(mamQuery, queryid, this.config.timeout * 1000 || 15000)
             .then(mamRes => {
-                mamRes.mamResult.items = results;
-                this.off('mam:item:' + queryid);
-                if (cb) {
-                    cb(null, mamRes);
-                }
-                return mamRes;
-            })
+            mamRes.mamResult.items = results;
+            this.off('mam:item:' + queryid);
+            if (cb) {
+                cb(null, mamRes);
+            }
+            return mamRes;
+        })
             .catch(err => {
-                this.off('mam:item:' + queryid);
-                if (cb) {
-                    cb(err);
-                } else {
-                    throw err;
-                }
-            });
+            this.off('mam:item:' + queryid);
+            if (cb) {
+                cb(err);
+            }
+            else {
+                throw err;
+            }
+        });
     };
-    client.getHistoryPreferences = function(cb) {
-        return this.sendIq(
-            {
-                mamPrefs: true,
-                type: 'get'
-            },
-            cb
-        );
+    client.getHistoryPreferences = function (cb) {
+        return this.sendIq({
+            mamPrefs: true,
+            type: 'get'
+        }, cb);
     };
-    client.setHistoryPreferences = function(opts, cb) {
-        return this.sendIq(
-            {
-                mamPrefs: opts,
-                type: 'set'
-            },
-            cb
-        );
+    client.setHistoryPreferences = function (opts, cb) {
+        return this.sendIq({
+            mamPrefs: opts,
+            type: 'set'
+        }, cb);
     };
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (msg.mamItem) {
             client.emit('mam:item', msg);
             client.emit('mam:item:' + msg.mamItem.queryid, msg);
@@ -9030,12 +8831,12 @@ function MAM$1(client) {
     });
 }
 
-function Markers$1(client) {
+function Markers$1 (client) {
     function enabled(msg) {
         return msg.markable && client.config.chatMarkers !== false;
     }
     client.disco.addFeature(CHAT_MARKERS_0);
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (enabled(msg)) {
             client.markReceived(msg);
             return;
@@ -9050,7 +8851,7 @@ function Markers$1(client) {
             return client.emit('marker:acknowledged', msg);
         }
     });
-    client.markReceived = function(msg) {
+    client.markReceived = function (msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new JID(msg.from.bare) : msg.from;
             client.sendMessage({
@@ -9061,7 +8862,7 @@ function Markers$1(client) {
             });
         }
     };
-    client.markDisplayed = function(msg) {
+    client.markDisplayed = function (msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new JID(msg.from.bare) : msg.from;
             client.sendMessage({
@@ -9072,7 +8873,7 @@ function Markers$1(client) {
             });
         }
     };
-    client.markAcknowledged = function(msg) {
+    client.markAcknowledged = function (msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new JID(msg.from.bare) : msg.from;
             client.sendMessage({
@@ -9085,7 +8886,7 @@ function Markers$1(client) {
     };
 }
 
-function MUC$2(client) {
+function MUC$2 (client) {
     client.disco.addFeature(MUC);
     client.disco.addFeature(MUC_DIRECT_INVITE);
     client.disco.addFeature(HATS_0);
@@ -9107,7 +8908,7 @@ function MUC$2(client) {
     }
     client.on('session:started', rejoinRooms);
     client.on('stream:management:resumed', rejoinRooms);
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (msg.muc) {
             if (msg.muc.invite) {
                 client.emit('muc:invite', {
@@ -9118,20 +8919,23 @@ function MUC$2(client) {
                     thread: msg.muc.invite.thread,
                     type: 'mediated'
                 });
-            } else if (msg.muc.decline) {
+            }
+            else if (msg.muc.decline) {
                 client.emit('muc:declined', {
                     from: msg.muc.decline.from,
                     reason: msg.muc.decline.reason,
                     room: msg.from
                 });
-            } else {
+            }
+            else {
                 client.emit('muc:other', {
                     muc: msg.muc,
                     room: msg.from,
                     to: msg.to
                 });
             }
-        } else if (msg.mucInvite) {
+        }
+        else if (msg.mucInvite) {
             client.emit('muc:invite', {
                 from: msg.from,
                 password: msg.mucInvite.password,
@@ -9145,16 +8949,18 @@ function MUC$2(client) {
             client.emit('muc:subject', msg);
         }
     });
-    client.on('presence', function(pres) {
+    client.on('presence', function (pres) {
         if (client.joiningRooms[pres.from.bare] && pres.type === 'error') {
             delete client.joiningRooms[pres.from.bare];
             client.emit('muc:failed', pres);
             client.emit('muc:error', pres);
-        } else if (pres.muc) {
+        }
+        else if (pres.muc) {
             const isSelf = pres.muc.codes && pres.muc.codes.indexOf('110') >= 0;
             if (pres.type === 'error') {
                 client.emit('muc:error', pres);
-            } else if (pres.type === 'unavailable') {
+            }
+            else if (pres.type === 'unavailable') {
                 client.emit('muc:unavailable', pres);
                 if (isSelf) {
                     client.emit('muc:leave', pres);
@@ -9168,7 +8974,8 @@ function MUC$2(client) {
                         room: pres.from
                     });
                 }
-            } else {
+            }
+            else {
                 client.emit('muc:available', pres);
                 if (isSelf && !client.joinedRooms[pres.from.bare]) {
                     client.emit('muc:join', pres);
@@ -9178,7 +8985,7 @@ function MUC$2(client) {
             }
         }
     });
-    client.joinRoom = function(room, nick, opts) {
+    client.joinRoom = function (room, nick, opts) {
         opts = opts || {};
         opts.to = room + '/' + nick;
         opts.caps = this.disco.caps;
@@ -9186,19 +8993,19 @@ function MUC$2(client) {
         this.joiningRooms[room] = nick;
         this.sendPresence(opts);
     };
-    client.leaveRoom = function(room, nick, opts) {
+    client.leaveRoom = function (room, nick, opts) {
         opts = opts || {};
         opts.to = room + '/' + nick;
         opts.type = 'unavailable';
         this.sendPresence(opts);
     };
-    client.ban = function(room, jid, reason, cb) {
+    client.ban = function (room, jid, reason, cb) {
         client.setRoomAffiliation(room, jid, 'outcast', reason, cb);
     };
-    client.kick = function(room, nick, reason, cb) {
+    client.kick = function (room, nick, reason, cb) {
         client.setRoomRole(room, nick, 'none', reason, cb);
     };
-    client.invite = function(room, opts) {
+    client.invite = function (room, opts) {
         client.sendMessage({
             muc: {
                 invites: opts
@@ -9206,14 +9013,14 @@ function MUC$2(client) {
             to: room
         });
     };
-    client.directInvite = function(room, opts) {
+    client.directInvite = function (room, opts) {
         opts.jid = room;
         client.sendMessage({
             mucInvite: opts,
             to: opts.to
         });
     };
-    client.declineInvite = function(room, sender, reason) {
+    client.declineInvite = function (room, sender, reason) {
         client.sendMessage({
             muc: {
                 decline: {
@@ -9224,20 +9031,20 @@ function MUC$2(client) {
             to: room
         });
     };
-    client.changeNick = function(room, nick) {
+    client.changeNick = function (room, nick) {
         client.sendPresence({
             to: new JID(room).bare + '/' + nick
         });
     };
-    client.setSubject = function(room, subject) {
+    client.setSubject = function (room, subject) {
         client.sendMessage({
             subject: subject,
             to: room,
             type: 'groupchat'
         });
     };
-    client.discoverReservedNick = function(room, cb) {
-        client.getDiscoInfo(room, 'x-roomuser-item', function(err, res) {
+    client.discoverReservedNick = function (room, cb) {
+        client.getDiscoInfo(room, 'x-roomuser-item', function (err, res) {
             if (err) {
                 return cb(err);
             }
@@ -9245,7 +9052,7 @@ function MUC$2(client) {
             cb(null, ident.name);
         });
     };
-    client.requestRoomVoice = function(room) {
+    client.requestRoomVoice = function (room) {
         client.sendMessage({
             form: {
                 fields: [
@@ -9263,97 +9070,76 @@ function MUC$2(client) {
             to: room
         });
     };
-    client.setRoomAffiliation = function(room, jid, affiliation, reason, cb) {
-        return this.sendIq(
-            {
-                mucAdmin: {
-                    affiliation: affiliation,
-                    jid: jid,
-                    reason: reason
-                },
-                to: room,
-                type: 'set'
+    client.setRoomAffiliation = function (room, jid, affiliation, reason, cb) {
+        return this.sendIq({
+            mucAdmin: {
+                affiliation: affiliation,
+                jid: jid,
+                reason: reason
             },
-            cb
-        );
+            to: room,
+            type: 'set'
+        }, cb);
     };
-    client.setRoomRole = function(room, nick, role, reason, cb) {
-        return this.sendIq(
-            {
-                mucAdmin: {
-                    nick: nick,
-                    reason: reason,
-                    role: role
-                },
-                to: room,
-                type: 'set'
+    client.setRoomRole = function (room, nick, role, reason, cb) {
+        return this.sendIq({
+            mucAdmin: {
+                nick: nick,
+                reason: reason,
+                role: role
             },
-            cb
-        );
+            to: room,
+            type: 'set'
+        }, cb);
     };
-    client.getRoomMembers = function(room, opts, cb) {
-        return this.sendIq(
-            {
-                mucAdmin: opts,
-                to: room,
-                type: 'get'
-            },
-            cb
-        );
+    client.getRoomMembers = function (room, opts, cb) {
+        return this.sendIq({
+            mucAdmin: opts,
+            to: room,
+            type: 'get'
+        }, cb);
     };
-    client.getRoomConfig = function(jid, cb) {
-        return this.sendIq(
-            {
-                mucOwner: true,
-                to: jid,
-                type: 'get'
-            },
-            cb
-        );
+    client.getRoomConfig = function (jid, cb) {
+        return this.sendIq({
+            mucOwner: true,
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.configureRoom = function(jid, form, cb) {
+    client.configureRoom = function (jid, form, cb) {
         if (!form.type) {
             form.type = 'submit';
         }
-        return this.sendIq(
-            {
-                mucOwner: {
-                    form: form
-                },
-                to: jid,
-                type: 'set'
+        return this.sendIq({
+            mucOwner: {
+                form: form
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.destroyRoom = function(jid, opts, cb) {
-        return this.sendIq(
-            {
-                mucOwner: {
-                    destroy: opts
-                },
-                to: jid,
-                type: 'set'
+    client.destroyRoom = function (jid, opts, cb) {
+        return this.sendIq({
+            mucOwner: {
+                destroy: opts
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.getUniqueRoomName = function(jid, cb) {
-        return this.sendIq(
-            {
-                mucUnique: true,
-                to: jid,
-                type: 'get'
-            },
-            cb
-        );
+    client.getUniqueRoomName = function (jid, cb) {
+        return this.sendIq({
+            mucUnique: true,
+            to: jid,
+            type: 'get'
+        }, cb);
     };
 }
 
-function Mood$1(client) {
+function Mood$1 (client) {
     client.disco.addFeature(MOOD);
     client.disco.addFeature(PEP_NOTIFY(MOOD));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -9365,25 +9151,20 @@ function Mood$1(client) {
             mood: msg.event.updated.published[0].mood
         });
     });
-    client.publishMood = function(mood, text, cb) {
-        return this.publish(
-            '',
-            MOOD,
-            {
-                mood: {
-                    text: text,
-                    value: mood
-                }
-            },
-            cb
-        );
+    client.publishMood = function (mood, text, cb) {
+        return this.publish('', MOOD, {
+            mood: {
+                text: text,
+                value: mood
+            }
+        }, cb);
     };
 }
 
-function Nick$1(client) {
+function Nick$1 (client) {
     client.disco.addFeature(NICK);
     client.disco.addFeature(PEP_NOTIFY(NICK));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -9395,59 +9176,45 @@ function Nick$1(client) {
             nick: msg.event.updated.published[0].nick
         });
     });
-    client.publishNick = function(nick, cb) {
-        return this.publish(
-            '',
-            NICK,
-            {
-                nick: nick
-            },
-            cb
-        );
+    client.publishNick = function (nick, cb) {
+        return this.publish('', NICK, {
+            nick: nick
+        }, cb);
     };
 }
 
-function Ping$1(client) {
+function Ping$1 (client) {
     client.disco.addFeature(PING);
-    client.on('iq:get:ping', function(iq) {
+    client.on('iq:get:ping', function (iq) {
         client.sendIq(iq.resultReply());
     });
-    client.ping = function(jid, cb) {
-        return this.sendIq(
-            {
-                ping: true,
-                to: jid,
-                type: 'get'
-            },
-            cb
-        );
+    client.ping = function (jid, cb) {
+        return this.sendIq({
+            ping: true,
+            to: jid,
+            type: 'get'
+        }, cb);
     };
 }
 
-function Private$1(client) {
-    client.getPrivateData = function(opts, cb) {
-        return this.sendIq(
-            {
-                privateStorage: opts,
-                type: 'get'
-            },
-            cb
-        );
+function Private$1 (client) {
+    client.getPrivateData = function (opts, cb) {
+        return this.sendIq({
+            privateStorage: opts,
+            type: 'get'
+        }, cb);
     };
-    client.setPrivateData = function(opts, cb) {
-        return this.sendIq(
-            {
-                privateStorage: opts,
-                type: 'set'
-            },
-            cb
-        );
+    client.setPrivateData = function (opts, cb) {
+        return this.sendIq({
+            privateStorage: opts,
+            type: 'set'
+        }, cb);
     };
 }
 
-function Push$1(client) {
+function Push$1 (client) {
     client.disco.addFeature(PUSH_0);
-    client.enableNotifications = function(jid, node, fieldList, cb) {
+    client.enableNotifications = function (jid, node, fieldList, cb) {
         const fields = [
             {
                 name: 'FORM_TYPE',
@@ -9469,7 +9236,7 @@ function Push$1(client) {
         }
         return this.sendIq(iq, cb);
     };
-    client.disableNotifications = function(jid, node, cb) {
+    client.disableNotifications = function (jid, node, cb) {
         const iq = {
             disablePush: {
                 jid: jid
@@ -9483,8 +9250,8 @@ function Push$1(client) {
     };
 }
 
-function PubSub(client) {
-    client.on('message', function(msg) {
+function PubSub (client) {
+    client.on('message', function (msg) {
         if (msg.event) {
             client.emit('pubsub:event', msg);
             client.emit('pubsubEvent', msg);
@@ -9515,133 +9282,109 @@ function PubSub(client) {
             client.emit('pubsub:affiliation', msg);
         }
     });
-    client.subscribeToNode = function(jid, opts, cb) {
+    client.subscribeToNode = function (jid, opts, cb) {
         if (typeof opts === 'string') {
             opts = {
                 node: opts
             };
         }
         opts.jid = opts.jid || client.jid;
-        return this.sendIq(
-            {
-                pubsub: {
-                    subscribe: opts
-                },
-                to: jid,
-                type: 'set'
+        return this.sendIq({
+            pubsub: {
+                subscribe: opts
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.unsubscribeFromNode = function(jid, opts, cb) {
+    client.unsubscribeFromNode = function (jid, opts, cb) {
         if (typeof opts === 'string') {
             opts = {
                 node: opts
             };
         }
         opts.jid = opts.jid || client.jid.bare;
-        return this.sendIq(
-            {
-                pubsub: {
-                    unsubscribe: opts
-                },
-                to: jid,
-                type: 'set'
+        return this.sendIq({
+            pubsub: {
+                unsubscribe: opts
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.publish = function(jid, node, item, cb) {
-        return this.sendIq(
-            {
-                pubsub: {
-                    publish: {
-                        item: item,
-                        node: node
-                    }
-                },
-                to: jid,
-                type: 'set'
+    client.publish = function (jid, node, item, cb) {
+        return this.sendIq({
+            pubsub: {
+                publish: {
+                    item: item,
+                    node: node
+                }
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.getItem = function(jid, node, id, cb) {
-        return this.sendIq(
-            {
-                pubsub: {
-                    retrieve: {
-                        item: {
-                            id: id
-                        },
-                        node: node
-                    }
-                },
-                to: jid,
-                type: 'get'
+    client.getItem = function (jid, node, id, cb) {
+        return this.sendIq({
+            pubsub: {
+                retrieve: {
+                    item: {
+                        id: id
+                    },
+                    node: node
+                }
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.getItems = function(jid, node, opts, cb) {
+    client.getItems = function (jid, node, opts, cb) {
         opts = opts || {};
         opts.node = node;
-        return this.sendIq(
-            {
-                pubsub: {
-                    retrieve: {
-                        max: opts.max,
-                        node: node
-                    },
-                    rsm: opts.rsm
+        return this.sendIq({
+            pubsub: {
+                retrieve: {
+                    max: opts.max,
+                    node: node
                 },
-                to: jid,
-                type: 'get'
+                rsm: opts.rsm
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.retract = function(jid, node, id, notify, cb) {
-        return this.sendIq(
-            {
-                pubsub: {
-                    retract: {
-                        id: id,
-                        node: node,
-                        notify: notify
-                    }
-                },
-                to: jid,
-                type: 'set'
+    client.retract = function (jid, node, id, notify, cb) {
+        return this.sendIq({
+            pubsub: {
+                retract: {
+                    id: id,
+                    node: node,
+                    notify: notify
+                }
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.purgeNode = function(jid, node, cb) {
-        return this.sendIq(
-            {
-                pubsubOwner: {
-                    purge: node
-                },
-                to: jid,
-                type: 'set'
+    client.purgeNode = function (jid, node, cb) {
+        return this.sendIq({
+            pubsubOwner: {
+                purge: node
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.deleteNode = function(jid, node, cb) {
-        return this.sendIq(
-            {
-                pubsubOwner: {
-                    del: node
-                },
-                to: jid,
-                type: 'set'
+    client.deleteNode = function (jid, node, cb) {
+        return this.sendIq({
+            pubsubOwner: {
+                del: node
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.createNode = function(jid, node, config, cb) {
+    client.createNode = function (jid, node, config, cb) {
         const cmd = {
             pubsub: {
                 create: node
@@ -9654,96 +9397,78 @@ function PubSub(client) {
         }
         return this.sendIq(cmd, cb);
     };
-    client.getSubscriptions = function(jid, opts, cb) {
+    client.getSubscriptions = function (jid, opts, cb) {
         opts = opts || {};
-        return this.sendIq(
-            {
-                pubsub: {
-                    subscriptions: opts
-                },
-                to: jid,
-                type: 'get'
+        return this.sendIq({
+            pubsub: {
+                subscriptions: opts
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.getAffiliations = function(jid, opts, cb) {
+    client.getAffiliations = function (jid, opts, cb) {
         opts = opts || {};
-        return this.sendIq(
-            {
-                pubsub: {
-                    affiliations: opts
-                },
-                to: jid,
-                type: 'get'
+        return this.sendIq({
+            pubsub: {
+                affiliations: opts
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.getNodeSubscribers = function(jid, node, opts, cb) {
+    client.getNodeSubscribers = function (jid, node, opts, cb) {
         opts = opts || {};
         opts.node = node;
-        return this.sendIq(
-            {
-                pubsubOwner: {
-                    subscriptions: opts
-                },
-                to: jid,
-                type: 'get'
+        return this.sendIq({
+            pubsubOwner: {
+                subscriptions: opts
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.updateNodeSubscriptions = function(jid, node, delta, cb) {
-        return this.sendIq(
-            {
-                pubsubOwner: {
-                    subscriptions: {
-                        list: delta,
-                        node: node
-                    }
-                },
-                to: jid,
-                type: 'set'
+    client.updateNodeSubscriptions = function (jid, node, delta, cb) {
+        return this.sendIq({
+            pubsubOwner: {
+                subscriptions: {
+                    list: delta,
+                    node: node
+                }
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.getNodeAffiliations = function(jid, node, opts, cb) {
+    client.getNodeAffiliations = function (jid, node, opts, cb) {
         opts = opts || {};
         opts.node = node;
-        return this.sendIq(
-            {
-                pubsubOwner: {
-                    affiliations: opts
-                },
-                to: jid,
-                type: 'get'
+        return this.sendIq({
+            pubsubOwner: {
+                affiliations: opts
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.updateNodeAffiliations = function(jid, node, delta, cb) {
-        return this.sendIq(
-            {
-                pubsubOwner: {
-                    affiliations: {
-                        list: delta,
-                        node: node
-                    }
-                },
-                to: jid,
-                type: 'set'
+    client.updateNodeAffiliations = function (jid, node, delta, cb) {
+        return this.sendIq({
+            pubsubOwner: {
+                affiliations: {
+                    list: delta,
+                    node: node
+                }
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
 }
 
-function Reach$1(client) {
+function Reach$1 (client) {
     client.disco.addFeature(REACH_0);
     client.disco.addFeature(PEP_NOTIFY(REACH_0));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -9755,7 +9480,7 @@ function Reach$1(client) {
             jid: msg.from
         });
     });
-    client.on('presence', function(pres) {
+    client.on('presence', function (pres) {
         if (!pres.reach || !pres.reach.length) {
             return;
         }
@@ -9764,22 +9489,17 @@ function Reach$1(client) {
             jid: pres.from
         });
     });
-    client.publishReachability = function(data, cb) {
-        return this.publish(
-            '',
-            REACH_0,
-            {
-                reach: data
-            },
-            cb
-        );
+    client.publishReachability = function (data, cb) {
+        return this.publish('', REACH_0, {
+            reach: data
+        }, cb);
     };
 }
 
-function Receipts(client, stanzas, config) {
+function Receipts (client, stanzas, config) {
     const sendReceipts = config.sendReceipts !== false;
     client.disco.addFeature(RECEIPTS);
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         const ackTypes = {
             chat: true,
             headline: true,
@@ -9800,56 +9520,45 @@ function Receipts(client, stanzas, config) {
     });
 }
 
-function Register$1(client) {
-    client.getAccountInfo = function(jid, cb) {
-        return this.sendIq(
-            {
-                register: true,
-                to: jid,
-                type: 'get'
-            },
-            cb
-        );
+function Register$1 (client) {
+    client.getAccountInfo = function (jid, cb) {
+        return this.sendIq({
+            register: true,
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.updateAccount = function(jid, data, cb) {
-        return this.sendIq(
-            {
-                register: data,
-                to: jid,
-                type: 'set'
-            },
-            cb
-        );
+    client.updateAccount = function (jid, data, cb) {
+        return this.sendIq({
+            register: data,
+            to: jid,
+            type: 'set'
+        }, cb);
     };
-    client.deleteAccount = function(jid, cb) {
-        return this.sendIq(
-            {
-                register: {
-                    remove: true
-                },
-                to: jid,
-                type: 'set'
+    client.deleteAccount = function (jid, cb) {
+        return this.sendIq({
+            register: {
+                remove: true
             },
-            cb
-        );
+            to: jid,
+            type: 'set'
+        }, cb);
     };
 }
 
-function Roster$1(client) {
-    client.on('iq:set:roster', function(iq) {
+function Roster$1 (client) {
+    client.on('iq:set:roster', function (iq) {
         const allowed = {};
         allowed[''] = true;
         allowed[client.jid.bare] = true;
         allowed[client.jid.domain] = true;
         if (!allowed[iq.from.full]) {
-            return client.sendIq(
-                iq.errorReply({
-                    error: {
-                        condition: 'service-unavailable',
-                        type: 'cancel'
-                    }
-                })
-            );
+            return client.sendIq(iq.errorReply({
+                error: {
+                    condition: 'service-unavailable',
+                    type: 'cancel'
+                }
+            }));
         }
         client.emit('roster:update', iq);
         client.sendIq({
@@ -9857,71 +9566,66 @@ function Roster$1(client) {
             type: 'result'
         });
     });
-    client.getRoster = function(cb) {
+    client.getRoster = function (cb) {
         return client
             .sendIq({
-                roster: {
-                    ver: this.config.rosterVer
-                },
-                type: 'get'
-            })
-            .then(resp => {
-                if (resp.roster) {
-                    const ver = resp.roster.ver;
-                    if (ver) {
-                        this.config.rosterVer = ver;
-                        this.emit('roster:ver', ver);
-                    }
-                }
-                return resp;
-            })
-            .then(
-                function(result) {
-                    if (cb) {
-                        cb(null, result);
-                    }
-                    return result;
-                },
-                function(err) {
-                    if (cb) {
-                        cb(err);
-                    } else {
-                        throw err;
-                    }
-                }
-            );
-    };
-    client.updateRosterItem = function(item, cb) {
-        return client.sendIq(
-            {
-                roster: {
-                    items: [item]
-                },
-                type: 'set'
+            roster: {
+                ver: this.config.rosterVer
             },
-            cb
-        );
+            type: 'get'
+        })
+            .then(resp => {
+            if (resp.roster) {
+                const ver = resp.roster.ver;
+                if (ver) {
+                    this.config.rosterVer = ver;
+                    this.emit('roster:ver', ver);
+                }
+            }
+            return resp;
+        })
+            .then(function (result) {
+            if (cb) {
+                cb(null, result);
+            }
+            return result;
+        }, function (err) {
+            if (cb) {
+                cb(err);
+            }
+            else {
+                throw err;
+            }
+        });
     };
-    client.removeRosterItem = function(jid, cb) {
+    client.updateRosterItem = function (item, cb) {
+        return client.sendIq({
+            roster: {
+                items: [item]
+            },
+            type: 'set'
+        }, cb);
+    };
+    client.removeRosterItem = function (jid, cb) {
         return client.updateRosterItem({ jid: jid, subscription: 'remove' }, cb);
     };
-    client.subscribe = function(jid) {
+    client.subscribe = function (jid) {
         client.sendPresence({ type: 'subscribe', to: jid });
     };
-    client.unsubscribe = function(jid) {
+    client.unsubscribe = function (jid) {
         client.sendPresence({ type: 'unsubscribe', to: jid });
     };
-    client.acceptSubscription = function(jid) {
+    client.acceptSubscription = function (jid) {
         client.sendPresence({ type: 'subscribed', to: jid });
     };
-    client.denySubscription = function(jid) {
+    client.denySubscription = function (jid) {
         client.sendPresence({ type: 'unsubscribed', to: jid });
     };
 }
 
-function RTT$1(client) {
+function RTT$1 (client) {
     client.disco.addFeature(RTT_0);
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (msg.rtt) {
             client.emit('rtt', msg);
             client.emit('rtt:' + msg.rtt.event, msg);
@@ -9929,78 +9633,62 @@ function RTT$1(client) {
     });
 }
 
-function Time$1(client) {
+function Time$1 (client) {
     client.disco.addFeature(TIME);
-    client.getTime = function(jid, cb) {
-        return this.sendIq(
-            {
-                time: true,
-                to: jid,
-                type: 'get'
-            },
-            cb
-        );
+    client.getTime = function (jid, cb) {
+        return this.sendIq({
+            time: true,
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.on('iq:get:time', function(iq) {
+    client.on('iq:get:time', function (iq) {
         const time = new Date();
-        client.sendIq(
-            iq.resultReply({
-                time: {
-                    tzo: time.getTimezoneOffset(),
-                    utc: time
-                }
-            })
-        );
+        client.sendIq(iq.resultReply({
+            time: {
+                tzo: time.getTimezoneOffset(),
+                utc: time
+            }
+        }));
     });
 }
 
-function VCard(client) {
+function VCard (client) {
     client.disco.addFeature('vcard-temp');
-    client.getVCard = function(jid, cb) {
-        return this.sendIq(
-            {
-                to: jid,
-                type: 'get',
-                vCardTemp: true
-            },
-            cb
-        );
+    client.getVCard = function (jid, cb) {
+        return this.sendIq({
+            to: jid,
+            type: 'get',
+            vCardTemp: true
+        }, cb);
     };
-    client.publishVCard = function(vcard, cb) {
-        return this.sendIq(
-            {
-                type: 'set',
-                vCardTemp: vcard
-            },
-            cb
-        );
+    client.publishVCard = function (vcard, cb) {
+        return this.sendIq({
+            type: 'set',
+            vCardTemp: vcard
+        }, cb);
     };
 }
 
-function Version$1(client) {
+function Version$1 (client) {
     client.disco.addFeature('jabber:iq:version');
-    client.on('iq:get:version', function(iq) {
-        client.sendIq(
-            iq.resultReply({
-                version: client.config.softwareVersion || {
-                    name: 'stanza.io'
-                }
-            })
-        );
+    client.on('iq:get:version', function (iq) {
+        client.sendIq(iq.resultReply({
+            version: client.config.softwareVersion || {
+                name: 'stanza.io'
+            }
+        }));
     });
-    client.getSoftwareVersion = function(jid, cb) {
-        return this.sendIq(
-            {
-                to: jid,
-                type: 'get',
-                version: true
-            },
-            cb
-        );
+    client.getSoftwareVersion = function (jid, cb) {
+        return this.sendIq({
+            to: jid,
+            type: 'get',
+            version: true
+        }, cb);
     };
 }
 
-function Plugins(client) {
+function Plugins (client) {
     // We always need this one first
     client.use(Disco$2);
     client.use(DiscoOnly);

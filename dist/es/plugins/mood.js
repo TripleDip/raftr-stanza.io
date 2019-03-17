@@ -1,8 +1,8 @@
 import { Namespaces } from '../protocol';
-export default function(client) {
+export default function (client) {
     client.disco.addFeature(Namespaces.MOOD);
     client.disco.addFeature(Namespaces.PEP_NOTIFY(Namespaces.MOOD));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -14,17 +14,12 @@ export default function(client) {
             mood: msg.event.updated.published[0].mood
         });
     });
-    client.publishMood = function(mood, text, cb) {
-        return this.publish(
-            '',
-            Namespaces.MOOD,
-            {
-                mood: {
-                    text: text,
-                    value: mood
-                }
-            },
-            cb
-        );
+    client.publishMood = function (mood, text, cb) {
+        return this.publish('', Namespaces.MOOD, {
+            mood: {
+                text: text,
+                value: mood
+            }
+        }, cb);
     };
 }

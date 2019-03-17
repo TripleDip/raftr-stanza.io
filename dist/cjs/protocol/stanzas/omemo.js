@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const OMEMO = JXT.define({
@@ -69,10 +69,10 @@ function default_1(JXT) {
     JXT.extend(Bundle, SignedPreKeyPublic);
     JXT.extend(Header, Key, 'keys', true);
     JXT.extend(OMEMO, Header);
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.extend(Message, OMEMO);
     });
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.extend(Item, Bundle);
         JXT.extend(Item, DeviceList);
     });

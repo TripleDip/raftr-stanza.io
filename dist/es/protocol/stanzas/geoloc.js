@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const GeoLoc = JXT.define({
         element: 'geoloc',

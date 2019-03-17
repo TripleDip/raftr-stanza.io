@@ -1,12 +1,12 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
-const jid_1 = require('../jid');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
+const jid_1 = require("../jid");
 function default_1(JXT) {
-    JXT.withIQ(function(IQ) {
+    JXT.withIQ(function (IQ) {
         JXT.add(IQ, 'jidPrep', {
-            get: function() {
+            get: function () {
                 const data = JXT.utils.getSubText(this.xml, NS.JID_PREP_0, 'jid');
                 if (data) {
                     const jid = new jid_1.JID(data);
@@ -14,7 +14,7 @@ function default_1(JXT) {
                     return jid;
                 }
             },
-            set: function(value) {
+            set: function (value) {
                 JXT.utils.setSubText(this.xml, NS.JID_PREP_0, 'jid', (value || '').toString());
             }
         });

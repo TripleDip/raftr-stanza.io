@@ -1,8 +1,8 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const SDP = tslib_1.__importStar(require('sdp'));
-tslib_1.__exportStar(require('sdp'), exports);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const SDP = tslib_1.__importStar(require("sdp"));
+tslib_1.__exportStar(require("sdp"), exports);
 function parseSctpMap(mediaSection) {
     const sctpMapLines = SDP.matchPrefix(mediaSection, 'a=sctpmap:');
     if (sctpMapLines.length > 0) {
@@ -14,7 +14,8 @@ function parseSctpMap(mediaSection) {
             protocol: parts[1],
             streams: parts[2]
         };
-    } else {
+    }
+    else {
         const sctpPort = SDP.matchPrefix(mediaSection, 'a=sctp-port:');
         return {
             number: sctpPort[0].substr(12),

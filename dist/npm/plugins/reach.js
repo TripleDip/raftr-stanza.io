@@ -1,10 +1,10 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const protocol_1 = require('../protocol');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const protocol_1 = require("../protocol");
 function default_1(client) {
     client.disco.addFeature(protocol_1.Namespaces.REACH_0);
     client.disco.addFeature(protocol_1.Namespaces.PEP_NOTIFY(protocol_1.Namespaces.REACH_0));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -16,7 +16,7 @@ function default_1(client) {
             jid: msg.from
         });
     });
-    client.on('presence', function(pres) {
+    client.on('presence', function (pres) {
         if (!pres.reach || !pres.reach.length) {
             return;
         }
@@ -25,15 +25,10 @@ function default_1(client) {
             jid: pres.from
         });
     });
-    client.publishReachability = function(data, cb) {
-        return this.publish(
-            '',
-            protocol_1.Namespaces.REACH_0,
-            {
-                reach: data
-            },
-            cb
-        );
+    client.publishReachability = function (data, cb) {
+        return this.publish('', protocol_1.Namespaces.REACH_0, {
+            reach: data
+        }, cb);
     };
 }
 exports.default = default_1;

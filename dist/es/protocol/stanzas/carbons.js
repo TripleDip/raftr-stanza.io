@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function(JXT) {
+export default function (JXT) {
     const Sent = JXT.define({
         element: 'sent',
         eventName: 'carbon:sent',
@@ -28,7 +28,7 @@ export default function(JXT) {
         name: 'disableCarbons',
         namespace: NS.CARBONS_2
     });
-    JXT.withDefinition('forwarded', NS.FORWARD_0, function(Forwarded) {
+    JXT.withDefinition('forwarded', NS.FORWARD_0, function (Forwarded) {
         JXT.extend(Sent, Forwarded);
         JXT.extend(Received, Forwarded);
     });

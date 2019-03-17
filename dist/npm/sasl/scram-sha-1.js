@@ -1,6 +1,6 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const iana_hashes_1 = require('iana-hashes');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const iana_hashes_1 = require("iana-hashes");
 const RESP = {};
 const CLIENT_KEY = 'Client Key';
 const SERVER_KEY = 'Server Key';
@@ -22,9 +22,11 @@ function saslname(name) {
         curr = name[i];
         if (curr === ',') {
             escaped.push('=2C');
-        } else if (curr === '=') {
+        }
+        else if (curr === '=') {
             escaped.push('=3D');
-        } else {
+        }
+        else {
             escaped.push(curr);
         }
     }
@@ -43,14 +45,12 @@ function XOR(a, b) {
     return buffer;
 }
 function H(text) {
-    return iana_hashes_1
-        .createHash('sha1')
+    return iana_hashes_1.createHash('sha1')
         .update(text)
         .digest();
 }
 function HMAC(key, msg) {
-    return iana_hashes_1
-        .createHmac('sha1', key)
+    return iana_hashes_1.createHmac('sha1', key)
         .update(msg)
         .digest();
 }
@@ -86,7 +86,7 @@ class SCRAM {
 exports.default = SCRAM;
 SCRAM.prototype.name = 'SCRAM-SHA-1';
 SCRAM.prototype.clientFirst = true;
-RESP.initial = function(mech, cred) {
+RESP.initial = function (mech, cred) {
     mech._cnonce = mech._genNonce();
     let authzid = '';
     if (cred.authzid) {
@@ -100,7 +100,7 @@ RESP.initial = function(mech, cred) {
     mech._stage = 'challenge';
     return result;
 };
-RESP.challenge = function(mech, cred) {
+RESP.challenge = function (mech, cred) {
     const gs2Header = Buffer.from(mech._gs2Header).toString('base64');
     mech._clientFinalMessageWithoutProof = 'c=' + gs2Header + ',r=' + mech._nonce;
     let saltedPassword;
@@ -112,19 +112,20 @@ RESP.challenge = function(mech, cred) {
         if (cred.clientKey && cred.serverKey) {
             clientKey = cred.clientKey;
             serverKey = cred.serverKey;
-        } else if (cred.saltedPassword) {
+        }
+        else if (cred.saltedPassword) {
             saltedPassword = cred.saltedPassword;
             clientKey = HMAC(saltedPassword, CLIENT_KEY);
             serverKey = HMAC(saltedPassword, SERVER_KEY);
         }
-    } else {
+    }
+    else {
         saltedPassword = Hi(cred.password || '', mech._salt, mech._iterationCount);
         clientKey = HMAC(saltedPassword, CLIENT_KEY);
         serverKey = HMAC(saltedPassword, SERVER_KEY);
     }
     const storedKey = H(clientKey);
-    const authMessage =
-        mech._clientFirstMessageBare +
+    const authMessage = mech._clientFirstMessageBare +
         ',' +
         mech._challenge +
         ',' +
@@ -142,7 +143,7 @@ RESP.challenge = function(mech, cred) {
     };
     return result;
 };
-RESP.final = function() {
+RESP.final = function () {
     // TODO: Signal errors
     return '';
 };

@@ -1,6 +1,6 @@
 import * as hashes from 'iana-hashes';
 import { Namespaces } from '../protocol';
-export default function(client) {
+export default function (client) {
     client.disco.addFeature('jid\\20escaping');
     client.disco.addFeature(Namespaces.DELAY);
     client.disco.addFeature(Namespaces.EME_0);

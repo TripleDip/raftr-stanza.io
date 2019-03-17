@@ -1,21 +1,21 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const uuid = tslib_1.__importStar(require('uuid'));
-const jxt_1 = tslib_1.__importDefault(require('jxt'));
-const wildemitter_1 = tslib_1.__importDefault(require('wildemitter'));
-const SASL = tslib_1.__importStar(require('./sasl'));
-const sm_1 = tslib_1.__importDefault(require('./sm'));
-const protocol_1 = tslib_1.__importDefault(require('./protocol'));
-const hostmeta_1 = tslib_1.__importDefault(require('./plugins/hostmeta'));
-const features_1 = tslib_1.__importDefault(require('./plugins/features'));
-const sasl_1 = tslib_1.__importDefault(require('./plugins/sasl'));
-const smacks_1 = tslib_1.__importDefault(require('./plugins/smacks'));
-const bind_1 = tslib_1.__importDefault(require('./plugins/bind'));
-const session_1 = tslib_1.__importDefault(require('./plugins/session'));
-const jid_1 = require('./protocol/jid');
-const websocket_1 = tslib_1.__importDefault(require('./transports/websocket'));
-const bosh_1 = tslib_1.__importDefault(require('./transports/bosh'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const uuid = tslib_1.__importStar(require("uuid"));
+const jxt_1 = tslib_1.__importDefault(require("jxt"));
+const wildemitter_1 = tslib_1.__importDefault(require("wildemitter"));
+const SASL = tslib_1.__importStar(require("./sasl"));
+const sm_1 = tslib_1.__importDefault(require("./sm"));
+const protocol_1 = tslib_1.__importDefault(require("./protocol"));
+const hostmeta_1 = tslib_1.__importDefault(require("./plugins/hostmeta"));
+const features_1 = tslib_1.__importDefault(require("./plugins/features"));
+const sasl_1 = tslib_1.__importDefault(require("./plugins/sasl"));
+const smacks_1 = tslib_1.__importDefault(require("./plugins/smacks"));
+const bind_1 = tslib_1.__importDefault(require("./plugins/bind"));
+const session_1 = tslib_1.__importDefault(require("./plugins/session"));
+const jid_1 = require("./protocol/jid");
+const websocket_1 = tslib_1.__importDefault(require("./transports/websocket"));
+const bosh_1 = tslib_1.__importDefault(require("./transports/bosh"));
 const SASL_MECHS = {
     anonymous: SASL.Anonymous,
     'digest-md5': SASL.DigestMD5,
@@ -28,8 +28,8 @@ function timeoutRequest(targetPromise, id, delay) {
     let timeoutRef;
     return Promise.race([
         targetPromise,
-        new Promise(function(resolve, reject) {
-            timeoutRef = setTimeout(function() {
+        new Promise(function (resolve, reject) {
+            timeoutRef = setTimeout(function () {
                 reject({
                     error: {
                         condition: 'timeout'
@@ -39,7 +39,7 @@ function timeoutRequest(targetPromise, id, delay) {
                 });
             }, delay);
         })
-    ]).then(function(result) {
+    ]).then(function (result) {
         clearTimeout(timeoutRef);
         return result;
     });
@@ -80,9 +80,11 @@ class Client extends wildemitter_1.default {
             if (data._name === 'message' || data._name === 'presence' || data._name === 'iq') {
                 this.sm.handle(json);
                 this.emit('stanza', json);
-            } else if (data._name === 'smAck') {
+            }
+            else if (data._name === 'smAck') {
                 return this.sm.process(json);
-            } else if (data._name === 'smRequest') {
+            }
+            else if (data._name === 'smRequest') {
                 return this.sm.ack();
             }
             if (json.id) {
@@ -106,55 +108,48 @@ class Client extends wildemitter_1.default {
             const iqType = iq.type;
             const xmlChildCount = iq._xmlChildCount;
             delete iq._xmlChildCount;
-            const exts = Object.keys(iq).filter(function(ext) {
-                return (
-                    ext !== 'id' &&
+            const exts = Object.keys(iq).filter(function (ext) {
+                return (ext !== 'id' &&
                     ext !== 'to' &&
                     ext !== 'from' &&
                     ext !== 'lang' &&
                     ext !== 'type' &&
                     ext !== 'errorReply' &&
-                    ext !== 'resultReply'
-                );
+                    ext !== 'resultReply');
             });
             if (iq.type === 'get' || iq.type === 'set') {
                 // Invalid request
                 if (xmlChildCount !== 1) {
-                    return this.sendIq(
-                        iq.errorReply({
-                            error: {
-                                condition: 'bad-request',
-                                type: 'modify'
-                            }
-                        })
-                    );
+                    return this.sendIq(iq.errorReply({
+                        error: {
+                            condition: 'bad-request',
+                            type: 'modify'
+                        }
+                    }));
                 }
                 // Valid request, but we don't have support for the
                 // payload data.
                 if (!exts.length) {
-                    return this.sendIq(
-                        iq.errorReply({
-                            error: {
-                                condition: 'service-unavailable',
-                                type: 'cancel'
-                            }
-                        })
-                    );
+                    return this.sendIq(iq.errorReply({
+                        error: {
+                            condition: 'service-unavailable',
+                            type: 'cancel'
+                        }
+                    }));
                 }
                 const iqEvent = 'iq:' + iqType + ':' + exts[0];
                 if (this.callbacks[iqEvent]) {
                     this.emit(iqEvent, iq);
-                } else {
+                }
+                else {
                     // We support the payload data, but there's
                     // nothing registered to handle it.
-                    this.sendIq(
-                        iq.errorReply({
-                            error: {
-                                condition: 'service-unavailable',
-                                type: 'cancel'
-                            }
-                        })
-                    );
+                    this.sendIq(iq.errorReply({
+                        error: {
+                            condition: 'service-unavailable',
+                            type: 'cancel'
+                        }
+                    }));
                 }
             }
         });
@@ -162,7 +157,8 @@ class Client extends wildemitter_1.default {
             if (Object.keys(msg.$body || {}).length && !msg.received && !msg.displayed) {
                 if (msg.type === 'chat' || msg.type === 'normal') {
                     this.emit('chat', msg);
-                } else if (msg.type === 'groupchat') {
+                }
+                else if (msg.type === 'groupchat') {
                     this.emit('groupchat', msg);
                 }
             }
@@ -183,15 +179,7 @@ class Client extends wildemitter_1.default {
     }
     _initConfig(opts) {
         const currConfig = this.config || {};
-        this.config = Object.assign(
-            {
-                sasl: ['external', 'scram-sha-1', 'digest-md5', 'plain', 'anonymous'],
-                transports: ['websocket', 'bosh'],
-                useStreamManagement: true
-            },
-            currConfig,
-            opts
-        );
+        this.config = Object.assign({ sasl: ['external', 'scram-sha-1', 'digest-md5', 'plain', 'anonymous'], transports: ['websocket', 'bosh'], useStreamManagement: true }, currConfig, opts);
         // Enable SASL authentication mechanisms (and their preferred order)
         // based on user configuration.
         if (!Array.isArray(this.config.sasl)) {
@@ -204,7 +192,8 @@ class Client extends wildemitter_1.default {
                 if (existingMech && existingMech.prototype && existingMech.prototype.name) {
                     this.SASLFactory.use(existingMech);
                 }
-            } else {
+            }
+            else {
                 this.SASLFactory.use(mech);
             }
         }
@@ -238,18 +227,7 @@ class Client extends wildemitter_1.default {
         const requestedJID = new jid_1.JID(this.config.jid);
         const username = creds.username || requestedJID.local;
         const server = creds.server || requestedJID.domain;
-        return Object.assign(
-            {
-                host: server,
-                password: this.config.password,
-                realm: server,
-                server: server,
-                serviceName: server,
-                serviceType: 'xmpp',
-                username: username
-            },
-            creds
-        );
+        return Object.assign({ host: server, password: this.config.password, realm: server, server: server, serviceName: server, serviceType: 'xmpp', username: username }, creds);
     }
     getCredentials(cb) {
         return cb(null, this._getConfiguredCredentials());
@@ -261,10 +239,7 @@ class Client extends wildemitter_1.default {
             transInfo.name = this.config.transports[0];
         }
         if (transInfo && transInfo.name) {
-            const trans = (this.transport = new this.transports[transInfo.name](
-                this.sm,
-                this.stanzas
-            ));
+            const trans = (this.transport = new this.transports[transInfo.name](this.sm, this.stanzas));
             trans.on('*', (event, data) => {
                 this.emit(event, data);
             });
@@ -272,11 +247,9 @@ class Client extends wildemitter_1.default {
         }
         return this.discoverBindings(this.config.server, (err, endpoints) => {
             if (err) {
-                console.error(
-                    'Could not find https://' +
-                        this.config.server +
-                        '/.well-known/host-meta file to discover connection endpoints for the requested transports.'
-                );
+                console.error('Could not find https://' +
+                    this.config.server +
+                    '/.well-known/host-meta file to discover connection endpoints for the requested transports.');
                 return this.disconnect();
             }
             for (let t = 0, tlen = this.config.transports.length; t < tlen; t++) {
@@ -287,7 +260,8 @@ class Client extends wildemitter_1.default {
                     if (uri.indexOf('wss://') === 0 || uri.indexOf('https://') === 0) {
                         if (transport === 'websocket') {
                             this.config.wsURL = uri;
-                        } else {
+                        }
+                        else {
                             this.config.boshURL = uri;
                         }
                         console.log('Using %s endpoint: %s', transport, uri);
@@ -295,12 +269,9 @@ class Client extends wildemitter_1.default {
                             name: transport,
                             url: uri
                         });
-                    } else {
-                        console.warn(
-                            'Discovered unencrypted %s endpoint (%s). Ignoring',
-                            transport,
-                            uri
-                        );
+                    }
+                    else {
+                        console.warn('Discovered unencrypted %s endpoint (%s). Ignoring', transport, uri);
                     }
                 }
             }
@@ -321,7 +292,8 @@ class Client extends wildemitter_1.default {
         this.releaseGroup('connection');
         if (this.transport) {
             this.transport.disconnect();
-        } else {
+        }
+        else {
             this.emit('disconnected');
         }
     }
@@ -386,27 +358,25 @@ class Client extends wildemitter_1.default {
                 this.off(respEvent, handler);
                 if (!res.error) {
                     resolve(res);
-                } else {
+                }
+                else {
                     reject(res);
                 }
             };
             this.on(respEvent, 'session', handler);
         });
         this.send(iq);
-        return timeoutRequest(request, data.id, (this.config.timeout || 15) * 1000).then(
-            function(result) {
-                if (cb) {
-                    cb(null, result);
-                }
-                return result;
-            },
-            function(err) {
-                if (cb) {
-                    return cb(err);
-                }
-                throw err;
+        return timeoutRequest(request, data.id, (this.config.timeout || 15) * 1000).then(function (result) {
+            if (cb) {
+                cb(null, result);
             }
-        );
+            return result;
+        }, function (err) {
+            if (cb) {
+                return cb(err);
+            }
+            throw err;
+        });
     }
     sendStreamError(data) {
         data = data || {};

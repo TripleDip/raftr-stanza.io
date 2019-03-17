@@ -66,11 +66,9 @@ export default class StreamManagement {
         this.unacked = [];
     }
     ack() {
-        this.client.send(
-            new this.stanzas.Ack({
-                h: this.handled
-            })
-        );
+        this.client.send(new this.stanzas.Ack({
+            h: this.handled
+        }));
     }
     request() {
         this.pendingAck = true;

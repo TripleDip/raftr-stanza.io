@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const Avatar = JXT.define({
@@ -18,7 +18,7 @@ function default_1(JXT) {
         namespace: NS.AVATAR_METADATA
     });
     const avatars = {
-        get: function() {
+        get: function () {
             const metadata = Utils.find(this.xml, NS.AVATAR_METADATA, 'metadata');
             const results = [];
             if (metadata.length) {
@@ -29,7 +29,7 @@ function default_1(JXT) {
             }
             return results;
         },
-        set: function(value) {
+        set: function (value) {
             const metadata = Utils.findOrCreate(this.xml, NS.AVATAR_METADATA, 'metadata');
             Utils.setAttribute(metadata, 'xmlns', NS.AVATAR_METADATA);
             for (const info of value) {
@@ -38,7 +38,7 @@ function default_1(JXT) {
             }
         }
     };
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.add(Item, 'avatars', avatars);
         JXT.add(Item, 'avatarData', Utils.textSub(NS.AVATAR_DATA, 'data'));
     });

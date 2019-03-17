@@ -29,12 +29,15 @@ export class Sender extends EventEmitter {
                 if (file.size > offset + this.config.chunkSize) {
                     if (usePoll) {
                         setTimeout(sliceFile, this.config.pacing, offset + this.config.chunkSize);
-                    } else if (channel.bufferedAmount <= channel.bufferedAmountLowThreshold) {
+                    }
+                    else if (channel.bufferedAmount <= channel.bufferedAmountLowThreshold) {
                         setTimeout(sliceFile, 0, offset + this.config.chunkSize);
-                    } else {
+                    }
+                    else {
                         // wait for bufferedAmountLow to fire
                     }
-                } else {
+                }
+                else {
                     this.emit('progress', file.size, file.size, null);
                     this.emit('sentFile', {
                         algo: this.config.hash,
@@ -80,7 +83,8 @@ export class Receiver extends EventEmitter {
                 this.metadata.actualhash = this.hash.digest('hex');
                 this.emit('receivedFile', new Blob(this.receiveBuffer), this.metadata);
                 this.receiveBuffer = [];
-            } else if (this.received > this.metadata.size) {
+            }
+            else if (this.received > this.metadata.size) {
                 // FIXME
                 console.error('received more than expected, discarding...');
                 this.receiveBuffer = []; // just discard...
@@ -133,35 +137,35 @@ export default class FileTransferSession extends ICESession {
         };
         this.pc
             .createOffer({
-                offerToReceiveAudio: false,
-                offerToReceiveVideo: false
-            })
+            offerToReceiveAudio: false,
+            offerToReceiveVideo: false
+        })
             .then(offer => {
-                const json = importFromSDP(offer.sdp);
-                const jingle = convertIntermediateToRequest(json, this.role);
-                this.contentName = jingle.contents[0].name;
-                jingle.sessionId = this.sid;
-                jingle.action = 'session-initate';
-                jingle.contents[0].application = {
-                    applicationType: 'filetransfer',
-                    offer: {
-                        date: file.lastModifiedDate,
-                        hash: {
-                            algo: 'sha-1',
-                            value: ''
-                        },
-                        name: file.name,
-                        size: file.size
-                    }
-                };
-                this.send('session-initiate', jingle);
-                return this.pc.setLocalDescription(offer).then(() => next());
-            })
+            const json = importFromSDP(offer.sdp);
+            const jingle = convertIntermediateToRequest(json, this.role);
+            this.contentName = jingle.contents[0].name;
+            jingle.sessionId = this.sid;
+            jingle.action = 'session-initate';
+            jingle.contents[0].application = {
+                applicationType: 'filetransfer',
+                offer: {
+                    date: file.lastModifiedDate,
+                    hash: {
+                        algo: 'sha-1',
+                        value: ''
+                    },
+                    name: file.name,
+                    size: file.size
+                }
+            };
+            this.send('session-initiate', jingle);
+            return this.pc.setLocalDescription(offer).then(() => next());
+        })
             .catch(err => {
-                console.error(err);
-                this._log('error', 'Could not create WebRTC offer', err);
-                return this.end('failed-application', true);
-            });
+            console.error(err);
+            this._log('error', 'Could not create WebRTC offer', err);
+            return this.end('failed-application', true);
+        });
     }
     accept(next) {
         this._log('info', 'Accepted incoming session');
@@ -171,22 +175,22 @@ export default class FileTransferSession extends ICESession {
         this.pc
             .createAnswer()
             .then(answer => {
-                const json = importFromSDP(answer.sdp);
-                const jingle = convertIntermediateToRequest(json, this.role);
-                jingle.sessionId = this.sid;
-                jingle.action = 'session-accept';
-                jingle.contents.forEach(content => {
-                    content.creator = 'initiator';
-                });
-                this.contentName = jingle.contents[0].name;
-                this.send('session-accept', jingle);
-                return this.pc.setLocalDescription(answer).then(() => next());
-            })
-            .catch(err => {
-                console.error(err);
-                this._log('error', 'Could not create WebRTC answer', err);
-                this.end('failed-application');
+            const json = importFromSDP(answer.sdp);
+            const jingle = convertIntermediateToRequest(json, this.role);
+            jingle.sessionId = this.sid;
+            jingle.action = 'session-accept';
+            jingle.contents.forEach(content => {
+                content.creator = 'initiator';
             });
+            this.contentName = jingle.contents[0].name;
+            this.send('session-accept', jingle);
+            return this.pc.setLocalDescription(answer).then(() => next());
+        })
+            .catch(err => {
+            console.error(err);
+            this._log('error', 'Could not create WebRTC answer', err);
+            this.end('failed-application');
+        });
     }
     onSessionInitiate(changes, cb) {
         this._log('info', 'Initiating incoming session');
@@ -211,17 +215,17 @@ export default class FileTransferSession extends ICESession {
         this.pc
             .setRemoteDescription({ type: 'offer', sdp })
             .then(() => {
-                if (cb) {
-                    return cb();
-                }
-            })
+            if (cb) {
+                return cb();
+            }
+        })
             .catch(err => {
-                console.error(err);
-                this._log('error', 'Could not create WebRTC answer', err);
-                if (cb) {
-                    return cb({ condition: 'general-error' });
-                }
-            });
+            console.error(err);
+            this._log('error', 'Could not create WebRTC answer', err);
+            if (cb) {
+                return cb({ condition: 'general-error' });
+            }
+        });
     }
     onDescriptionInfo(info, cb) {
         const hash = info.contents[0].application.offer.hash;
@@ -234,11 +238,13 @@ export default class FileTransferSession extends ICESession {
     _maybeReceivedFile() {
         if (!this.receiver.metadata.hash.value) {
             // unknown hash, file transfer not completed
-        } else if (this.receiver.metadata.hash.value === this.receiver.metadata.actualhash) {
+        }
+        else if (this.receiver.metadata.hash.value === this.receiver.metadata.actualhash) {
             this._log('info', 'File hash matches');
             this.emit('receivedFile', this, this.receivedFile, this.receiver.metadata);
             this.end('success');
-        } else {
+        }
+        else {
             this._log('error', 'File hash does not match');
             this.end('media-error');
         }

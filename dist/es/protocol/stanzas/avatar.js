@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const Avatar = JXT.define({
         element: 'info',
@@ -15,7 +15,7 @@ export default function(JXT) {
         namespace: NS.AVATAR_METADATA
     });
     const avatars = {
-        get: function() {
+        get: function () {
             const metadata = Utils.find(this.xml, NS.AVATAR_METADATA, 'metadata');
             const results = [];
             if (metadata.length) {
@@ -26,7 +26,7 @@ export default function(JXT) {
             }
             return results;
         },
-        set: function(value) {
+        set: function (value) {
             const metadata = Utils.findOrCreate(this.xml, NS.AVATAR_METADATA, 'metadata');
             Utils.setAttribute(metadata, 'xmlns', NS.AVATAR_METADATA);
             for (const info of value) {
@@ -35,7 +35,7 @@ export default function(JXT) {
             }
         }
     };
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.add(Item, 'avatars', avatars);
         JXT.add(Item, 'avatarData', Utils.textSub(NS.AVATAR_DATA, 'data'));
     });

@@ -1,4 +1,4 @@
-import * as tslib_1 from 'tslib';
+import * as tslib_1 from "tslib";
 import fetch from 'cross-fetch';
 import WildEmitter from 'wildemitter';
 import { Namespaces } from '../protocol';
@@ -12,17 +12,19 @@ function timeoutPromise(targetPromise, delay) {
     });
 }
 function retryRequest(url, opts, timeout, allowedRetries) {
-    return tslib_1.__awaiter(this, void 0, void 0, function*() {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
         try {
             const resp = yield timeoutPromise(fetch(url, opts), timeout * 1000);
             if (!resp.ok) {
                 throw new Error('HTTP Status Error: ' + resp.status);
             }
             return resp.text();
-        } catch (err) {
+        }
+        catch (err) {
             if (allowedRetries > 0) {
                 return retryRequest(url, opts, timeout, allowedRetries - 1);
-            } else {
+            }
+            else {
                 throw err;
             }
         }
@@ -42,7 +44,7 @@ export default class BOSHConnection extends WildEmitter {
         self.maxRequests = undefined;
         self.sid = '';
         self.authenticated = false;
-        self.on('raw:incoming', function(data) {
+        self.on('raw:incoming', function (data) {
             data = data.trim();
             if (data === '') {
                 return;
@@ -51,7 +53,8 @@ export default class BOSHConnection extends WildEmitter {
             let err;
             try {
                 bosh = stanzas.parse(data, self.stanzas.BOSH);
-            } catch (e) {
+            }
+            catch (e) {
                 err = new self.stanzas.StreamError({
                     condition: 'invalid-xml'
                 });
@@ -89,10 +92,7 @@ export default class BOSHConnection extends WildEmitter {
     }
     connect(opts) {
         const self = this;
-        self.config = Object.assign(
-            { maxRetries: 5, rid: Math.ceil(Math.random() * 9999999999), wait: 30 },
-            opts
-        );
+        self.config = Object.assign({ maxRetries: 5, rid: Math.ceil(Math.random() * 9999999999), wait: 30 }, opts);
         self.hasStream = false;
         self.sm.started = false;
         self.url = opts.boshURL;
@@ -108,26 +108,23 @@ export default class BOSHConnection extends WildEmitter {
             return;
         }
         self.rid++;
-        self.request(
-            new self.stanzas.BOSH({
-                hold: 1,
-                lang: self.config.lang || 'en',
-                to: self.config.server,
-                ver: '1.6',
-                version: self.config.version || '1.0',
-                wait: self.config.wait
-            })
-        );
+        self.request(new self.stanzas.BOSH({
+            hold: 1,
+            lang: self.config.lang || 'en',
+            to: self.config.server,
+            ver: '1.6',
+            version: self.config.version || '1.0',
+            wait: self.config.wait
+        }));
     }
     disconnect() {
         if (this.hasStream) {
             this.rid++;
-            this.request(
-                new this.stanzas.BOSH({
-                    type: 'terminate'
-                })
-            );
-        } else {
+            this.request(new this.stanzas.BOSH({
+                type: 'terminate'
+            }));
+        }
+        else {
             this.stream = undefined;
             this.sid = undefined;
             this.rid = undefined;
@@ -137,13 +134,11 @@ export default class BOSHConnection extends WildEmitter {
     restart() {
         const self = this;
         self.rid++;
-        self.request(
-            new self.stanzas.BOSH({
-                lang: self.config.lang || 'en',
-                restart: 'true',
-                to: self.config.server
-            })
-        );
+        self.request(new self.stanzas.BOSH({
+            lang: self.config.lang || 'en',
+            restart: 'true',
+            to: self.config.server
+        }));
     }
     send(data) {
         const self = this;
@@ -154,8 +149,7 @@ export default class BOSHConnection extends WildEmitter {
     }
     longPoll() {
         const canReceive = !this.maxRequests || this.requests.length < this.maxRequests;
-        const canSend =
-            !this.maxRequests ||
+        const canSend = !this.maxRequests ||
             (this.sendQueue.length > 0 && this.requests.length < this.maxRequests);
         if (!this.sid || (!canReceive && !canSend)) {
             return;
@@ -163,11 +157,9 @@ export default class BOSHConnection extends WildEmitter {
         const stanzas = this.sendQueue;
         this.sendQueue = [];
         this.rid++;
-        this.request(
-            new this.stanzas.BOSH({
-                payload: stanzas
-            })
-        );
+        this.request(new this.stanzas.BOSH({
+            payload: stanzas
+        }));
     }
     request(bosh) {
         const self = this;
@@ -178,48 +170,41 @@ export default class BOSHConnection extends WildEmitter {
         self.emit('raw:outgoing', body);
         self.emit('raw:outgoing:' + ticket.id, body);
         self.requests.push(ticket);
-        const req = retryRequest(
-            self.url,
-            {
-                body: body,
-                headers: {
-                    'Content-Type': 'text/xml'
-                },
-                method: 'POST'
+        const req = retryRequest(self.url, {
+            body: body,
+            headers: {
+                'Content-Type': 'text/xml'
             },
-            self.config.wait * 1.5,
-            this.config.maxRetries
-        )
-            .catch(function(err) {
-                console.log(err);
-                self.hasStream = false;
-                const serr = new self.stanzas.StreamError({
-                    condition: 'connection-timeout'
-                });
-                self.emit('stream:error', serr, err);
-                self.disconnect();
-            })
-            .then(function(respBody) {
-                self.requests = self.requests.filter(item => {
-                    return item.id !== ticket.id;
-                });
-                if (respBody) {
-                    respBody = Buffer.from(respBody, 'utf8').toString();
-                    self.emit('raw:incoming', respBody);
-                    self.emit('raw:incoming:' + ticket.id, respBody);
-                }
-                // do not (re)start long polling if terminating, or request is pending, or before authentication
-                if (
-                    self.hasStream &&
-                    bosh.type !== 'terminate' &&
-                    !self.requests.length &&
-                    self.authenticated
-                ) {
-                    setTimeout(() => {
-                        self.longPoll();
-                    }, 30);
-                }
+            method: 'POST'
+        }, self.config.wait * 1.5, this.config.maxRetries)
+            .catch(function (err) {
+            console.log(err);
+            self.hasStream = false;
+            const serr = new self.stanzas.StreamError({
+                condition: 'connection-timeout'
             });
+            self.emit('stream:error', serr, err);
+            self.disconnect();
+        })
+            .then(function (respBody) {
+            self.requests = self.requests.filter(item => {
+                return item.id !== ticket.id;
+            });
+            if (respBody) {
+                respBody = Buffer.from(respBody, 'utf8').toString();
+                self.emit('raw:incoming', respBody);
+                self.emit('raw:incoming:' + ticket.id, respBody);
+            }
+            // do not (re)start long polling if terminating, or request is pending, or before authentication
+            if (self.hasStream &&
+                bosh.type !== 'terminate' &&
+                !self.requests.length &&
+                self.authenticated) {
+                setTimeout(() => {
+                    self.longPoll();
+                }, 30);
+            }
+        });
         ticket.request = req;
         return req;
     }

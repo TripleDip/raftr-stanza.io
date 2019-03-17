@@ -1,44 +1,35 @@
 import { Namespaces } from '../protocol';
-export default function(client) {
+export default function (client) {
     client.disco.addFeature(Namespaces.BLOCKING);
-    client.block = function(jid, cb) {
-        return client.sendIq(
-            {
-                block: {
-                    jids: [jid]
-                },
-                type: 'set'
+    client.block = function (jid, cb) {
+        return client.sendIq({
+            block: {
+                jids: [jid]
             },
-            cb
-        );
+            type: 'set'
+        }, cb);
     };
-    client.unblock = function(jid, cb) {
-        return client.sendIq(
-            {
-                type: 'set',
-                unblock: {
-                    jids: [jid]
-                }
-            },
-            cb
-        );
+    client.unblock = function (jid, cb) {
+        return client.sendIq({
+            type: 'set',
+            unblock: {
+                jids: [jid]
+            }
+        }, cb);
     };
-    client.getBlocked = function(cb) {
-        return client.sendIq(
-            {
-                blockList: true,
-                type: 'get'
-            },
-            cb
-        );
+    client.getBlocked = function (cb) {
+        return client.sendIq({
+            blockList: true,
+            type: 'get'
+        }, cb);
     };
-    client.on('iq:set:block', function(iq) {
+    client.on('iq:set:block', function (iq) {
         client.emit('block', {
             jids: iq.block.jids || []
         });
         client.sendIq(iq.resultReply());
     });
-    client.on('iq:set:unblock', function(iq) {
+    client.on('iq:set:unblock', function (iq) {
         client.emit('unblock', {
             jids: iq.unblock.jids || []
         });

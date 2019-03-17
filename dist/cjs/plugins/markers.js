@@ -1,13 +1,13 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const jid_1 = require('../protocol/jid');
-const protocol_1 = require('../protocol');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const jid_1 = require("../protocol/jid");
+const protocol_1 = require("../protocol");
 function default_1(client) {
     function enabled(msg) {
         return msg.markable && client.config.chatMarkers !== false;
     }
     client.disco.addFeature(protocol_1.Namespaces.CHAT_MARKERS_0);
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (enabled(msg)) {
             client.markReceived(msg);
             return;
@@ -22,7 +22,7 @@ function default_1(client) {
             return client.emit('marker:acknowledged', msg);
         }
     });
-    client.markReceived = function(msg) {
+    client.markReceived = function (msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new jid_1.JID(msg.from.bare) : msg.from;
             client.sendMessage({
@@ -33,7 +33,7 @@ function default_1(client) {
             });
         }
     };
-    client.markDisplayed = function(msg) {
+    client.markDisplayed = function (msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new jid_1.JID(msg.from.bare) : msg.from;
             client.sendMessage({
@@ -44,7 +44,7 @@ function default_1(client) {
             });
         }
     };
-    client.markAcknowledged = function(msg) {
+    client.markAcknowledged = function (msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new jid_1.JID(msg.from.bare) : msg.from;
             client.sendMessage({

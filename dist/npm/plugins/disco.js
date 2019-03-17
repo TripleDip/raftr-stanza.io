@@ -1,9 +1,9 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const hashes = tslib_1.__importStar(require('iana-hashes'));
-const protocol_1 = require('../protocol');
-const jid_1 = require('../protocol/jid');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const hashes = tslib_1.__importStar(require("iana-hashes"));
+const protocol_1 = require("../protocol");
+const jid_1 = require("../protocol/jid");
 function generateVerString(info, hash) {
     let S = '';
     let features = info.features || [];
@@ -12,14 +12,12 @@ function generateVerString(info, hash) {
     const formTypes = {};
     const formOrder = [];
     for (const identity of info.identities || []) {
-        identities.push(
-            [
-                identity.category || '',
-                identity.type || '',
-                identity.lang || '',
-                identity.name || ''
-            ].join('/')
-        );
+        identities.push([
+            identity.category || '',
+            identity.type || '',
+            identity.lang || '',
+            identity.name || ''
+        ].join('/'));
     }
     const idLen = identities.length;
     const featureLen = features.length;
@@ -136,7 +134,7 @@ function default_1(client) {
         category: 'client',
         type: 'web'
     });
-    client.registerFeature('caps', 100, function(features, cb) {
+    client.registerFeature('caps', 100, function (features, cb) {
         this.emit('disco:caps', {
             caps: features.caps,
             from: new jid_1.JID(client.jid.domain || client.config.server)
@@ -144,39 +142,31 @@ function default_1(client) {
         this.features.negotiated.caps = true;
         cb();
     });
-    client.getDiscoInfo = function(jid, node, cb) {
-        return this.sendIq(
-            {
-                discoInfo: {
-                    node: node
-                },
-                to: jid,
-                type: 'get'
+    client.getDiscoInfo = function (jid, node, cb) {
+        return this.sendIq({
+            discoInfo: {
+                node: node
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.getDiscoItems = function(jid, node, cb) {
-        return this.sendIq(
-            {
-                discoItems: {
-                    node: node
-                },
-                to: jid,
-                type: 'get'
+    client.getDiscoItems = function (jid, node, cb) {
+        return this.sendIq({
+            discoItems: {
+                node: node
             },
-            cb
-        );
+            to: jid,
+            type: 'get'
+        }, cb);
     };
-    client.updateCaps = function() {
+    client.updateCaps = function () {
         let node = this.config.capsNode || 'https://stanza.io';
-        const data = JSON.parse(
-            JSON.stringify({
-                extensions: this.disco.extensions[''],
-                features: this.disco.features[''],
-                identities: this.disco.identities['']
-            })
-        );
+        const data = JSON.parse(JSON.stringify({
+            extensions: this.disco.extensions[''],
+            features: this.disco.features[''],
+            identities: this.disco.identities['']
+        }));
         const ver = generateVerString(data, 'sha-1');
         this.disco.caps = {
             hash: 'sha-1',
@@ -189,7 +179,7 @@ function default_1(client) {
         this.disco.extensions[node] = data.extensions;
         return client.getCurrentCaps();
     };
-    client.getCurrentCaps = function() {
+    client.getCurrentCaps = function () {
         const caps = client.disco.caps;
         if (!caps.ver) {
             return { ver: null, discoInfo: null };
@@ -204,39 +194,35 @@ function default_1(client) {
             ver: caps.ver
         };
     };
-    client.on('presence', function(pres) {
+    client.on('presence', function (pres) {
         if (pres.caps) {
             client.emit('disco:caps', pres);
         }
     });
-    client.on('iq:get:discoInfo', function(iq) {
+    client.on('iq:get:discoInfo', function (iq) {
         let node = iq.discoInfo.node || '';
         let reportedNode = iq.discoInfo.node || '';
         if (node === client.disco.caps.node + '#' + client.disco.caps.ver) {
             reportedNode = node;
             node = '';
         }
-        client.sendIq(
-            iq.resultReply({
-                discoInfo: {
-                    extensions: client.disco.extensions[node] || [],
-                    features: client.disco.features[node] || [],
-                    identities: client.disco.identities[node] || [],
-                    node: reportedNode
-                }
-            })
-        );
+        client.sendIq(iq.resultReply({
+            discoInfo: {
+                extensions: client.disco.extensions[node] || [],
+                features: client.disco.features[node] || [],
+                identities: client.disco.identities[node] || [],
+                node: reportedNode
+            }
+        }));
     });
-    client.on('iq:get:discoItems', function(iq) {
+    client.on('iq:get:discoItems', function (iq) {
         const node = iq.discoItems.node;
-        client.sendIq(
-            iq.resultReply({
-                discoItems: {
-                    items: client.disco.items[node] || [],
-                    node: node
-                }
-            })
-        );
+        client.sendIq(iq.resultReply({
+            discoItems: {
+                items: client.disco.items[node] || [],
+                node: node
+            }
+        }));
     });
     client.verifyVerString = verifyVerString;
     client.generateVerString = generateVerString;

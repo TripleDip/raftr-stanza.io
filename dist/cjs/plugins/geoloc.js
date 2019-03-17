@@ -1,10 +1,10 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const protocol_1 = require('../protocol');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const protocol_1 = require("../protocol");
 function default_1(client) {
     client.disco.addFeature(protocol_1.Namespaces.GEOLOC);
     client.disco.addFeature(protocol_1.Namespaces.PEP_NOTIFY(protocol_1.Namespaces.GEOLOC));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -16,15 +16,10 @@ function default_1(client) {
             jid: msg.from
         });
     });
-    client.publishGeoLoc = function(data, cb) {
-        return this.publish(
-            '',
-            protocol_1.Namespaces.GEOLOC,
-            {
-                geoloc: data
-            },
-            cb
-        );
+    client.publishGeoLoc = function (data, cb) {
+        return this.publish('', protocol_1.Namespaces.GEOLOC, {
+            geoloc: data
+        }, cb);
     };
 }
 exports.default = default_1;
