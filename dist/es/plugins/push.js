@@ -1,7 +1,7 @@
 import { Namespaces } from '../protocol';
-export default function (client) {
+export default function(client) {
     client.disco.addFeature(Namespaces.PUSH_0);
-    client.enableNotifications = function (jid, node, fieldList, cb) {
+    client.enableNotifications = function(jid, node, fieldList, cb) {
         const fields = [
             {
                 name: 'FORM_TYPE',
@@ -23,7 +23,7 @@ export default function (client) {
         }
         return this.sendIq(iq, cb);
     };
-    client.disableNotifications = function (jid, node, cb) {
+    client.disableNotifications = function(jid, node, cb) {
         const iq = {
             disablePush: {
                 jid: jid

@@ -1,8 +1,8 @@
 import { Namespaces } from '../protocol';
-export default function (client) {
+export default function(client) {
     client.disco.addFeature(Namespaces.NICK);
     client.disco.addFeature(Namespaces.PEP_NOTIFY(Namespaces.NICK));
-    client.on('pubsub:event', function (msg) {
+    client.on('pubsub:event', function(msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -14,9 +14,14 @@ export default function (client) {
             nick: msg.event.updated.published[0].nick
         });
     });
-    client.publishNick = function (nick, cb) {
-        return this.publish('', Namespaces.NICK, {
-            nick: nick
-        }, cb);
+    client.publishNick = function(nick, cb) {
+        return this.publish(
+            '',
+            Namespaces.NICK,
+            {
+                nick: nick
+            },
+            cb
+        );
     };
 }

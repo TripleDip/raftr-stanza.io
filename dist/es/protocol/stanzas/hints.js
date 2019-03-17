@@ -11,11 +11,11 @@ const IMPORT_MAP = {
     'no-store': 'noStore',
     store: 'store'
 };
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
-    JXT.withMessage(function (Message) {
+    JXT.withMessage(function(Message) {
         JXT.add(Message, 'processingHints', {
-            get: function () {
+            get: function() {
                 const results = {};
                 for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                     const child = this.xml.childNodes[i];
@@ -29,7 +29,7 @@ export default function (JXT) {
                 }
                 return results;
             },
-            set: function (hints) {
+            set: function(hints) {
                 for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                     const child = this.xml.childNodes[i];
                     if (child.namespaceURI !== NS.HINTS) {

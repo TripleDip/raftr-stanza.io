@@ -1,8 +1,8 @@
 import * as NS from '../namespaces';
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     const Properties = {
-        get: function () {
+        get: function() {
             const results = {};
             const props = Utils.find(this.xml, NS.XRD, 'Property');
             for (let i = 0, len = props.length; i < len; i++) {

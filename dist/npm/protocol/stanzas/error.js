@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 const CONDITIONS = [
     'bad-request',
     'conflict',
@@ -32,7 +32,7 @@ function default_1(JXT) {
         element: 'error',
         fields: {
             $text: {
-                get: function () {
+                get: function() {
                     return Utils.getSubLangText(this.xml, NS.STANZA_ERROR, 'text', this.lang);
                 }
             },
@@ -40,34 +40,34 @@ function default_1(JXT) {
             code: Utils.attribute('code'),
             condition: Utils.enumSub(NS.STANZA_ERROR, CONDITIONS),
             gone: {
-                get: function () {
+                get: function() {
                     return Utils.getSubText(this.xml, NS.STANZA_ERROR, 'gone');
                 },
-                set: function (value) {
+                set: function(value) {
                     this.condition = 'gone';
                     Utils.setSubText(this.xml, NS.STANZA_ERROR, 'gone', value);
                 }
             },
             lang: {
-                get: function () {
+                get: function() {
                     return (this.parent || {}).lang || '';
                 }
             },
             redirect: {
-                get: function () {
+                get: function() {
                     return Utils.getSubText(this.xml, NS.STANZA_ERROR, 'redirect');
                 },
-                set: function (value) {
+                set: function(value) {
                     this.condition = 'redirect';
                     Utils.setSubText(this.xml, NS.STANZA_ERROR, 'redirect', value);
                 }
             },
             text: {
-                get: function () {
+                get: function() {
                     const text = this.$text;
                     return text[this.lang] || '';
                 },
-                set: function (value) {
+                set: function(value) {
                     Utils.setSubLangText(this.xml, NS.STANZA_ERROR, 'text', value, this.lang);
                 }
             },

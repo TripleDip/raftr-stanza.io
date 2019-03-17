@@ -1,11 +1,11 @@
 import { JID } from '../protocol/jid';
 import { Namespaces } from '../protocol';
-export default function (client) {
+export default function(client) {
     function enabled(msg) {
         return msg.markable && client.config.chatMarkers !== false;
     }
     client.disco.addFeature(Namespaces.CHAT_MARKERS_0);
-    client.on('message', function (msg) {
+    client.on('message', function(msg) {
         if (enabled(msg)) {
             client.markReceived(msg);
             return;
@@ -20,7 +20,7 @@ export default function (client) {
             return client.emit('marker:acknowledged', msg);
         }
     });
-    client.markReceived = function (msg) {
+    client.markReceived = function(msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new JID(msg.from.bare) : msg.from;
             client.sendMessage({
@@ -31,7 +31,7 @@ export default function (client) {
             });
         }
     };
-    client.markDisplayed = function (msg) {
+    client.markDisplayed = function(msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new JID(msg.from.bare) : msg.from;
             client.sendMessage({
@@ -42,7 +42,7 @@ export default function (client) {
             });
         }
     };
-    client.markAcknowledged = function (msg) {
+    client.markAcknowledged = function(msg) {
         if (enabled(msg)) {
             const to = msg.type === 'groupchat' ? new JID(msg.from.bare) : msg.from;
             client.sendMessage({

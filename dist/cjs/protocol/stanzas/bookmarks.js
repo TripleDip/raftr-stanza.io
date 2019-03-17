@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const Conference = JXT.define({
@@ -21,7 +21,7 @@ function default_1(JXT) {
         namespace: NS.BOOKMARKS
     });
     JXT.extend(Bookmarks, Conference, 'conferences');
-    JXT.withDefinition('query', NS.PRIVATE, function (PrivateStorage) {
+    JXT.withDefinition('query', NS.PRIVATE, function(PrivateStorage) {
         JXT.extend(PrivateStorage, Bookmarks);
     });
 }

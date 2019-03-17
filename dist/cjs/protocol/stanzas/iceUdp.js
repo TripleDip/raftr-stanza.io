@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const ICE = JXT.define({
@@ -74,7 +74,7 @@ function default_1(JXT) {
     JXT.extend(ICE, RemoteCandidate);
     JXT.extend(ICE, Fingerprint, 'fingerprints');
     JXT.extend(ICE, SctpMap, 'sctp');
-    JXT.withDefinition('content', NS.JINGLE_1, function (Content) {
+    JXT.withDefinition('content', NS.JINGLE_1, function(Content) {
         JXT.extend(Content, ICE);
     });
 }

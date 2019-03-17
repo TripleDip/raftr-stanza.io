@@ -1,11 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const IBB = {
-        get: function () {
+        get: function() {
             let data = Utils.find(this.xml, NS.IBB, 'data');
             if (data.length) {
                 data = data[0];
@@ -22,8 +22,7 @@ function default_1(JXT) {
                 let ack = Utils.getAttribute(open, 'stanza');
                 if (ack === 'message') {
                     ack = false;
-                }
-                else {
+                } else {
                     ack = true;
                 }
                 return {
@@ -41,7 +40,7 @@ function default_1(JXT) {
                 };
             }
         },
-        set: function (value) {
+        set: function(value) {
             if (value.action === 'data') {
                 const data = Utils.createElement(NS.IBB, 'data');
                 Utils.setAttribute(data, 'sid', value.sid);
@@ -55,8 +54,7 @@ function default_1(JXT) {
                 Utils.setAttribute(open, 'block-size', (value.blockSize || '4096').toString());
                 if (value.ack === false) {
                     Utils.setAttribute(open, 'stanza', 'message');
-                }
-                else {
+                } else {
                     Utils.setAttribute(open, 'stanza', 'iq');
                 }
                 this.xml.appendChild(open);
@@ -72,18 +70,17 @@ function default_1(JXT) {
         element: 'transport',
         fields: {
             ack: {
-                get: function () {
+                get: function() {
                     const value = Utils.getAttribute(this.xml, 'stanza');
                     if (value === 'message') {
                         return false;
                     }
                     return true;
                 },
-                set: function (value) {
+                set: function(value) {
                     if (value.ack === false) {
                         Utils.setAttribute(this.xml, 'stanza', 'message');
-                    }
-                    else {
+                    } else {
                         Utils.setAttribute(this.xml, 'stanza', 'iq');
                     }
                 }
@@ -99,13 +96,13 @@ function default_1(JXT) {
         namespace: NS.JINGLE_IBB_1,
         tags: ['jingle-transport']
     });
-    JXT.withDefinition('content', NS.JINGLE_1, function (Content) {
+    JXT.withDefinition('content', NS.JINGLE_1, function(Content) {
         JXT.extend(Content, JingleIBB);
     });
-    JXT.withIQ(function (IQ) {
+    JXT.withIQ(function(IQ) {
         JXT.add(IQ, 'ibb', IBB);
     });
-    JXT.withMessage(function (Message) {
+    JXT.withMessage(function(Message) {
         JXT.add(Message, 'ibb', IBB);
     });
 }

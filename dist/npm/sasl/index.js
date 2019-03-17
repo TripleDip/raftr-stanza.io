@@ -1,17 +1,17 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const anonymous_1 = tslib_1.__importDefault(require("./anonymous"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const anonymous_1 = tslib_1.__importDefault(require('./anonymous'));
 exports.Anonymous = anonymous_1.default;
-const external_1 = tslib_1.__importDefault(require("./external"));
+const external_1 = tslib_1.__importDefault(require('./external'));
 exports.External = external_1.default;
-const plain_1 = tslib_1.__importDefault(require("./plain"));
+const plain_1 = tslib_1.__importDefault(require('./plain'));
 exports.Plain = plain_1.default;
-const digest_md5_1 = tslib_1.__importDefault(require("./digest-md5"));
+const digest_md5_1 = tslib_1.__importDefault(require('./digest-md5'));
 exports.DigestMD5 = digest_md5_1.default;
-const scram_sha_1_1 = tslib_1.__importDefault(require("./scram-sha-1"));
+const scram_sha_1_1 = tslib_1.__importDefault(require('./scram-sha-1'));
 exports.ScramSha1 = scram_sha_1_1.default;
-const x_oauth2_1 = tslib_1.__importDefault(require("./x-oauth2"));
+const x_oauth2_1 = tslib_1.__importDefault(require('./x-oauth2'));
 exports.XOauth2 = x_oauth2_1.default;
 class Factory {
     constructor() {

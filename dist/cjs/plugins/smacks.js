@@ -1,18 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 function default_1(client, stanzas, config) {
-    const smacks = function (features, cb) {
+    const smacks = function(features, cb) {
         const self = this;
         if (!config.useStreamManagement) {
             return cb();
         }
-        self.on('stream:management:enabled', 'sm', function (enabled) {
+        self.on('stream:management:enabled', 'sm', function(enabled) {
             self.sm.enabled(enabled);
             self.features.negotiated.streamManagement = true;
             self.releaseGroup('sm');
             cb();
         });
-        self.on('stream:management:resumed', 'sm', function (resumed) {
+        self.on('stream:management:resumed', 'sm', function(resumed) {
             self.sm.resumed(resumed);
             self.features.negotiated.streamManagement = true;
             self.features.negotiated.bind = true;
@@ -20,7 +20,7 @@ function default_1(client, stanzas, config) {
             self.releaseGroup('sm');
             cb('break'); // Halt further processing of stream features
         });
-        self.on('stream:management:failed', 'sm', function () {
+        self.on('stream:management:failed', 'sm', function() {
             self.sm.failed();
             self.emit('session:end');
             self.releaseGroup('session');
@@ -30,21 +30,18 @@ function default_1(client, stanzas, config) {
         if (!self.sm.id) {
             if (self.features.negotiated.bind) {
                 self.sm.enable();
-            }
-            else {
+            } else {
                 self.releaseGroup('sm');
                 cb();
             }
-        }
-        else if (self.sm.id && self.sm.allowResume) {
+        } else if (self.sm.id && self.sm.allowResume) {
             self.sm.resume();
-        }
-        else {
+        } else {
             self.releaseGroup('sm');
             cb();
         }
     };
-    client.on('disconnected', function () {
+    client.on('disconnected', function() {
         client.features.negotiated.streamManagement = false;
     });
     client.registerFeature('streamManagement', 200, smacks);

@@ -1,10 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const protocol_1 = require("../protocol");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const protocol_1 = require('../protocol');
 function default_1(client) {
     client.disco.addFeature(protocol_1.Namespaces.CHAT_STATES);
     const allowedTypes = ['chat', 'groupchat', 'normal'];
-    client.on('message', function (msg) {
+    client.on('message', function(msg) {
         if (allowedTypes.indexOf(msg.type || 'normal') < 0) {
             return;
         }

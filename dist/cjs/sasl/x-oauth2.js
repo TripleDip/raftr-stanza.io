@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 class XOAuth2 {
     response(cred) {
         let str = '';

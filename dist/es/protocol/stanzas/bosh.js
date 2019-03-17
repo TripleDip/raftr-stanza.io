@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'body',
@@ -19,7 +19,7 @@ export default function (JXT) {
             newKey: Utils.attribute('newkey'),
             pause: Utils.numberAttribute('pause'),
             payload: {
-                get: function () {
+                get: function() {
                     const results = [];
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         const obj = JXT.build(this.xml.childNodes[i]);
@@ -29,7 +29,7 @@ export default function (JXT) {
                     }
                     return results;
                 },
-                set: function (values) {
+                set: function(values) {
                     for (const types of values) {
                         this.xml.appendChild(types.xml);
                     }

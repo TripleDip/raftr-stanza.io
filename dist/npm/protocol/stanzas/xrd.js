@@ -1,11 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const Properties = {
-        get: function () {
+        get: function() {
             const results = {};
             const props = Utils.find(this.xml, NS.XRD, 'Property');
             for (let i = 0, len = props.length; i < len; i++) {

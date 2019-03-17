@@ -1,9 +1,9 @@
 import * as NS from '../namespaces';
 import { JID } from '../jid';
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     const jidList = {
-        get: function () {
+        get: function() {
             const result = [];
             const items = Utils.find(this.xml, NS.BLOCKING, 'item');
             if (!items.length) {
@@ -14,7 +14,7 @@ export default function (JXT) {
             }
             return result;
         },
-        set: function (values) {
+        set: function(values) {
             const self = this;
             for (const value of values) {
                 const item = Utils.createElement(NS.BLOCKING, 'item', NS.BLOCKING);

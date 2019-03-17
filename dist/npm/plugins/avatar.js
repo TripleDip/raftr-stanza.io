@@ -1,9 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const protocol_1 = require("../protocol");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const protocol_1 = require('../protocol');
 function default_1(client) {
-    client.disco.addFeature(protocol_1.Namespaces.PEP_NOTIFY(protocol_1.Namespaces.AVATAR_METADATA));
-    client.on('pubsub:event', function (msg) {
+    client.disco.addFeature(
+        protocol_1.Namespaces.PEP_NOTIFY(protocol_1.Namespaces.AVATAR_METADATA)
+    );
+    client.on('pubsub:event', function(msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -16,7 +18,7 @@ function default_1(client) {
             source: 'pubsub'
         });
     });
-    client.on('presence', function (pres) {
+    client.on('presence', function(pres) {
         if (pres.avatarId) {
             client.emit('avatar', {
                 avatars: [
@@ -29,19 +31,29 @@ function default_1(client) {
             });
         }
     });
-    client.publishAvatar = function (id, data, cb) {
-        return this.publish('', protocol_1.Namespaces.AVATAR_DATA, {
-            avatarData: data,
-            id: id
-        }, cb);
+    client.publishAvatar = function(id, data, cb) {
+        return this.publish(
+            '',
+            protocol_1.Namespaces.AVATAR_DATA,
+            {
+                avatarData: data,
+                id: id
+            },
+            cb
+        );
     };
-    client.useAvatars = function (info, cb) {
-        return this.publish('', protocol_1.Namespaces.AVATAR_METADATA, {
-            avatars: info,
-            id: 'current'
-        }, cb);
+    client.useAvatars = function(info, cb) {
+        return this.publish(
+            '',
+            protocol_1.Namespaces.AVATAR_METADATA,
+            {
+                avatars: info,
+                id: 'current'
+            },
+            cb
+        );
     };
-    client.getAvatar = function (jid, id, cb) {
+    client.getAvatar = function(jid, id, cb) {
         return this.getItem(jid, protocol_1.Namespaces.AVATAR_DATA, id, cb);
     };
 }
