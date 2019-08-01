@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const OMEMO = JXT.define({
         element: 'encrypted',
@@ -66,10 +66,10 @@ export default function(JXT) {
     JXT.extend(Bundle, SignedPreKeyPublic);
     JXT.extend(Header, Key, 'keys', true);
     JXT.extend(OMEMO, Header);
-    JXT.withMessage(function(Message) {
+    JXT.withMessage(function (Message) {
         JXT.extend(Message, OMEMO);
     });
-    JXT.withPubsubItem(function(Item) {
+    JXT.withPubsubItem(function (Item) {
         JXT.extend(Item, Bundle);
         JXT.extend(Item, DeviceList);
     });

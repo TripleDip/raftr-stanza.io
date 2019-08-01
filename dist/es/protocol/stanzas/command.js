@@ -8,14 +8,14 @@ const CONDITIONS = [
     'malformed-action',
     'session-expired'
 ];
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const Command = JXT.define({
         element: 'command',
         fields: {
             action: Utils.attribute('action'),
             actions: {
-                get: function() {
+                get: function () {
                     const result = [];
                     const actionSet = Utils.find(this.xml, NS.ADHOC_COMMANDS, 'actions');
                     if (!actionSet.length) {
@@ -29,19 +29,13 @@ export default function(JXT) {
                     }
                     return result;
                 },
-                set: function(values) {
+                set: function (values) {
                     const actionSet = Utils.findOrCreate(this.xml, NS.ADHOC_COMMANDS, 'actions');
                     for (let i = 0, len = actionSet.childNodes.length; i < len; i++) {
                         actionSet.removeChild(actionSet.childNodes[i]);
                     }
                     for (const value of values) {
-                        actionSet.appendChild(
-                            Utils.createElement(
-                                NS.ADHOC_COMMANDS,
-                                value.toLowerCase(),
-                                NS.ADHOC_COMMANDS
-                            )
-                        );
+                        actionSet.appendChild(Utils.createElement(NS.ADHOC_COMMANDS, value.toLowerCase(), NS.ADHOC_COMMANDS));
                     }
                 }
             },
@@ -64,10 +58,10 @@ export default function(JXT) {
     });
     JXT.extend(Command, Note, 'notes');
     JXT.extendIQ(Command);
-    JXT.withStanzaError(function(StanzaError) {
+    JXT.withStanzaError(function (StanzaError) {
         JXT.add(StanzaError, 'adhocCommandCondition', Utils.enumSub(NS.ADHOC_COMMANDS, CONDITIONS));
     });
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(Command, DataForm);
     });
 }

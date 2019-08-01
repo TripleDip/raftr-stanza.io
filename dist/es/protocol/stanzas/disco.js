@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const DiscoCaps = JXT.define({
         element: 'c',
@@ -56,10 +56,10 @@ export default function(JXT) {
     JXT.extendIQ(DiscoItems);
     JXT.extendPresence(DiscoCaps);
     JXT.extendStreamFeatures(DiscoCaps);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(DiscoInfo, DataForm, 'extensions');
     });
-    JXT.withDefinition('set', NS.RSM, function(RSM) {
+    JXT.withDefinition('set', NS.RSM, function (RSM) {
         JXT.extend(DiscoItems, RSM);
     });
 }

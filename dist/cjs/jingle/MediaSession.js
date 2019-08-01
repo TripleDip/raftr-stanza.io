@@ -1,17 +1,15 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const ICESession_1 = tslib_1.__importDefault(require('./ICESession'));
-const Intermediate_1 = require('./lib/Intermediate');
-const Protocol_1 = require('./lib/Protocol');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const ICESession_1 = tslib_1.__importDefault(require("./ICESession"));
+const Intermediate_1 = require("./lib/Intermediate");
+const Protocol_1 = require("./lib/Protocol");
 function applyStreamsCompatibility(content) {
     /* signal .streams as a=ssrc: msid */
-    if (
-        content.application.streams &&
+    if (content.application.streams &&
         content.application.streams.length &&
         content.application.sources &&
-        content.application.sources.length
-    ) {
+        content.application.sources.length) {
         const msid = content.application.streams[0];
         content.application.sources[0].parameters.push({
             key: 'msid',
@@ -55,21 +53,21 @@ class MediaSession extends ICESession_1.default {
         this.pc
             .createOffer(offerOptions)
             .then(offer => {
-                const json = Intermediate_1.importFromSDP(offer.sdp);
-                const jingle = Protocol_1.convertIntermediateToRequest(json, this.role);
-                jingle.sessionId = this.sid;
-                jingle.action = 'session-initate';
-                jingle.contents.forEach(content => {
-                    content.creator = 'initiator';
-                    applyStreamsCompatibility(content);
-                });
-                this.send('session-initiate', jingle);
-                return this.pc.setLocalDescription(offer).then(() => next());
-            })
-            .catch(err => {
-                this._log('error', 'Could not create WebRTC offer', err);
-                this.end('failed-application', true);
+            const json = Intermediate_1.importFromSDP(offer.sdp);
+            const jingle = Protocol_1.convertIntermediateToRequest(json, this.role);
+            jingle.sessionId = this.sid;
+            jingle.action = 'session-initate';
+            jingle.contents.forEach(content => {
+                content.creator = 'initiator';
+                applyStreamsCompatibility(content);
             });
+            this.send('session-initiate', jingle);
+            return this.pc.setLocalDescription(offer).then(() => next());
+        })
+            .catch(err => {
+            this._log('error', 'Could not create WebRTC offer', err);
+            this.end('failed-application', true);
+        });
     }
     accept(opts, next) {
         // support calling with accept(next) or accept(opts, next)
@@ -85,20 +83,20 @@ class MediaSession extends ICESession_1.default {
         this.pc
             .createAnswer(opts)
             .then(answer => {
-                const json = Intermediate_1.importFromSDP(answer.sdp);
-                const jingle = Protocol_1.convertIntermediateToRequest(json, this.role);
-                jingle.sessionId = this.sid;
-                jingle.action = 'session-accept';
-                jingle.contents.forEach(content => {
-                    content.creator = 'initiator';
-                });
-                this.send('session-accept', jingle);
-                return this.pc.setLocalDescription(answer).then(() => next());
-            })
-            .catch(err => {
-                this._log('error', 'Could not create WebRTC answer', err);
-                this.end('failed-application');
+            const json = Intermediate_1.importFromSDP(answer.sdp);
+            const jingle = Protocol_1.convertIntermediateToRequest(json, this.role);
+            jingle.sessionId = this.sid;
+            jingle.action = 'session-accept';
+            jingle.contents.forEach(content => {
+                content.creator = 'initiator';
             });
+            this.send('session-accept', jingle);
+            return this.pc.setLocalDescription(answer).then(() => next());
+        })
+            .catch(err => {
+            this._log('error', 'Could not create WebRTC answer', err);
+            this.end('failed-application');
+        });
     }
     end(reason, silent) {
         this.pc.getReceivers().forEach(receiver => {
@@ -143,7 +141,8 @@ class MediaSession extends ICESession_1.default {
     addTrack(track, stream, cb) {
         if (this.pc.addTrack) {
             this.pc.addTrack(track, stream);
-        } else {
+        }
+        else {
             this.pc.addStream(stream, cb);
         }
         if (cb) {
@@ -184,16 +183,16 @@ class MediaSession extends ICESession_1.default {
         this.pc
             .setRemoteDescription({ type: 'offer', sdp })
             .then(() => {
-                if (cb) {
-                    return cb();
-                }
-            })
+            if (cb) {
+                return cb();
+            }
+        })
             .catch(err => {
-                this._log('error', 'Could not create WebRTC answer', err);
-                if (cb) {
-                    return cb({ condition: 'general-error' });
-                }
-            });
+            this._log('error', 'Could not create WebRTC answer', err);
+            if (cb) {
+                return cb({ condition: 'general-error' });
+            }
+        });
     }
     onSessionTerminate(changes, cb) {
         for (const receiver of this.pc.getReceivers()) {

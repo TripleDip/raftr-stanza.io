@@ -1,6 +1,6 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const JingleUtil_1 = require('./JingleUtil');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const JingleUtil_1 = require("./JingleUtil");
 function convertIntermediateToApplication(media, role) {
     const rtp = media.rtpParameters;
     const rtcp = media.rtcpParameters || {};
@@ -24,10 +24,9 @@ function convertIntermediateToApplication(media, role) {
     for (const ext of rtp.headerExtensions || []) {
         application.headerExtensions.push({
             id: ext.id,
-            senders:
-                ext.direction && ext.direction !== 'sendrecv'
-                    ? JingleUtil_1.directionToSenders(role, ext.direction)
-                    : undefined,
+            senders: ext.direction && ext.direction !== 'sendrecv'
+                ? JingleUtil_1.directionToSenders(role, ext.direction)
+                : undefined,
             uri: ext.uri
         });
     }
@@ -144,9 +143,9 @@ function convertIntermediateToRequest(session, role) {
                 application: isRTP
                     ? convertIntermediateToApplication(media, role)
                     : {
-                          applicationType: 'datachannel',
-                          protocol: media.protocol
-                      },
+                        applicationType: 'datachannel',
+                        protocol: media.protocol
+                    },
                 creator: JingleUtil_1.SessionRole.Initiator,
                 name: media.mid,
                 senders: JingleUtil_1.directionToSenders(role, media.direction),
@@ -155,9 +154,9 @@ function convertIntermediateToRequest(session, role) {
         }),
         groups: session.groups
             ? session.groups.map(group => ({
-                  contents: group.mids,
-                  semantics: group.semantics
-              }))
+                contents: group.mids,
+                semantics: group.semantics
+            }))
             : undefined
     };
 }
@@ -236,10 +235,9 @@ function convertContentToIntermediate(content, role) {
             });
             for (const ext of application.headerExtensions || []) {
                 media.rtpParameters.headerExtensions.push({
-                    direction:
-                        ext.senders && ext.senders !== 'both'
-                            ? JingleUtil_1.sendersToDirection(role, ext.senders)
-                            : undefined,
+                    direction: ext.senders && ext.senders !== 'both'
+                        ? JingleUtil_1.sendersToDirection(role, ext.senders)
+                        : undefined,
                     id: ext.id,
                     uri: ext.uri
                 });

@@ -1,10 +1,10 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const protocol_1 = require('../protocol');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const protocol_1 = require("../protocol");
 function default_1(client) {
     client.disco.addFeature(protocol_1.Namespaces.MOOD);
     client.disco.addFeature(protocol_1.Namespaces.PEP_NOTIFY(protocol_1.Namespaces.MOOD));
-    client.on('pubsub:event', function(msg) {
+    client.on('pubsub:event', function (msg) {
         if (!msg.event.updated) {
             return;
         }
@@ -16,18 +16,13 @@ function default_1(client) {
             mood: msg.event.updated.published[0].mood
         });
     });
-    client.publishMood = function(mood, text, cb) {
-        return this.publish(
-            '',
-            protocol_1.Namespaces.MOOD,
-            {
-                mood: {
-                    text: text,
-                    value: mood
-                }
-            },
-            cb
-        );
+    client.publishMood = function (mood, text, cb) {
+        return this.publish('', protocol_1.Namespaces.MOOD, {
+            mood: {
+                text: text,
+                value: mood
+            }
+        }, cb);
     };
 }
 exports.default = default_1;

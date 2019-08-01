@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Sent = JXT.define({
         element: 'sent',
@@ -31,7 +31,7 @@ function default_1(JXT) {
         name: 'disableCarbons',
         namespace: NS.CARBONS_2
     });
-    JXT.withDefinition('forwarded', NS.FORWARD_0, function(Forwarded) {
+    JXT.withDefinition('forwarded', NS.FORWARD_0, function (Forwarded) {
         JXT.extend(Sent, Forwarded);
         JXT.extend(Received, Forwarded);
     });

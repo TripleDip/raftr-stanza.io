@@ -1,17 +1,17 @@
 import * as NS from '../namespaces';
 function proxy(child, field) {
     return {
-        get: function() {
+        get: function () {
             if (this._extensions[child]) {
                 return this[child][field];
             }
         },
-        set: function(value) {
+        set: function (value) {
             this[child][field] = value;
         }
     };
 }
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const UserItem = JXT.define({
         element: 'item',
@@ -102,14 +102,14 @@ export default function(JXT) {
             actor: proxy('_mucUserItem', '_mucUserActor'),
             affiliation: proxy('_mucUserItem', 'affiliation'),
             codes: {
-                get: function() {
-                    return Utils.getMultiSubText(this.xml, NS.MUC_USER, 'status', function(sub) {
+                get: function () {
+                    return Utils.getMultiSubText(this.xml, NS.MUC_USER, 'status', function (sub) {
                         return Utils.getAttribute(sub, 'code');
                     });
                 },
-                set: function(value) {
+                set: function (value) {
                     const self = this;
-                    Utils.setMultiSubText(this.xml, NS.MUC_USER, 'status', value, function(val) {
+                    Utils.setMultiSubText(this.xml, NS.MUC_USER, 'status', value, function (val) {
                         const child = Utils.createElement(NS.MUC_USER, 'status', NS.MUC_USER);
                         Utils.setAttribute(child, 'code', val);
                         self.xml.appendChild(child);
@@ -147,7 +147,7 @@ export default function(JXT) {
         element: 'x',
         fields: {
             history: {
-                get: function() {
+                get: function () {
                     const result = {};
                     let hist = Utils.find(this.xml, NS.MUC, 'history');
                     if (!hist.length) {
@@ -171,7 +171,7 @@ export default function(JXT) {
                         result.since = new Date(since);
                     }
                 },
-                set: function(opts) {
+                set: function (opts) {
                     const existing = Utils.find(this.xml, NS.MUC, 'history');
                     if (existing.length) {
                         for (let i = 0; i < existing.length; i++) {
@@ -223,12 +223,12 @@ export default function(JXT) {
     JXT.extendPresence(MUCJoin);
     JXT.extendMessage(MUC);
     JXT.extendMessage(DirectInvite);
-    JXT.withIQ(function(IQ) {
+    JXT.withIQ(function (IQ) {
         JXT.add(IQ, 'mucUnique', Utils.textSub(NS.MUC_UNIQUE, 'unique'));
         JXT.extend(IQ, MUCAdmin);
         JXT.extend(IQ, MUCOwner);
     });
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(MUCOwner, DataForm);
     });
 }

@@ -5,14 +5,15 @@ Copyright © 2013-2018 &yet <https://andyet.com>
 
 Portions of this code were adapted from existing projects:
 
+
 ## SASL
 
--   saslmechanisms
--   sasl-anonymous
--   sasl-digest-md5
--   sasl-external
--   sasl-plain
--   sasl-x-oauth2
+* saslmechanisms
+* sasl-anonymous
+* sasl-digest-md5
+* sasl-external
+* sasl-plain
+* sasl-x-oauth2
 
 (The MIT License)
 
@@ -34,3 +35,4 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+

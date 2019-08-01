@@ -1,5 +1,5 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionRole = {
     Initiator: 'initiator',
     Responder: 'responder'
@@ -20,13 +20,9 @@ function sendersToDirection(role, senders = 'both') {
     const isInitiator = role === exports.SessionRole.Initiator;
     switch (senders) {
         case exports.ContentSenders.Initiator:
-            return isInitiator
-                ? exports.ApplicationDirection.Send
-                : exports.ApplicationDirection.Receive;
+            return isInitiator ? exports.ApplicationDirection.Send : exports.ApplicationDirection.Receive;
         case exports.ContentSenders.Responder:
-            return isInitiator
-                ? exports.ApplicationDirection.Receive
-                : exports.ApplicationDirection.Send;
+            return isInitiator ? exports.ApplicationDirection.Receive : exports.ApplicationDirection.Send;
         case exports.ContentSenders.Both:
             return exports.ApplicationDirection.SendReceive;
     }
@@ -37,13 +33,9 @@ function directionToSenders(role, direction = 'sendrecv') {
     const isInitiator = role === exports.SessionRole.Initiator;
     switch (direction) {
         case exports.ApplicationDirection.Send:
-            return isInitiator
-                ? exports.ContentSenders.Initiator
-                : exports.ContentSenders.Responder;
+            return isInitiator ? exports.ContentSenders.Initiator : exports.ContentSenders.Responder;
         case exports.ApplicationDirection.Receive:
-            return isInitiator
-                ? exports.ContentSenders.Responder
-                : exports.ContentSenders.Initiator;
+            return isInitiator ? exports.ContentSenders.Responder : exports.ContentSenders.Initiator;
         case exports.ApplicationDirection.SendReceive:
             return exports.ContentSenders.Both;
     }

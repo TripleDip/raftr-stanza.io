@@ -1,35 +1,38 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 const internals = {};
-internals.definePresence = function(JXT, name, namespace) {
+internals.definePresence = function (JXT, name, namespace) {
     const Utils = JXT.utils;
     JXT.define({
         element: 'presence',
         fields: {
             $status: {
-                get: function() {
+                get: function () {
                     return Utils.getSubLangText(this.xml, namespace, 'status', this.lang);
                 }
             },
             avatarId: {
-                get: function() {
+                get: function () {
                     const update = Utils.find(this.xml, NS.VCARD_TEMP_UPDATE, 'x');
                     if (!update.length) {
                         return '';
                     }
                     return Utils.getSubText(update[0], NS.VCARD_TEMP_UPDATE, 'photo');
                 },
-                set: function(value) {
+                set: function (value) {
                     const update = Utils.findOrCreate(this.xml, NS.VCARD_TEMP_UPDATE, 'x');
                     if (value === '') {
                         Utils.setBoolSub(update, NS.VCARD_TEMP_UPDATE, 'photo', true);
-                    } else if (value === true) {
+                    }
+                    else if (value === true) {
                         return;
-                    } else if (value) {
+                    }
+                    else if (value) {
                         Utils.setSubText(update, NS.VCARD_TEMP_UPDATE, 'photo', value);
-                    } else {
+                    }
+                    else {
                         this.xml.removeChild(update);
                     }
                 }
@@ -42,20 +45,20 @@ internals.definePresence = function(JXT, name, namespace) {
             priority: Utils.numberSub(namespace, 'priority', false, 0),
             show: Utils.textSub(namespace, 'show'),
             status: {
-                get: function() {
+                get: function () {
                     const statuses = this.$status;
                     return statuses[this.lang] || '';
                 },
-                set: function(value) {
+                set: function (value) {
                     Utils.setSubLangText(this.xml, namespace, 'status', value, this.lang);
                 }
             },
             to: Utils.jidAttribute('to', true),
             type: {
-                get: function() {
+                get: function () {
                     return Utils.getAttribute(this.xml, 'type', 'available');
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value === 'available') {
                         value = false;
                     }

@@ -1,10 +1,11 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const punycode = require('punycode');
 let StringPrep;
 try {
     StringPrep = require('node-stringprep');
-} catch (err) {
+}
+catch (err) {
     StringPrep = false;
 }
 const HAS_STRINGPREP = !!StringPrep && !!StringPrep.StringPrep;
@@ -12,7 +13,8 @@ exports.NATIVE_STRINGPREP = HAS_STRINGPREP && new StringPrep.StringPrep('nodepre
 function toUnicode(data) {
     if (HAS_STRINGPREP) {
         return punycode.toUnicode(StringPrep.toUnicode(data));
-    } else {
+    }
+    else {
         return punycode.toUnicode(data);
     }
 }
@@ -21,7 +23,8 @@ function nameprep(str) {
     if (HAS_STRINGPREP) {
         const name = new StringPrep.StringPrep('nameprep');
         return name.prepare(str);
-    } else {
+    }
+    else {
         return str.toLowerCase();
     }
 }
@@ -30,7 +33,8 @@ function nodeprep(str) {
     if (HAS_STRINGPREP) {
         const node = new StringPrep.StringPrep('nodeprep');
         return node.prepare(str);
-    } else {
+    }
+    else {
         return str.toLowerCase();
     }
 }
@@ -39,7 +43,8 @@ function resourceprep(str) {
     if (HAS_STRINGPREP) {
         const resource = new StringPrep.StringPrep('resourceprep');
         return resource.prepare(str);
-    } else {
+    }
+    else {
         return str;
     }
 }
@@ -75,12 +80,10 @@ function prep(data) {
     if (domain[domain.length - 1] === '.') {
         domain = domain.slice(0, domain.length - 1);
     }
-    domain = nameprep(
-        domain
-            .split('.')
-            .map(toUnicode)
-            .join('.')
-    );
+    domain = nameprep(domain
+        .split('.')
+        .map(toUnicode)
+        .join('.'));
     return {
         bare: bareJID(local, domain),
         domain,
@@ -125,12 +128,10 @@ function equal(jid1, jid2, requirePrep) {
     if (arguments.length === 2) {
         requirePrep = true;
     }
-    return (
-        jid1.local === jid2.local &&
+    return (jid1.local === jid2.local &&
         jid1.domain === jid2.domain &&
         jid1.resource === jid2.resource &&
-        (requirePrep ? jid1.prepped && jid2.prepped : true)
-    );
+        (requirePrep ? jid1.prepped && jid2.prepped : true));
 }
 exports.equal = equal;
 function equalBare(jid1, jid2, requirePrep) {
@@ -139,11 +140,9 @@ function equalBare(jid1, jid2, requirePrep) {
     if (arguments.length === 2) {
         requirePrep = true;
     }
-    return (
-        jid1.local === jid2.local &&
+    return (jid1.local === jid2.local &&
         jid1.domain === jid2.domain &&
-        (requirePrep ? jid1.prepped && jid2.prepped : true)
-    );
+        (requirePrep ? jid1.prepped && jid2.prepped : true));
 }
 exports.equalBare = equalBare;
 function isBare(jid) {
@@ -206,12 +205,15 @@ class JID {
         if (localOrJID && !domain && !resource) {
             if (typeof localOrJID === 'string') {
                 parsed = parse(localOrJID);
-            } else if (localOrJID._isJID || localOrJID instanceof JID) {
+            }
+            else if (localOrJID._isJID || localOrJID instanceof JID) {
                 parsed = localOrJID;
-            } else {
+            }
+            else {
                 throw new Error('Invalid argument type');
             }
-        } else if (domain) {
+        }
+        else if (domain) {
             let trusted = ASCII.test(localOrJID) && ASCII.test(domain);
             if (resource) {
                 trusted = trusted && ASCII.test(resource);
@@ -222,7 +224,8 @@ class JID {
                 prepped: trusted,
                 resource
             });
-        } else {
+        }
+        else {
             parsed = {};
         }
         this._isJID = true;

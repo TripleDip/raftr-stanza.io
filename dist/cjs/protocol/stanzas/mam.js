@@ -1,8 +1,8 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
-const jid_1 = require('../jid');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
+const jid_1 = require("../jid");
 function default_1(JXT) {
     const Utils = JXT.utils;
     const MAMQuery = JXT.define({
@@ -36,7 +36,7 @@ function default_1(JXT) {
         element: 'prefs',
         fields: {
             always: {
-                get: function() {
+                get: function () {
                     const results = [];
                     let container = Utils.find(this.xml, NS.MAM_1, 'always');
                     if (container.length === 0) {
@@ -49,7 +49,7 @@ function default_1(JXT) {
                     }
                     return results;
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value.length > 0) {
                         const container = Utils.findOrCreate(this.xml, NS.MAM_1, 'always');
                         Utils.setMultiSubText(container, NS.MAM_1, 'jid', value);
@@ -58,7 +58,7 @@ function default_1(JXT) {
             },
             defaultCondition: Utils.attribute('default'),
             never: {
-                get: function() {
+                get: function () {
                     const results = [];
                     let container = Utils.find(this.xml, NS.MAM_1, 'always');
                     if (container.length === 0) {
@@ -71,7 +71,7 @@ function default_1(JXT) {
                     }
                     return results;
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value.length > 0) {
                         const container = Utils.findOrCreate(this.xml, NS.MAM_1, 'never');
                         Utils.setMultiSubText(container, NS.MAM_1, 'jid', value);
@@ -86,13 +86,13 @@ function default_1(JXT) {
     JXT.extendIQ(MAMQuery);
     JXT.extendIQ(Prefs);
     JXT.extendIQ(Fin);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(MAMQuery, DataForm);
     });
-    JXT.withDefinition('forwarded', NS.FORWARD_0, function(Forwarded) {
+    JXT.withDefinition('forwarded', NS.FORWARD_0, function (Forwarded) {
         JXT.extend(Result, Forwarded);
     });
-    JXT.withDefinition('set', NS.RSM, function(RSM) {
+    JXT.withDefinition('set', NS.RSM, function (RSM) {
         JXT.extend(MAMQuery, RSM);
         JXT.extend(Fin, RSM);
     });

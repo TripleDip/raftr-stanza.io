@@ -1,5 +1,5 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function default_1(JXT) {
     const Utils = JXT.utils;
     const Attachment = JXT.define({

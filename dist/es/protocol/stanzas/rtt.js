@@ -9,13 +9,13 @@ const ACTION_MAP = {
     t: 'insert',
     w: 'wait'
 };
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const RTT = JXT.define({
         element: 'rtt',
         fields: {
             actions: {
-                get: function() {
+                get: function () {
                     const results = [];
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         const child = this.xml.childNodes[i];
@@ -26,7 +26,8 @@ export default function(JXT) {
                         }
                         if (ACTION_MAP[name]) {
                             action.type = ACTION_MAP[name];
-                        } else {
+                        }
+                        else {
                             continue;
                         }
                         const pos = Utils.getAttribute(child, 'p');
@@ -45,7 +46,7 @@ export default function(JXT) {
                     }
                     return results;
                 },
-                set: function(actions) {
+                set: function (actions) {
                     const self = this;
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         this.xml.removeChild(this.xml.childNodes[i]);
@@ -54,11 +55,7 @@ export default function(JXT) {
                         if (!TYPE_MAP[action.type]) {
                             return;
                         }
-                        const child = Utils.createElement(
-                            NS.RTT_0,
-                            TYPE_MAP[action.type],
-                            NS.RTT_0
-                        );
+                        const child = Utils.createElement(NS.RTT_0, TYPE_MAP[action.type], NS.RTT_0);
                         if (action.pos !== undefined) {
                             Utils.setAttribute(child, 'p', action.pos.toString());
                         }

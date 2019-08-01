@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Utils = JXT.utils;
     JXT.define({
@@ -9,13 +9,14 @@ function default_1(JXT) {
         fields: {
             after: Utils.textSub(NS.RSM, 'after'),
             before: {
-                get: function() {
+                get: function () {
                     return Utils.getSubText(this.xml, NS.RSM, 'before');
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value === true) {
                         Utils.findOrCreate(this.xml, NS.RSM, 'before');
-                    } else {
+                    }
+                    else {
                         Utils.setSubText(this.xml, NS.RSM, 'before', value);
                     }
                 }

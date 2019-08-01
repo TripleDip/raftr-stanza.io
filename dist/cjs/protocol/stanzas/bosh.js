@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Utils = JXT.utils;
     JXT.define({
@@ -22,7 +22,7 @@ function default_1(JXT) {
             newKey: Utils.attribute('newkey'),
             pause: Utils.numberAttribute('pause'),
             payload: {
-                get: function() {
+                get: function () {
                     const results = [];
                     for (let i = 0, len = this.xml.childNodes.length; i < len; i++) {
                         const obj = JXT.build(this.xml.childNodes[i]);
@@ -32,7 +32,7 @@ function default_1(JXT) {
                     }
                     return results;
                 },
-                set: function(values) {
+                set: function (values) {
                     for (const types of values) {
                         this.xml.appendChild(types.xml);
                     }

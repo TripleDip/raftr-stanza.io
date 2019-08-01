@@ -47,7 +47,7 @@ export default class JingleSession extends WildEmitter {
                 cb({ condition: 'bad-request' });
                 return next();
             }
-            this[ACTIONS[action]](changes, function(err, result) {
+            this[ACTIONS[action]](changes, function (err, result) {
                 cb(err, result);
                 return next();
             });
@@ -103,7 +103,8 @@ export default class JingleSession extends WildEmitter {
         };
         if (requirePending[action]) {
             this.pendingAction = action;
-        } else {
+        }
+        else {
             this.pendingAction = false;
         }
         this.emit('send', {
@@ -172,7 +173,7 @@ export default class JingleSession extends WildEmitter {
             sid: true
         };
         let unknownPayload = false;
-        Object.keys(changes).forEach(function(key) {
+        Object.keys(changes).forEach(function (key) {
             if (!okKeys[key]) {
                 unknownPayload = true;
             }
@@ -183,7 +184,8 @@ export default class JingleSession extends WildEmitter {
                 jingleCondition: 'unsupported-info',
                 type: 'modify'
             });
-        } else {
+        }
+        else {
             cb();
         }
     }

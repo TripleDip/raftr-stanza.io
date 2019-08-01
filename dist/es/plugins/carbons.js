@@ -1,25 +1,19 @@
 import { Namespaces } from '../protocol';
-export default function(client) {
+export default function (client) {
     client.disco.addFeature(Namespaces.CARBONS_2);
-    client.enableCarbons = function(cb) {
-        return this.sendIq(
-            {
-                enableCarbons: true,
-                type: 'set'
-            },
-            cb
-        );
+    client.enableCarbons = function (cb) {
+        return this.sendIq({
+            enableCarbons: true,
+            type: 'set'
+        }, cb);
     };
-    client.disableCarbons = function(cb) {
-        return this.sendIq(
-            {
-                disableCarbons: true,
-                type: 'set'
-            },
-            cb
-        );
+    client.disableCarbons = function (cb) {
+        return this.sendIq({
+            disableCarbons: true,
+            type: 'set'
+        }, cb);
     };
-    client.on('message', function(msg) {
+    client.on('message', function (msg) {
         if (msg.carbonSent) {
             return client.emit('carbon:sent', msg);
         }
@@ -27,7 +21,7 @@ export default function(client) {
             return client.emit('carbon:received', msg);
         }
     });
-    client.on('carbon:*', function(name, carbon) {
+    client.on('carbon:*', function (name, carbon) {
         const dir = name.split(':')[1];
         if (carbon.from.bare !== client.jid.bare) {
             return;
@@ -37,7 +31,8 @@ export default function(client) {
         if (dir === 'received') {
             msg = carbon.carbonReceived.forwarded.message;
             delay = carbon.carbonReceived.forwarded.delay;
-        } else {
+        }
+        else {
             msg = carbon.carbonSent.forwarded.message;
             delay = carbon.carbonSent.forwarded.delay;
         }
@@ -51,7 +46,8 @@ export default function(client) {
         // have originally treated it ourself.
         if (msg.from.bare === client.jid.bare) {
             client.emit('message:sent', msg);
-        } else {
+        }
+        else {
             client.emit('message', msg);
         }
     });

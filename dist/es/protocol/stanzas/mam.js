@@ -1,6 +1,6 @@
 import * as NS from '../namespaces';
 import { JID } from '../jid';
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const MAMQuery = JXT.define({
         element: 'query',
@@ -33,7 +33,7 @@ export default function(JXT) {
         element: 'prefs',
         fields: {
             always: {
-                get: function() {
+                get: function () {
                     const results = [];
                     let container = Utils.find(this.xml, NS.MAM_1, 'always');
                     if (container.length === 0) {
@@ -46,7 +46,7 @@ export default function(JXT) {
                     }
                     return results;
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value.length > 0) {
                         const container = Utils.findOrCreate(this.xml, NS.MAM_1, 'always');
                         Utils.setMultiSubText(container, NS.MAM_1, 'jid', value);
@@ -55,7 +55,7 @@ export default function(JXT) {
             },
             defaultCondition: Utils.attribute('default'),
             never: {
-                get: function() {
+                get: function () {
                     const results = [];
                     let container = Utils.find(this.xml, NS.MAM_1, 'always');
                     if (container.length === 0) {
@@ -68,7 +68,7 @@ export default function(JXT) {
                     }
                     return results;
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value.length > 0) {
                         const container = Utils.findOrCreate(this.xml, NS.MAM_1, 'never');
                         Utils.setMultiSubText(container, NS.MAM_1, 'jid', value);
@@ -83,13 +83,13 @@ export default function(JXT) {
     JXT.extendIQ(MAMQuery);
     JXT.extendIQ(Prefs);
     JXT.extendIQ(Fin);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(MAMQuery, DataForm);
     });
-    JXT.withDefinition('forwarded', NS.FORWARD_0, function(Forwarded) {
+    JXT.withDefinition('forwarded', NS.FORWARD_0, function (Forwarded) {
         JXT.extend(Result, Forwarded);
     });
-    JXT.withDefinition('set', NS.RSM, function(RSM) {
+    JXT.withDefinition('set', NS.RSM, function (RSM) {
         JXT.extend(MAMQuery, RSM);
         JXT.extend(Fin, RSM);
     });

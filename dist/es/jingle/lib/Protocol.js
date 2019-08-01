@@ -22,10 +22,9 @@ export function convertIntermediateToApplication(media, role) {
     for (const ext of rtp.headerExtensions || []) {
         application.headerExtensions.push({
             id: ext.id,
-            senders:
-                ext.direction && ext.direction !== 'sendrecv'
-                    ? directionToSenders(role, ext.direction)
-                    : undefined,
+            senders: ext.direction && ext.direction !== 'sendrecv'
+                ? directionToSenders(role, ext.direction)
+                : undefined,
             uri: ext.uri
         });
     }
@@ -140,9 +139,9 @@ export function convertIntermediateToRequest(session, role) {
                 application: isRTP
                     ? convertIntermediateToApplication(media, role)
                     : {
-                          applicationType: 'datachannel',
-                          protocol: media.protocol
-                      },
+                        applicationType: 'datachannel',
+                        protocol: media.protocol
+                    },
                 creator: SessionRole.Initiator,
                 name: media.mid,
                 senders: directionToSenders(role, media.direction),
@@ -151,9 +150,9 @@ export function convertIntermediateToRequest(session, role) {
         }),
         groups: session.groups
             ? session.groups.map(group => ({
-                  contents: group.mids,
-                  semantics: group.semantics
-              }))
+                contents: group.mids,
+                semantics: group.semantics
+            }))
             : undefined
     };
 }
@@ -231,10 +230,9 @@ export function convertContentToIntermediate(content, role) {
             });
             for (const ext of application.headerExtensions || []) {
                 media.rtpParameters.headerExtensions.push({
-                    direction:
-                        ext.senders && ext.senders !== 'both'
-                            ? sendersToDirection(role, ext.senders)
-                            : undefined,
+                    direction: ext.senders && ext.senders !== 'both'
+                        ? sendersToDirection(role, ext.senders)
+                        : undefined,
                     id: ext.id,
                     uri: ext.uri
                 });

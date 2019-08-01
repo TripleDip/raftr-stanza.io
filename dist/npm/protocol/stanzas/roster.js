@@ -1,17 +1,17 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const Roster = JXT.define({
         element: 'query',
         fields: {
             ver: {
-                get: function() {
+                get: function () {
                     return Utils.getAttribute(this.xml, 'ver');
                 },
-                set: function(value) {
+                set: function (value) {
                     const force = value === '';
                     Utils.setAttribute(this.xml, 'ver', value, force);
                 }
@@ -29,7 +29,7 @@ function default_1(JXT) {
             preApproved: Utils.boolAttribute(NS.ROSTER, 'approved'),
             subscription: Utils.attribute('subscription', 'none'),
             subscriptionRequested: {
-                get: function() {
+                get: function () {
                     const ask = Utils.getAttribute(this.xml, 'ask');
                     return ask === 'subscribe';
                 }

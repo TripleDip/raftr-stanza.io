@@ -1,34 +1,35 @@
 import * as NS from '../namespaces';
-export default function(JXT) {
+export default function (JXT) {
     const Utils = JXT.utils;
     const Pubsub = JXT.define({
         element: 'pubsub',
         fields: {
             create: {
-                get: function() {
+                get: function () {
                     const node = Utils.getSubAttribute(this.xml, NS.PUBSUB, 'create', 'node');
                     if (node) {
                         return node;
                     }
                     return Utils.getBoolSub(this.xml, NS.PUBSUB, 'create');
                 },
-                set: function(value) {
+                set: function (value) {
                     if (value === true || !value) {
                         Utils.setBoolSub(this.xml, NS.PUBSUB, 'create', value);
-                    } else {
+                    }
+                    else {
                         Utils.setSubAttribute(this.xml, NS.PUBSUB, 'create', 'node', value);
                     }
                 }
             },
             publishOptions: {
-                get: function() {
+                get: function () {
                     const DataForm = JXT.getDefinition('x', NS.DATAFORM);
                     const conf = Utils.find(this.xml, NS.PUBSUB, 'publish-options');
                     if (conf.length && conf[0].childNodes.length) {
                         return new DataForm({}, conf[0].childNodes[0]);
                     }
                 },
-                set: function(value) {
+                set: function (value) {
                     const DataForm = JXT.getDefinition('x', NS.DATAFORM);
                     const conf = Utils.findOrCreate(this.xml, NS.PUBSUB, 'publish-options');
                     if (value) {
@@ -60,7 +61,7 @@ export default function(JXT) {
         fields: {
             configurable: Utils.boolSub('subscribe-options'),
             configurationRequired: {
-                get: function() {
+                get: function () {
                     const options = Utils.find(this.xml, NS.PUBSUB, 'subscribe-options');
                     if (options.length) {
                         return Utils.getBoolSub(options[0], NS.PUBSUB, 'required');
@@ -173,12 +174,12 @@ export default function(JXT) {
     JXT.extend(Subscriptions, Subscription, 'list');
     JXT.extend(Affiliations, Affiliation, 'list');
     JXT.extendIQ(Pubsub);
-    JXT.withDataForm(function(DataForm) {
+    JXT.withDataForm(function (DataForm) {
         JXT.extend(SubscriptionOptions, DataForm);
         JXT.extend(Item, DataForm);
         JXT.extend(Configure, DataForm);
     });
-    JXT.withDefinition('set', NS.RSM, function(RSM) {
+    JXT.withDefinition('set', NS.RSM, function (RSM) {
         JXT.extend(Pubsub, RSM);
     });
 }

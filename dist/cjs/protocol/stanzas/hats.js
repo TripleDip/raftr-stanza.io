@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const tslib_1 = require('tslib');
-const NS = tslib_1.__importStar(require('../namespaces'));
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const NS = tslib_1.__importStar(require("../namespaces"));
 function default_1(JXT) {
     const Hat = JXT.define({
         element: 'hat',
@@ -13,7 +13,7 @@ function default_1(JXT) {
         name: '_hat',
         namespace: NS.HATS_0
     });
-    JXT.withPresence(function(Presence) {
+    JXT.withPresence(function (Presence) {
         JXT.add(Presence, 'hats', JXT.utils.subMultiExtension(NS.HATS_0, 'hats', Hat));
     });
 }

@@ -39,6 +39,7 @@ internals.defineMessage = function(JXT, name, namespace) {
 
                     if (attachmentXml[0]) {
                         attachmentObj.url = Utils.getSubText(attachmentXml[0], namespace, 'url');
+                        attachmentObj.pk = Utils.getSubText(attachmentXml[0], namespace, 'pk');
 
                         const thumbnailXml = Utils.find(attachmentXml[0], namespace, 'thumbnail');
 
@@ -58,16 +59,21 @@ internals.defineMessage = function(JXT, name, namespace) {
                     const thumbnail = Utils.createElement('', 'thumbnail');
                     const url = Utils.createElement('', 'url');
                     const tUrl = Utils.createElement('', 'url');
+                    const pollPk = Utils.createElement('', 'pk');
                     attachment.setAttribute('type', value.type);
                     attachment.setAttribute('dispay_width', value.width);
                     attachment.setAttribute('display_height', value.height);
                     url.textContent = value.url;
                     tUrl.textContent = value.thumbnailUrl;
+                    pollPk.textContent = value.pk;
 
                     if (value.url) {
                         thumbnail.appendChild(tUrl);
                         attachment.appendChild(thumbnail);
                         attachment.appendChild(url);
+                        this.xml.appendChild(attachment);
+                    } else if (value.pk) {
+                        attachment.appendChild(pollPk);
                         this.xml.appendChild(attachment);
                     }
                 }

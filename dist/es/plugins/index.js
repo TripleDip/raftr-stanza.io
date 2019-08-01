@@ -35,7 +35,7 @@ import RTT from './rtt';
 import Time from './time';
 import VCard from './vcard';
 import Version from './version';
-export default function(client) {
+export default function (client) {
     // We always need this one first
     client.use(Disco);
     client.use(DiscoOnly);
