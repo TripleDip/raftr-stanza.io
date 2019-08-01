@@ -16,7 +16,7 @@ export default class WSConnection extends WildEmitter {
             Open: stanzas.getDefinition('open', 'urn:ietf:params:xml:ns:xmpp-framing', true),
             StreamError: stanzas.getStreamError()
         };
-        self.sendQueue = async.queue(function (data, cb) {
+        self.sendQueue = async.queue(function(data, cb) {
             if (self.conn) {
                 if (typeof data !== 'string') {
                     data = data.toString();
@@ -29,10 +29,10 @@ export default class WSConnection extends WildEmitter {
             }
             cb();
         }, 1);
-        self.on('connected', function () {
+        self.on('connected', function() {
             self.send(self.startHeader());
         });
-        self.on('raw:incoming', function (data) {
+        self.on('raw:incoming', function(data) {
             let stanzaObj;
             let err;
             data = data.trim();
@@ -41,8 +41,7 @@ export default class WSConnection extends WildEmitter {
             }
             try {
                 stanzaObj = stanzas.parse(data);
-            }
-            catch (e) {
+            } catch (e) {
                 err = new self.stanzas.StreamError({
                     condition: 'invalid-xml'
                 });
@@ -74,20 +73,20 @@ export default class WSConnection extends WildEmitter {
         self.hasStream = false;
         self.closing = false;
         self.conn = new WS(opts.wsURL, 'xmpp', opts.wsOptions);
-        self.conn.onerror = function (e) {
+        self.conn.onerror = function(e) {
             if (e.preventDefault) {
                 e.preventDefault();
             }
             self.emit('disconnected', self);
         };
-        self.conn.onclose = function () {
+        self.conn.onclose = function() {
             self.emit('disconnected', self);
         };
-        self.conn.onopen = function () {
+        self.conn.onopen = function() {
             self.sm.started = false;
             self.emit('connected', self);
         };
-        self.conn.onmessage = function (wsMsg) {
+        self.conn.onmessage = function(wsMsg) {
             self.emit('raw:incoming', Buffer.from(wsMsg.data, 'utf8').toString());
         };
     }
@@ -105,8 +104,7 @@ export default class WSConnection extends WildEmitter {
         if (this.conn && !this.closing && this.hasStream) {
             this.closing = true;
             this.send(this.closeHeader());
-        }
-        else {
+        } else {
             this.hasStream = false;
             this.stream = undefined;
             if (this.conn && this.conn.readyState === WS_OPEN) {

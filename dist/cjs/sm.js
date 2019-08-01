@@ -1,6 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const protocol_1 = require("./protocol");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const protocol_1 = require('./protocol');
 const MAX_SEQ = Math.pow(2, 32);
 const mod = (v, n) => ((v % n) + n) % n;
 class StreamManagement {
@@ -68,9 +68,11 @@ class StreamManagement {
         this.unacked = [];
     }
     ack() {
-        this.client.send(new this.stanzas.Ack({
-            h: this.handled
-        }));
+        this.client.send(
+            new this.stanzas.Ack({
+                h: this.handled
+            })
+        );
     }
     request() {
         this.pendingAck = true;

@@ -1,8 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const async = tslib_1.__importStar(require("async"));
-const uuid = tslib_1.__importStar(require("uuid"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const async = tslib_1.__importStar(require('async'));
+const uuid = tslib_1.__importStar(require('uuid'));
 const WildEmitter = require('wildemitter');
 const ACTIONS = {
     'content-accept': 'onContentAccept',
@@ -50,7 +50,7 @@ class JingleSession extends WildEmitter {
                 cb({ condition: 'bad-request' });
                 return next();
             }
-            this[ACTIONS[action]](changes, function (err, result) {
+            this[ACTIONS[action]](changes, function(err, result) {
                 cb(err, result);
                 return next();
             });
@@ -106,8 +106,7 @@ class JingleSession extends WildEmitter {
         };
         if (requirePending[action]) {
             this.pendingAction = action;
-        }
-        else {
+        } else {
             this.pendingAction = false;
         }
         this.emit('send', {
@@ -176,7 +175,7 @@ class JingleSession extends WildEmitter {
             sid: true
         };
         let unknownPayload = false;
-        Object.keys(changes).forEach(function (key) {
+        Object.keys(changes).forEach(function(key) {
             if (!okKeys[key]) {
                 unknownPayload = true;
             }
@@ -187,8 +186,7 @@ class JingleSession extends WildEmitter {
                 jingleCondition: 'unsupported-info',
                 type: 'modify'
             });
-        }
-        else {
+        } else {
             cb();
         }
     }

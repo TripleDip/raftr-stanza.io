@@ -71,7 +71,7 @@ import XMPPShortcuts from './shortcuts';
 import XMPPTypes from './types';
 import * as JID from './jid';
 export { JID, Namespaces };
-export default function (JXT) {
+export default function(JXT) {
     JXT.use(XMPPTypes);
     JXT.use(XMPPShortcuts);
     JXT.use(Addresses);

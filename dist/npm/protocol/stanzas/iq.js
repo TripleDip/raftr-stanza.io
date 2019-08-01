@@ -1,9 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 const internals = {};
-internals.defineIQ = function (JXT, name, namespace) {
+internals.defineIQ = function(JXT, name, namespace) {
     const Utils = JXT.utils;
     const IQ = JXT.define({
         element: 'iq',

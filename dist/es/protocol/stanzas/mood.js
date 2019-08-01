@@ -83,7 +83,7 @@ const MOODS = [
     'weak',
     'worried'
 ];
-export default function (JXT) {
+export default function(JXT) {
     const Mood = JXT.define({
         element: 'mood',
         fields: {

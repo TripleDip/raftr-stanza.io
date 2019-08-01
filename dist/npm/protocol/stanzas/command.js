@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 const ACTIONS = ['next', 'prev', 'complete', 'cancel'];
 const CONDITIONS = [
     'bad-action',
@@ -18,7 +18,7 @@ function default_1(JXT) {
         fields: {
             action: Utils.attribute('action'),
             actions: {
-                get: function () {
+                get: function() {
                     const result = [];
                     const actionSet = Utils.find(this.xml, NS.ADHOC_COMMANDS, 'actions');
                     if (!actionSet.length) {
@@ -32,13 +32,19 @@ function default_1(JXT) {
                     }
                     return result;
                 },
-                set: function (values) {
+                set: function(values) {
                     const actionSet = Utils.findOrCreate(this.xml, NS.ADHOC_COMMANDS, 'actions');
                     for (let i = 0, len = actionSet.childNodes.length; i < len; i++) {
                         actionSet.removeChild(actionSet.childNodes[i]);
                     }
                     for (const value of values) {
-                        actionSet.appendChild(Utils.createElement(NS.ADHOC_COMMANDS, value.toLowerCase(), NS.ADHOC_COMMANDS));
+                        actionSet.appendChild(
+                            Utils.createElement(
+                                NS.ADHOC_COMMANDS,
+                                value.toLowerCase(),
+                                NS.ADHOC_COMMANDS
+                            )
+                        );
                     }
                 }
             },
@@ -61,10 +67,10 @@ function default_1(JXT) {
     });
     JXT.extend(Command, Note, 'notes');
     JXT.extendIQ(Command);
-    JXT.withStanzaError(function (StanzaError) {
+    JXT.withStanzaError(function(StanzaError) {
         JXT.add(StanzaError, 'adhocCommandCondition', Utils.enumSub(NS.ADHOC_COMMANDS, CONDITIONS));
     });
-    JXT.withDataForm(function (DataForm) {
+    JXT.withDataForm(function(DataForm) {
         JXT.extend(Command, DataForm);
     });
 }

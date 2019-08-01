@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 // ================================================================
 // RFCS
 // ================================================================
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, '__esModule', { value: true });
 // RFC 6120
 exports.BIND = 'urn:ietf:params:xml:ns:xmpp-bind';
 exports.CLIENT = 'jabber:client';

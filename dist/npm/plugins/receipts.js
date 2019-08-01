@@ -1,10 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const protocol_1 = require("../protocol");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const protocol_1 = require('../protocol');
 function default_1(client, stanzas, config) {
     const sendReceipts = config.sendReceipts !== false;
     client.disco.addFeature(protocol_1.Namespaces.RECEIPTS);
-    client.on('message', function (msg) {
+    client.on('message', function(msg) {
         const ackTypes = {
             chat: true,
             headline: true,

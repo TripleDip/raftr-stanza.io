@@ -1,4 +1,4 @@
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     const Attachment = JXT.define({
         element: 'attachment',

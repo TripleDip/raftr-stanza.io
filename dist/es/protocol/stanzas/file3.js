@@ -1,6 +1,6 @@
 import * as NS from '../namespaces';
 const FT_NS = NS.FILE_TRANSFER_3;
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     const File = JXT.define({
         element: 'file',
@@ -48,10 +48,10 @@ export default function (JXT) {
     });
     JXT.extend(File, Range);
     JXT.extend(File, Thumbnail);
-    JXT.withDefinition('hash', NS.HASHES_1, function (Hash) {
+    JXT.withDefinition('hash', NS.HASHES_1, function(Hash) {
         JXT.extend(File, Hash, 'hashes');
     });
-    JXT.withDefinition('content', NS.JINGLE_1, function (Content) {
+    JXT.withDefinition('content', NS.JINGLE_1, function(Content) {
         JXT.extend(Content, FileTransfer);
     });
 }

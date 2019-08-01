@@ -1,6 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const iana_hashes_1 = require("iana-hashes");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const iana_hashes_1 = require('iana-hashes');
 function parse(chal) {
     const dtives = {};
     const tokens = chal.split(/,(?=(?:[^"]|"[^"]*")*$)/);
@@ -42,14 +42,16 @@ class DigestMD5 {
         str += ',nc=' + nc;
         str += ',qop=' + qop;
         str += ',digest-uri="' + uri + '"';
-        const base = iana_hashes_1.createHash('md5')
+        const base = iana_hashes_1
+            .createHash('md5')
             .update(cred.username)
             .update(':')
             .update(realm)
             .update(':')
             .update(cred.password)
             .digest();
-        let ha1 = iana_hashes_1.createHash('md5')
+        let ha1 = iana_hashes_1
+            .createHash('md5')
             .update(base)
             .update(':')
             .update(this._nonce)
@@ -59,14 +61,16 @@ class DigestMD5 {
             ha1.update(':').update(cred.authzid);
         }
         ha1 = ha1.digest('hex');
-        let ha2 = iana_hashes_1.createHash('md5')
+        let ha2 = iana_hashes_1
+            .createHash('md5')
             .update('AUTHENTICATE:')
             .update(uri);
         if (qop === 'auth-int' || qop === 'auth-conf') {
             ha2.update(':00000000000000000000000000000000');
         }
         ha2 = ha2.digest('hex');
-        const digest = iana_hashes_1.createHash('md5')
+        const digest = iana_hashes_1
+            .createHash('md5')
             .update(ha1)
             .update(':')
             .update(this._nonce)

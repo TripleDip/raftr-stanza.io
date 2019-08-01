@@ -1,14 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const NS = tslib_1.__importStar(require("../namespaces"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const NS = tslib_1.__importStar(require('../namespaces'));
 function default_1(JXT) {
     const Utils = JXT.utils;
     const SHIM = {
-        get: function () {
+        get: function() {
             const headerSet = Utils.find(this.xml, NS.SHIM, 'headers');
             if (headerSet.length) {
-                return Utils.getMultiSubText(headerSet[0], NS.SHIM, 'header', function (header) {
+                return Utils.getMultiSubText(headerSet[0], NS.SHIM, 'header', function(header) {
                     const name = Utils.getAttribute(header, 'name');
                     if (name) {
                         return {
@@ -20,9 +20,9 @@ function default_1(JXT) {
             }
             return [];
         },
-        set: function (values) {
+        set: function(values) {
             const headerSet = Utils.findOrCreate(this.xml, NS.SHIM, 'headers');
-            JXT.setMultiSubText(headerSet, NS.SHIM, 'header', values, function (val) {
+            JXT.setMultiSubText(headerSet, NS.SHIM, 'header', values, function(val) {
                 const header = Utils.createElement(NS.SHIM, 'header', NS.SHIM);
                 Utils.setAttribute(header, 'name', val.name);
                 Utils.setText(header, val.value);
@@ -30,10 +30,10 @@ function default_1(JXT) {
             });
         }
     };
-    JXT.withMessage(function (Message) {
+    JXT.withMessage(function(Message) {
         JXT.add(Message, 'headers', SHIM);
     });
-    JXT.withPresence(function (Presence) {
+    JXT.withPresence(function(Presence) {
         JXT.add(Presence, 'headers', SHIM);
     });
 }

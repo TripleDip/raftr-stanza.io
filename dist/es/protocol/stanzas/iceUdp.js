@@ -1,5 +1,5 @@
 import * as NS from '../namespaces';
-export default function (JXT) {
+export default function(JXT) {
     const Utils = JXT.utils;
     const ICE = JXT.define({
         element: 'transport',
@@ -71,7 +71,7 @@ export default function (JXT) {
     JXT.extend(ICE, RemoteCandidate);
     JXT.extend(ICE, Fingerprint, 'fingerprints');
     JXT.extend(ICE, SctpMap, 'sctp');
-    JXT.withDefinition('content', NS.JINGLE_1, function (Content) {
+    JXT.withDefinition('content', NS.JINGLE_1, function(Content) {
         JXT.extend(Content, ICE);
     });
 }

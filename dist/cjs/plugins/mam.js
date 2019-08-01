@@ -1,13 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const protocol_1 = require("../protocol");
-const jid_1 = require("../protocol/jid");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const protocol_1 = require('../protocol');
+const jid_1 = require('../protocol/jid');
 function timeoutPromise(targetPromise, queryid, delay) {
     let timeoutRef;
     return Promise.race([
         targetPromise,
-        new Promise(function (resolve, reject) {
-            timeoutRef = setTimeout(function () {
+        new Promise(function(resolve, reject) {
+            timeoutRef = setTimeout(function() {
                 reject({
                     error: {
                         condition: 'timeout'
@@ -17,21 +17,24 @@ function timeoutPromise(targetPromise, queryid, delay) {
                 });
             }, delay);
         })
-    ]).then(function (result) {
+    ]).then(function(result) {
         clearTimeout(timeoutRef);
         return result;
     });
 }
 function default_1(client) {
     client.disco.addFeature(protocol_1.Namespaces.MAM_1);
-    client.getHistorySearchForm = function (jid, cb) {
-        return client.sendIq({
-            mam: true,
-            to: jid,
-            type: 'get'
-        }, cb);
+    client.getHistorySearchForm = function(jid, cb) {
+        return client.sendIq(
+            {
+                mam: true,
+                to: jid,
+                type: 'get'
+            },
+            cb
+        );
     };
-    client.searchHistory = function (opts, cb) {
+    client.searchHistory = function(opts, cb) {
         const queryid = this.nextId();
         opts = opts || {};
         opts.queryid = queryid;
@@ -78,7 +81,7 @@ function default_1(client) {
         allowed[client.jid.bare] = true;
         allowed[client.jid.domain] = true;
         const results = [];
-        this.on('mam:item:' + queryid, 'session', function (msg) {
+        this.on('mam:item:' + queryid, 'session', function(msg) {
             if (!allowed[msg.from.full]) {
                 return;
             }
@@ -92,36 +95,41 @@ function default_1(client) {
         });
         return timeoutPromise(mamQuery, queryid, this.config.timeout * 1000 || 15000)
             .then(mamRes => {
-            mamRes.mamResult.items = results;
-            this.off('mam:item:' + queryid);
-            if (cb) {
-                cb(null, mamRes);
-            }
-            return mamRes;
-        })
+                mamRes.mamResult.items = results;
+                this.off('mam:item:' + queryid);
+                if (cb) {
+                    cb(null, mamRes);
+                }
+                return mamRes;
+            })
             .catch(err => {
-            this.off('mam:item:' + queryid);
-            if (cb) {
-                cb(err);
-            }
-            else {
-                throw err;
-            }
-        });
+                this.off('mam:item:' + queryid);
+                if (cb) {
+                    cb(err);
+                } else {
+                    throw err;
+                }
+            });
     };
-    client.getHistoryPreferences = function (cb) {
-        return this.sendIq({
-            mamPrefs: true,
-            type: 'get'
-        }, cb);
+    client.getHistoryPreferences = function(cb) {
+        return this.sendIq(
+            {
+                mamPrefs: true,
+                type: 'get'
+            },
+            cb
+        );
     };
-    client.setHistoryPreferences = function (opts, cb) {
-        return this.sendIq({
-            mamPrefs: opts,
-            type: 'set'
-        }, cb);
+    client.setHistoryPreferences = function(opts, cb) {
+        return this.sendIq(
+            {
+                mamPrefs: opts,
+                type: 'set'
+            },
+            cb
+        );
     };
-    client.on('message', function (msg) {
+    client.on('message', function(msg) {
         if (msg.mamItem) {
             client.emit('mam:item', msg);
             client.emit('mam:item:' + msg.mamItem.queryid, msg);

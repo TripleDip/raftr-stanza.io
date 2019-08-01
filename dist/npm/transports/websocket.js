@@ -1,8 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const wildemitter_1 = tslib_1.__importDefault(require("wildemitter"));
-const async = tslib_1.__importStar(require("async"));
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const tslib_1 = require('tslib');
+const wildemitter_1 = tslib_1.__importDefault(require('wildemitter'));
+const async = tslib_1.__importStar(require('async'));
 let WS = require('ws');
 if (typeof WS !== 'function') {
     WS = window.WebSocket;
@@ -19,7 +19,7 @@ class WSConnection extends wildemitter_1.default {
             Open: stanzas.getDefinition('open', 'urn:ietf:params:xml:ns:xmpp-framing', true),
             StreamError: stanzas.getStreamError()
         };
-        self.sendQueue = async.queue(function (data, cb) {
+        self.sendQueue = async.queue(function(data, cb) {
             if (self.conn) {
                 if (typeof data !== 'string') {
                     data = data.toString();
@@ -32,10 +32,10 @@ class WSConnection extends wildemitter_1.default {
             }
             cb();
         }, 1);
-        self.on('connected', function () {
+        self.on('connected', function() {
             self.send(self.startHeader());
         });
-        self.on('raw:incoming', function (data) {
+        self.on('raw:incoming', function(data) {
             let stanzaObj;
             let err;
             data = data.trim();
@@ -44,8 +44,7 @@ class WSConnection extends wildemitter_1.default {
             }
             try {
                 stanzaObj = stanzas.parse(data);
-            }
-            catch (e) {
+            } catch (e) {
                 err = new self.stanzas.StreamError({
                     condition: 'invalid-xml'
                 });
@@ -77,20 +76,20 @@ class WSConnection extends wildemitter_1.default {
         self.hasStream = false;
         self.closing = false;
         self.conn = new WS(opts.wsURL, 'xmpp', opts.wsOptions);
-        self.conn.onerror = function (e) {
+        self.conn.onerror = function(e) {
             if (e.preventDefault) {
                 e.preventDefault();
             }
             self.emit('disconnected', self);
         };
-        self.conn.onclose = function () {
+        self.conn.onclose = function() {
             self.emit('disconnected', self);
         };
-        self.conn.onopen = function () {
+        self.conn.onopen = function() {
             self.sm.started = false;
             self.emit('connected', self);
         };
-        self.conn.onmessage = function (wsMsg) {
+        self.conn.onmessage = function(wsMsg) {
             self.emit('raw:incoming', Buffer.from(wsMsg.data, 'utf8').toString());
         };
     }
@@ -108,8 +107,7 @@ class WSConnection extends wildemitter_1.default {
         if (this.conn && !this.closing && this.hasStream) {
             this.closing = true;
             this.send(this.closeHeader());
-        }
-        else {
+        } else {
             this.hasStream = false;
             this.stream = undefined;
             if (this.conn && this.conn.readyState === WS_OPEN) {

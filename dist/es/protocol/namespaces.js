@@ -250,7 +250,8 @@ export const SPOILER_0 = 'urn:xmppp:spoiler:0';
 // XEP-0384
 export const OMEMO_AXOLOTL = 'eu.siacs.conversations.axolotl';
 export const OMEMO_AXOLOTL_DEVICELIST = 'eu.siacs.conversations.axolotl.devicelist';
-export const OMEMO_AXOLOTL_BUNDLE = deviceId => `eu.siacs.conversations.axolotl.bundles:${deviceId}`;
+export const OMEMO_AXOLOTL_BUNDLE = deviceId =>
+    `eu.siacs.conversations.axolotl.bundles:${deviceId}`;
 // ================================================================
 // OTHER
 // ================================================================
